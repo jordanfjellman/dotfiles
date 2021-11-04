@@ -1,4 +1,3 @@
-export PATH=$HOME/.local/bin:$PATH
 export ZSH=$HOME/.oh-my-zsh
 
 ZSH_THEME="robbyrussell"
@@ -21,13 +20,3 @@ if type brew &>/dev/null; then
   autoload -Uz compinit
   compinit
 fi
-
-# fzf
-[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
-export FZF_DEFAULT_OPS="--extended"
-export FZF_DEFAULT_COMMAND="fd --type f"
-export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
-
-# tmux-sessionizer
-bindkey -s ^f "tmux-sessionizer\n"
-
