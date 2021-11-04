@@ -14,3 +14,5 @@ for folder in $(echo $STOW_FOLDERS | sed "s/,/ /g"); do
   stow $folder
 done
 popd
+
+ln -sf "$HOME/.vimrc" "$HOME/.ideavimrc"
