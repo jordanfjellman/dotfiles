@@ -6,10 +6,10 @@ export EDITOR="nvim"
 export HISTSIZE=10000
 
 # fzf
-[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 export FZF_DEFAULT_OPS="--extended"
 export FZF_DEFAULT_COMMAND="fd --type f"
 export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
+export FZF_ALT_C_COMMAND="$FZF_DEFAULT_COMMAND"
 
 # tmux-sessionizer
 bindkey -s ^f "tmux-sessionizer\n"
@@ -65,6 +65,6 @@ if [[ -f "$HOME/.private_keys" ]]; then
 fi
 
 # aliases
-alias pr="git pull-request"
+alias pr="gh pr create"
 alias k="kubectl"
 alias kl="kubectl login"

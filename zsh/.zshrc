@@ -12,7 +12,6 @@ plugins=(
 
 source $ZSH/oh-my-zsh.sh
 source /usr/local/share/zsh-autosuggestions/zsh-autosuggestions.zsh
-# awscli autocomplete
 source /usr/local/share/zsh/site-functions
 
 if type brew &>/dev/null; then
@@ -20,3 +19,5 @@ if type brew &>/dev/null; then
   autoload -Uz compinit
   compinit
 fi
+
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
