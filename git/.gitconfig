@@ -1,0 +1,30 @@
+[user]
+  name = Jordan Fjellman
+  email = 8724130+jordanfjellman@users.noreply.github.com
+[core]
+  editor = vim
+  excludesfile = /Users/jfjellm/.gitignore_global
+[alias]
+  co = checkout
+  br = branch
+  ci = commit
+  st = status
+  ss = status -s
+  ll = log --graph --oneline --decorate --abbrev-commit --all
+  pr = pull-request
+  undo = reset --soft HEAD~1
+[filter "lfs"]
+  clean = git-lfs clean -- %f
+  smudge = git-lfs smudge -- %f
+  process = git-lfs filter-process
+  required = true
+[init]
+  templatedir = ~/.git-templates
+[branch "master"]
+  remote = upstream
+  merge = refs/heads/master
+[filter "gitignore"]
+  clean = "sed '/#gitignore$/'d"
+  smudge = cat
+[pull]
+  ff = only
