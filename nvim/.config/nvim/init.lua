@@ -15,6 +15,7 @@ local global_opt = vim.opt_global
 cmd([[packadd packer.nvim]])
 
 require("plugins")
+require("globals")
 
 require("settings.cmp").setup()
 require("settings.lsp").setup()
