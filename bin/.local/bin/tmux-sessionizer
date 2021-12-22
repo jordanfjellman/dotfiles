@@ -6,7 +6,7 @@
 if [[ $# -eq 1 ]]; then
   selected=$1
 else
-  selected=$(find ~/repos ~/code -mindepth 1 -maxdepth 2 -type d | fzf)
+  selected=$(find $HOME/repos -name .git -type d -prune -mindepth 1 -maxdepth 3 | sed 's/\/.git$//' | fzf --select-1)
 fi
 
 if [[ -z $selected ]]; then
