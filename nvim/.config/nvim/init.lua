@@ -25,7 +25,6 @@ require("settings.tree").setup()
 require("settings.treesitter").setup()
 
 require("gitsigns").setup()
-require("lspsaga").init_lsp_saga()
 require("nvim-autopairs").setup()
 
 ----------------------------------
@@ -115,11 +114,6 @@ map("n", "<leader>d", "<cmd>lua vim.lsp.diagnostic.set_loclist()<CR>") -- buffer
 map("n", "[c", "<cmd>lua vim.lsp.diagnostic.goto_prev { wrap = false }<CR>")
 map("n", "]c", "<cmd>lua vim.lsp.diagnostic.goto_next { wrap = false }<CR>")
 
--- lspsaga
--- map("n", "gh", [[<cmd>lua require"lspsaga.provider".lsp_finder()<CR>]])
--- map("n", "<leader>ca", [[<cmd>lua require("lspsaga.codeaction").code_action()<CR>]])
--- map("v", "<leader>ca", [[:<C-U>lua require("lspsaga.codeaction").range_code_action()<CR>]])
--- map("n", "<leader>rn", [[<cmd>lua require("lspsaga.rename").rename()<CR>]])
 
 -- telescope
 map("n", "<leader>ff", [[<cmd>lua require"telescope.builtin".find_files({layout_strategy="vertical"})<CR>]])
