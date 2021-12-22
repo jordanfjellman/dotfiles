@@ -21,3 +21,7 @@ if type brew &>/dev/null; then
 fi
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+
+# tmux-sessionizer
+bindkey -s "^f" "tmux-sessionizer\n"
+
