@@ -37,6 +37,7 @@ return require("packer").startup(function(use)
       { "nvim-lua/popup.nvim"},
       { "nvim-lua/plenary.nvim"},
       { "nvim-telescope/telescope-fzy-native.nvim"},
+      { "ThePrimeagen/harpoon"},
     }})
   use({ "nvim-treesitter/nvim-treesitter", run = ":TSUpdate" })
   use({ "projekt0n/github-nvim-theme" })

@@ -126,6 +126,14 @@ map("n", "<leader>fb", [[<cmd>lua require"telescope.builtin".file_browser({layou
 map("n", "<leader>mc", [[<cmd>lua require("telescope").extensions.metals.commands()<CR>]])
 map("n", "<leader>gc", [[<cmd>lua require"telescope.builtin".git_commits({layout_strategy="vertical"})<CR>]])
 map("n", "<leader>gs", [[<cmd>lua require"telescope.builtin".git_status({layout_strategy="vertical"})<CR>]])
+-- harpoon
+map("n", "<leader>ha", [[<cmd>lua require"harpoon.mark".add_file()<CR>]])
+map("n", "<leader>hv", [[<cmd>lua require"harpoon.ui".toggle_quick_menu()<CR>]])
+map("n", "<leader>h1", [[<cmd>lua require"harpoon.ui".nav_file(1)<CR>]])
+map("n", "<leader>h2", [[<cmd>lua require"harpoon.ui".nav_file(2)<CR>]])
+map("n", "<leader>h3", [[<cmd>lua require"harpoon.ui".nav_file(3)<CR>]])
+map("n", "<leader>h4", [[<cmd>lua require"harpoon.ui".nav_file(4)<CR>]])
+map("n", "<leader>hn", [[<cmd>lua require"harpoon.ui".nav_next()<CR>]])
 
 ----------------------------------
 -- Commands ----------------------
@@ -147,3 +155,4 @@ cmd([[hi! link LspReferenceText CursorColumn]])
 cmd([[hi! link LspReferenceRead CursorColumn]])
 cmd([[hi! link LspReferenceWrite CursorColumn]])
 cmd([[command! Format lua vim.lsp.buf.formatting()]])
+

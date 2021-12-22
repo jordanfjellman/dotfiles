@@ -17,6 +17,7 @@ M.setup = function ()
   })
 
   require("telescope").load_extension("fzy_native")
+  require("telescope").load_extension("harpoon")
 end
 
 -- This is mainly for Metals since we don't respond to "" as a query to get all
