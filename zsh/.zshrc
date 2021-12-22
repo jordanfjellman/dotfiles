@@ -1,11 +1,13 @@
 export ZSH=$HOME/.oh-my-zsh
 
 ZSH_THEME="robbyrussell"
+ZSH_TMUX_AUTOSTART=true
 
 plugins=(
   brew
   git
   github
+  tmux
   zsh-autosuggestions
   zsh-completions
 )
