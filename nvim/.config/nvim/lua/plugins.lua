@@ -42,7 +42,6 @@ return require("packer").startup(function(use)
   use({ "nvim-treesitter/nvim-treesitter", run = ":TSUpdate" })
   use({ "projekt0n/github-nvim-theme" })
   use({ "scalameta/nvim-metals", requires = { "nvim-lua/plenary.nvim" } })
-  use({ 'tami5/lspsaga.nvim' }) 
   use({
     "tpope/vim-fugitive",
     requires = { "tpope/vim-rhubarb" },
