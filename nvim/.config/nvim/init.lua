@@ -67,7 +67,7 @@ global_opt.updatetime = 300
 global_opt.wildmode = {"list", "longest"} -- Command-line completion mode
 
 -- window-scoped
-opt.colorcolumn = "80"
+opt.colorcolumn = "120"
 opt.number = true -- Show line numbers
 opt.relativenumber = true -- Relative line numbers
 opt.signcolumn = "yes"
