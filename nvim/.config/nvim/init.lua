@@ -20,6 +20,7 @@ require("globals")
 require("settings.cmp").setup()
 require("settings.lsp").setup()
 require("settings.telescope").setup()
+require("settings.theme").setup()
 require("settings.treesitter").setup()
 
 require("gitsigns").setup()
