@@ -42,8 +42,11 @@ return require("packer").startup(function(use)
   use({ "projekt0n/github-nvim-theme" })
   use({ "scalameta/nvim-metals", requires = { "nvim-lua/plenary.nvim" } })
   use({ 'tami5/lspsaga.nvim' }) 
+  use({
+    "tpope/vim-fugitive",
+    requires = { "tpope/vim-rhubarb" },
+  })
   use({ "windwp/nvim-autopairs"})
-
 
   -- Automatically set up your configuration after cloning packer.nvim
   -- Put this at the end after all plugins
