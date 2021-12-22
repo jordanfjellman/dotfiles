@@ -29,6 +29,10 @@ return require("packer").startup(function(use)
   use({ "neovim/nvim-lspconfig" })
   use({ "numToStr/Comment.nvim" })
   use({
+    "nvim-lualine/lualine.nvim",
+    requires = {"kyazdani42/nvim-web-devicons", opt = true }
+  })
+  use({
     "nvim-telescope/telescope.nvim",
     requires = {
       { "nvim-lua/popup.nvim"},

@@ -26,6 +26,7 @@ require("settings.treesitter").setup()
 
 require("Comment").setup()
 require("gitsigns").setup()
+require("lualine").setup()
 require("nvim-autopairs").setup()
 
 ----------------------------------
