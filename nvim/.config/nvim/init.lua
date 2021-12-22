@@ -87,8 +87,10 @@ opt.tabstop = indent -- Number of spaces tabs count for
 ----------------------------------
 map("n", "<SPACE>", "<NOP>")
 map("i", "jk", "<ESC>")
-map("n", "<Leader>h", ":set hlsearch!<CR>")
-map("n", "<Leader>e", ":NvimTreeToggle<CR>")
+map("n", "<leader>h", ":set hlsearch!<CR>")
+map("n", "<leader>e", ":NvimTreeToggle<CR>")
+
+map("n", "<leader><leader>e", [[:luafile %<CR>]])
 
 -- window navigation
 map("n", "<C-h>", "<C-w>h")
