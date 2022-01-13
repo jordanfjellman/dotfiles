@@ -18,6 +18,7 @@ require("plugins")
 require("globals")
 
 require("settings.cmp").setup()
+require("settings.diagnostic").setup()
 require("settings.lsp").setup()
 require("settings.telescope").setup()
 require("settings.theme").setup()
@@ -128,9 +129,11 @@ map("n", "<leader>o", [[<cmd>lua vim.lsp.buf.formatting()<CR>]])
 map("n", "<leader>ca", [[<cmd>lua vim.lsp.buf.code_action()<CR>]])
 map("n", "<leader>cl", [[<cmd>lua vim.lsp.codelens.run()<CR>]])
 map("n", "<leader>ws", [[<cmd>lua require"metals".worksheet_hover()<CR>]])
-map("n", "<leader>aa", [[<cmd>lua vim.diagnostic.setqflist()<CR>]])
-map("n", "<leader>d", [[<cmd>lua vim.diagnostic.setloclist()<CR>]])
-map("n", "<leader>ld", [[<cmd>lua vim.diagnostic.open_float(0, {scope = "line"})<CR>]])
+
+-- diagnostic
+map("n", "<leader>dn", [[<cmd>lua vim.diagnostic.goto_next({wrap = true, float = true})<CR>]])
+map("n", "<leader>dp", [[<cmd>lua vim.diagnostic.goto_prev({wrap = true, float = true})<CR>]])
+map("n", "<leader>d", [[<cmd>lua vim.diagnostic.open_float(0, {scope = "line"})<CR>]])
 
 -- telescope
 map("n", "<leader>ff", [[<cmd>lua require"telescope.builtin".find_files()<CR>]])
