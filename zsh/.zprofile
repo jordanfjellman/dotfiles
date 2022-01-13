@@ -1,5 +1,5 @@
 #!/usr/bin/env zsh
-export PATH=$HOME/bin:/usr/local/bin:$HOME/.local/bin:/usr/local/opt/python@3.8/bin:/Users/jfjellm/Library/Application\ Support/Coursier/bin:$PATH
+export PATH=$HOME/bin:/usr/local/bin:$HOME/.local/bin:/usr/local/sbin:/usr/local/opt/python@3.8/bin:/Users/jfjellm/Library/Application\ Support/Coursier/bin:$PATH
 
 alias vim="nvim"
 export EDITOR="nvim"
