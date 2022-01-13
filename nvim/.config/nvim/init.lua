@@ -102,6 +102,16 @@ map("n", "<C-l>", "<C-w>l")
 map("v", ">", ">gv")
 map("v", "<", "<gv")
 
+-- clipboard
+map("v", "<leader>y", '"+y')
+map("n", "<leader>Y", '"+yg_')
+map("n", "<leader>y", '"+y')
+map("n", "<leader>yy", '"+yy')
+map("n", "<leader>p", '"+p')
+map("n", "<leader>p", '"+p')
+map("v", "<leader>p", '"+p')
+map("v", "<leader>p", '"+p')
+
 -- lsp
 map("n", "gD", [[<cmd>lua vim.lsp.buf.declaration()<CR>]])
 map("n", "gd", [[<cmd>lua vim.lsp.buf.definition()<CR>]])
