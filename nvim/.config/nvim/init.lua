@@ -24,6 +24,7 @@ require("settings.telescope").setup()
 require("settings.theme").setup()
 require("settings.tree").setup()
 require("settings.treesitter").setup()
+require("settings.scrollbar").setup()
 
 require("Comment").setup()
 require("gitsigns").setup()

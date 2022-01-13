@@ -30,6 +30,10 @@ return require("packer").startup(function(use)
     requires = {"kyazdani42/nvim-web-devicons", opt = true }
   })
   use({
+    "petertriho/nvim-scrollbar",
+    requires = "kevinhwang91/nvim-hlslens"
+  })
+  use({
     "nvim-telescope/telescope.nvim",
     requires = {
       { "nvim-lua/popup.nvim"},
