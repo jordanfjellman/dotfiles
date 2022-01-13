@@ -139,11 +139,9 @@ map("n", "<leader>d", [[<cmd>lua vim.diagnostic.open_float(0, {scope = "line"})<
 -- telescope
 map("n", "<leader>ff", [[<cmd>lua require"telescope.builtin".find_files()<CR>]])
 map("n", "<leader>lg", [[<cmd>lua require"telescope.builtin".live_grep()<CR>]])
-map("n", "<leader>fb", [[<cmd>lua require"telescope.builtin".file_browser()<CR>]])
-map("n", "<leader>mc", [[<cmd>lua require("telescope").extensions.metals.commands()<CR>]])
-map("n", "<leader>gc", [[<cmd>lua require"telescope.builtin".git_commits()<CR>]])
 map("n", "<leader>gs", [[<cmd>lua require"telescope.builtin".git_status()<CR>]])
-map("n", "<leader>fm", [[<cmd>lua require"telescope".extensions.harpoon.marks()<CR>]])
+map("n", "<leader>mc", [[<cmd>lua require("telescope").extensions.metals.commands()<CR>]])
+map("n", "<leader>hf", [[<cmd>lua require"telescope".extensions.harpoon.marks()<CR>]])
 
 -- harpoon
 map("n", "<leader>ha", [[<cmd>lua require"harpoon.mark".add_file()<CR>]])
