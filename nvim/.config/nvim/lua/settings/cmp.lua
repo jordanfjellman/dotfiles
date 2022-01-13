@@ -33,7 +33,7 @@ M.setup = function()
                     fallback()
                 end
             end,
-        }
+        },
     })
 end
 
