@@ -56,6 +56,9 @@ return require("packer").startup(function(use)
     "tpope/vim-fugitive",
     requires = { "tpope/vim-rhubarb" },
   })
+  use({
+    "ray-x/lsp_signature.nvim",
+  })
   use({ "windwp/nvim-autopairs"})
 
   -- Automatically set up your configuration after cloning packer.nvim
