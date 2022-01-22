@@ -24,6 +24,7 @@ return require("packer").startup(function(use)
     requires = "kyazdani42/nvim-web-devicons"
   })
   use({ "lewis6991/gitsigns.nvim", requires = { "nvim-lua/plenary.nvim" } })
+  use({ "jose-elias-alvarez/null-ls.nvim" })
   use({
       "neovim/nvim-lspconfig",
       "williamboman/nvim-lsp-installer",
