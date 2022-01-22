@@ -68,3 +68,5 @@ fi
 alias pr="gh pr create"
 alias k="kubectl"
 alias kl="kubectl login"
+alias kns="kubens"
+alias kc="kubectx"
