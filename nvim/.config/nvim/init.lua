@@ -41,9 +41,6 @@ g["netrw_gx"] = "<cWORD>"
 -- markdown plugin?
 g["markdown_folding"] = 1
 
--- nvim-metals
-g["metals_server_version"] = "0.10.9"
-
 ----------------------------------
 -- Options -----------------------
 ----------------------------------
