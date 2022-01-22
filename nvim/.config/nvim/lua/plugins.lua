@@ -24,7 +24,10 @@ return require("packer").startup(function(use)
     requires = "kyazdani42/nvim-web-devicons"
   })
   use({ "lewis6991/gitsigns.nvim", requires = { "nvim-lua/plenary.nvim" } })
-  use({ "neovim/nvim-lspconfig" })
+  use({
+      "neovim/nvim-lspconfig",
+      "williamboman/nvim-lsp-installer",
+  })
   use({ "numToStr/Comment.nvim" })
   use({
     "nvim-lualine/lualine.nvim",
