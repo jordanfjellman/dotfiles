@@ -5,6 +5,9 @@ alias vim="nvim"
 export EDITOR="nvim"
 export HISTSIZE=10000
 
+# homebrew
+export HOMEBREW_NO_ANALYTICS=1
+
 # fzf
 export FZF_DEFAULT_OPS="--extended"
 export FZF_DEFAULT_COMMAND="fd --type f"
