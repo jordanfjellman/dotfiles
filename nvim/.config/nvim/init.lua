@@ -64,6 +64,7 @@ global_opt.splitbelow = true -- Put new windows below current
 global_opt.splitright = true -- Put new windows right of current
 global_opt.termguicolors = true -- True color support
 global_opt.updatetime = 300
+global_opt.wildignore = { ".git", "*/node_modules/*", "*/target/*", ".metals", ".bloop", ".ammonite" }
 global_opt.wildmode = {"list", "longest"} -- Command-line completion mode
 
 -- window-scoped
