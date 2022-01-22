@@ -55,7 +55,7 @@ global_opt.ignorecase = true -- Ignore case
 global_opt.mouse = "n"
 global_opt.list = true -- Show some invisible characters
 global_opt.listchars = "trail:·"
-global_opt.scrolloff = 4 -- Lines of context
+global_opt.scrolloff = 8 -- Lines of context
 global_opt.shiftround = true -- Round indent
 global_opt.shortmess:remove("F"):append("c") -- needed for nvim-metals
 global_opt.sidescrolloff = 8 -- Columns of context
