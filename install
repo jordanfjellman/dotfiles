@@ -5,13 +5,13 @@ if [[ -z $STOW_FOLDERS ]]; then
 fi
 
 if [[ -z $DOTFILES ]]; then
-  DOTFILES=$HOME/.dotfiles
+  DOTFILES=$HOME/code/jordanfjellman/dotfiles
 fi
 
 pushd $DOTFILES
 for folder in $(echo $STOW_FOLDERS | sed "s/,/ /g"); do
-  stow -D $folder
-  stow $folder
+  stow --delete $folder
+  stow --target=$HOME $folder
 done
 popd
 
