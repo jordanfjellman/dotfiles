@@ -98,6 +98,10 @@ map("n", "<C-j>", "<C-w>j")
 map("n", "<C-k>", "<C-w>k")
 map("n", "<C-l>", "<C-w>l")
 
+-- resizing splits
+map("n", "<C-[>", ":vertical resize -3<CR>")
+map("n", "<C-]>", ":vertical resize +3<CR>")
+
 -- indenting
 map("v", ">", ">gv")
 map("v", "<", "<gv")
@@ -157,13 +161,6 @@ cmd("colorscheme github_dimmed")
 
 -- markdown plugin?
 cmd([[au FileType markdown setlocal foldlevel=99]]) -- expand all folds on open
-
--- lsp
-cmd([[augroup lsp]])
-cmd([[autocmd!]])
-cmd([[autocmd FileType scala setlocal omnifunc=v:lua.vim.lsp.omnifunc]])
-cmd([[autocmd FileType scala,sbt lua require("metals").initialize_or_attach(metals_config)]])
-cmd([[augroup end]])
 
 cmd([[hi! link LspCodeLens CursorColumn]])
 cmd([[hi! link LspReferenceText CursorColumn]])
