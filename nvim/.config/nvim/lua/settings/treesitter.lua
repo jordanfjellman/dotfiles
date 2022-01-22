@@ -11,7 +11,6 @@ M.setup = function ()
     ensure_installed = "maintained",
     highlight = {
       enable = true,
-      disable = { "scala" },
     },
   })
 end
