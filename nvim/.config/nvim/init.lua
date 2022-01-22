@@ -139,8 +139,8 @@ map("n", "<leader>dp", [[<cmd>lua vim.diagnostic.goto_prev({wrap = true, float =
 map("n", "<leader>d", [[<cmd>lua vim.diagnostic.open_float(0, {scope = "line"})<CR>]])
 
 -- telescope
-map("n", "<leader>ff", [[<cmd>lua require"telescope.builtin".find_files()<CR>]])
-map("n", "<leader>lg", [[<cmd>lua require"telescope.builtin".live_grep()<CR>]])
+map("n", "<leader>ff", [[<cmd>lua require"telescope.builtin".find_files({ hidden = true })<CR>]])
+map("n", "<leader>lg", [[<cmd>lua require"telescope.builtin".live_grep({ hidden = true })<CR>]])
 map("n", "<leader>gs", [[<cmd>lua require"telescope.builtin".git_status()<CR>]])
 map("n", "<leader>mc", [[<cmd>lua require("telescope").extensions.metals.commands()<CR>]])
 map("n", "<leader>hf", [[<cmd>lua require"telescope".extensions.harpoon.marks()<CR>]])
