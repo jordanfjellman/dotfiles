@@ -16,3 +16,4 @@ done
 popd
 
 ln -sf "$HOME/.vimrc" "$HOME/.ideavimrc"
+
