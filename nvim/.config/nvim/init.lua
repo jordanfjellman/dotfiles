@@ -19,6 +19,7 @@ require("globals")
 
 require("settings.cmp").setup()
 require("settings.diagnostic").setup()
+require("settings.gitsigns-nvim").setup()
 require("settings.lsp").setup()
 require("settings.telescope").setup()
 require("settings.theme").setup()
@@ -28,7 +29,6 @@ require("settings.treesitter").setup()
 require("settings.scrollbar").setup()
 
 require("Comment").setup()
-require("gitsigns").setup()
 require("lualine").setup()
 require("nvim-autopairs").setup()
 
