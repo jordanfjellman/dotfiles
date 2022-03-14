@@ -18,10 +18,16 @@ M.setup = function()
     showInferredType = true,
   }
   Metals_config.capabilities = require("cmp_nvim_lsp").update_capabilities(capabilities)
-  Metals_config.on_attach = function(client, _)
+  Metals_config.on_attach = function(_, _)
     -- null-ls handles formatting
-    client.resolved_capabilities.document_formatting = false
-    client.resolved_capabilities.document_range_formatting = false
+    -- client.resolved_capabilities.document_formatting = false
+    -- client.resolved_capabilities.document_range_formatting = false
+    cmd([[
+      augroup LspFormatting
+          autocmd! * <buffer>
+          autocmd BufWritePre <buffer> lua vim.lsp.buf.formatting_sync()
+      augroup END
+    ]])
 
     cmd([[autocmd CursorHold <buffer> lua vim.lsp.buf.document_highlight()]])
     cmd([[autocmd CursorMoved <buffer> lua vim.lsp.buf.clear_references()]])
