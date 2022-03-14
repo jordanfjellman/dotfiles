@@ -69,6 +69,7 @@ fi
 
 # aliases
 alias pr="gh pr create"
+alias prv="gh pr view --web"
 alias k="kubectl"
 alias kl="kubectl login"
 alias kns="kubens"
