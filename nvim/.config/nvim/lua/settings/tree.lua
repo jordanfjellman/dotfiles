@@ -1,10 +1,13 @@
 local M = {}
 
 M.setup = function()
-  vim.g["nvim_tree_quit_on_open"] = 1
-
   require("nvim-tree").setup({
-    disable_netrw = true,
+     disable_netrw = true,
+     actions = {
+       open_file = {
+         quit_on_open = true,
+       },
+     },
   })
 end
 
