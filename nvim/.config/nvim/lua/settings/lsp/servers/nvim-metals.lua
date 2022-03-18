@@ -19,9 +19,6 @@ M.setup = function()
   }
   Metals_config.capabilities = require("cmp_nvim_lsp").update_capabilities(capabilities)
   Metals_config.on_attach = function(_, _)
-    -- null-ls handles formatting
-    -- client.resolved_capabilities.document_formatting = false
-    -- client.resolved_capabilities.document_range_formatting = false
     cmd([[
       augroup LspFormatting
           autocmd! * <buffer>
