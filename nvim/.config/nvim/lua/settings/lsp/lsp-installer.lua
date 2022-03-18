@@ -13,6 +13,11 @@ M.setup = function ()
         opts = vim.tbl_deep_extend("force", sumneko_lua_opts, opts)
       end
 
+      if server.name == "jsonls" then
+        local jsonls_opts = require("settings.lsp.servers.jsonls").opts
+        opts = vim.tbl_deep_extend("force", jsonls_opts, opts)
+      end
+
       if server.name == "yamlls" then
         local yamlls_opts = require("settings.lsp.servers.yamlls").opts
         opts = vim.tbl_deep_extend("force", yamlls_opts, opts)
