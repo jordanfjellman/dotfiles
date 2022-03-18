@@ -40,11 +40,6 @@ M.setup = function()
     border = "rounded",
   })
 
-  -- local lsp_config = require("lspconfig")
-  -- lsp_config.html.setup({})
-  -- lsp_config.jsonls.setup({})
-  -- lsp_config.tsserver.setup({})
-
   require("settings.lsp.lsp-installer").setup()
   require("settings.lsp.lsp-signature").setup()
   require("settings.lsp.null-ls-nvim").setup()
