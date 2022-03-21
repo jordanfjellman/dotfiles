@@ -17,6 +17,10 @@ export FZF_ALT_C_COMMAND="$FZF_DEFAULT_COMMAND"
 # tmux-sessionizer
 bindkey -s "^f" "tmux-sessionizer\n"
 
+# line navigation
+bindkey -s "M-f" vi-backward-blank-word
+bindkey -s "M-b" vi-forward-blank-word
+
 # nvm configuration
 export NVM_DIR="$HOME/.nvm"
   . "/usr/local/opt/nvm/nvm.sh"
