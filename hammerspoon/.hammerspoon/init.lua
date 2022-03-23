@@ -25,7 +25,8 @@ spoon.SpoonInstall:andUse("AppLauncher", {
     o = "Microsoft Outlook",
     t = "Microsoft Teams",
     s = "Slack",
-    y = "YouTube Music"
+    y = "YouTube Music",
+    z = "zoom.us"
   }
 })
 
