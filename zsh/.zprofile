@@ -72,6 +72,7 @@ if [[ -f "$HOME/.private_keys" ]]; then
 fi
 
 # aliases
+alias gd="github ."
 alias pr="gh pr create"
 alias prv="gh pr view --web"
 alias k="kubectl"
