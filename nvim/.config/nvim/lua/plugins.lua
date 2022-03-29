@@ -45,6 +45,7 @@ return require("packer").startup(function(use)
       { "nvim-lua/plenary.nvim"},
       { "nvim-telescope/telescope-fzy-native.nvim"},
       { "ThePrimeagen/harpoon"},
+      { "xiyaowong/telescope-emoji.nvim" },
     }})
   use({
     "nvim-treesitter/nvim-treesitter",

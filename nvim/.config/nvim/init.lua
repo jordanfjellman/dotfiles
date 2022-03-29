@@ -145,6 +145,7 @@ map("n", "<leader>lg", [[<cmd>lua require"telescope.builtin".live_grep({ hidden 
 map("n", "<leader>gs", [[<cmd>lua require"telescope.builtin".git_status()<CR>]])
 map("n", "<leader>mc", [[<cmd>lua require("telescope").extensions.metals.commands()<CR>]])
 map("n", "<leader>hf", [[<cmd>lua require"telescope".extensions.harpoon.marks()<CR>]])
+map("n", "<leader>fe", [[<cmd>Telescope emoji<CR>]])
 
 -- harpoon
 map("n", "<leader>ma", [[<cmd>lua require"harpoon.mark".add_file()<CR>]])
