@@ -16,6 +16,7 @@ export FZF_ALT_C_COMMAND="$FZF_DEFAULT_COMMAND"
 
 # tmux-sessionizer
 bindkey -s "^f" "tmux-sessionizer\n"
+bindkey -s "^n" "tmux-sessionizer \"$HOME/notes\" \n"
 
 # line navigation
 bindkey -s "M-f" vi-backward-blank-word
