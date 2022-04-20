@@ -4,8 +4,8 @@ M.setup = function()
   local signs = {
     { name = "DiagnosticSignError", text = "" },
     { name = "DiagnosticSignWarn", text = "" },
-    { name = "DiagnosticSignHint", text = "" },
-    { name = "DiagnosticSignInfo", text = "" },
+    { name = "DiagnosticSignHint", text = "" },
+    { name = "DiagnosticSignInfo", text = "" },
   }
 
   for _, sign in ipairs(signs) do
@@ -13,8 +13,22 @@ M.setup = function()
   end
 
   vim.diagnostic.config {
+    float = {
+      focus = false,
+      focusable = false,
+      style = "minimal",
+      border = "rounded",
+      source = "always",
+      header = "",
+      prefix = "",
+    },
+    underline = true,
     update_in_insert = true,
     severity_sort = true,
+    signs = {
+      active = signs,
+    },
+    virtual_text = false,
   }
 end
 
