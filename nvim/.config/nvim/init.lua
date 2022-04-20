@@ -26,8 +26,8 @@ require("settings.theme").setup()
 require("settings.tree").setup()
 require("settings.treesitter").setup()
 require("settings.scrollbar").setup()
+require("settings.comment-nvim").setup()
 
-require("Comment").setup()
 require("lualine").setup()
 require("nvim-autopairs").setup()
 

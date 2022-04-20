@@ -28,6 +28,7 @@ return require("packer").startup(function(use)
       "neovim/nvim-lspconfig",
       "williamboman/nvim-lsp-installer",
   })
+  use({'JoosepAlviste/nvim-ts-context-commentstring'})
   use({ "numToStr/Comment.nvim" })
   use({
     "nvim-lualine/lualine.nvim",
