@@ -143,7 +143,6 @@ map("n", "<leader>ff", [[<cmd>lua require"telescope.builtin".find_files({ hidden
 map("n", "<leader>lg", [[<cmd>lua require"telescope.builtin".live_grep({ hidden = true })<CR>]])
 map("n", "<leader>gs", [[<cmd>lua require"telescope.builtin".git_status()<CR>]])
 map("n", "<leader>mc", [[<cmd>lua require("telescope").extensions.metals.commands()<CR>]])
-map("n", "<leader>hf", [[<cmd>lua require"telescope".extensions.harpoon.marks()<CR>]])
 map("n", "<leader>fe", [[<cmd>Telescope emoji<CR>]])
 
 -- harpoon
@@ -155,6 +154,7 @@ map("n", "<leader>m3", [[<cmd>lua require"harpoon.ui".nav_file(3)<CR>]])
 map("n", "<leader>m4", [[<cmd>lua require"harpoon.ui".nav_file(4)<CR>]])
 map("n", "<leader>mn", [[<cmd>lua require"harpoon.ui".nav_next()<CR>]])
 map("n", "<leader>mp", [[<cmd>lua require"harpoon.ui".nav_next()<CR>]])
+map("n", "<leader>mf", [[<cmd>lua require"telescope".extensions.harpoon.marks()<CR>]])
 
 ----------------------------------
 -- Commands ----------------------
