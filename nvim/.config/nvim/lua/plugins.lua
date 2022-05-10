@@ -47,11 +47,7 @@ return require("packer").startup(function(use)
       { "ThePrimeagen/harpoon"},
       { "xiyaowong/telescope-emoji.nvim" },
     }})
-  use({
-    "nvim-treesitter/nvim-treesitter",
-    run = ":TSUpdate",
-    commit = "668de0951a36ef17016074f1120b6aacbe6c4515"
-  })
+  use({ "nvim-treesitter/nvim-treesitter", run = ":TSUpdate" })
   use({ "projekt0n/github-nvim-theme" })
   use({ "scalameta/nvim-metals", requires = { "nvim-lua/plenary.nvim" } })
   use({
