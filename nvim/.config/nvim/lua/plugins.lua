@@ -23,6 +23,12 @@ return require("packer").startup(function(use)
     "iamcco/markdown-preview.nvim",
     run = function () vim.fn["mkdp#util#install"]() end,
   })
+  use({
+    "preservim/vim-markdown",
+    requires = {
+      "godlygeek/tabular",
+    }
+  })
   use({ "kevinhwang91/nvim-bqf", ft = "qf" })
   use({
     "kyazdani42/nvim-tree.lua",
