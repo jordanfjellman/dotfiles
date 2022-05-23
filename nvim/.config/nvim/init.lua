@@ -99,8 +99,8 @@ map("n", "<C-k>", "<C-w>k")
 map("n", "<C-l>", "<C-w>l")
 
 -- resizing splits
-map("n", "<C-[>", ":vertical resize -3<CR>")
-map("n", "<C-]>", ":vertical resize +3<CR>")
+map("n", "<leader>[", ":vertical resize -3<CR>")
+map("n", "<leader>]", ":vertical resize +3<CR>")
 
 -- indenting
 map("v", ">", ">gv")
