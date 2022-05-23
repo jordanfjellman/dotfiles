@@ -19,6 +19,10 @@ return require("packer").startup(function(use)
       { "hrsh7th/vim-vsnip" },
     },
   })
+  use({
+    "iamcco/markdown-preview.nvim",
+    run = function () vim.fn["mkdp#util#install"]() end,
+  })
   use({ "kevinhwang91/nvim-bqf", ft = "qf" })
   use({
     "kyazdani42/nvim-tree.lua",
