@@ -12,8 +12,6 @@ local global_opt = vim.opt_global
 ----------------------------------
 -- Setup Plugins -----------------
 ----------------------------------
-cmd([[packadd packer.nvim]])
-
 require("plugins")
 require("globals")
 
