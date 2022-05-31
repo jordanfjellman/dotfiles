@@ -20,9 +20,12 @@ spoon.SpoonInstall:andUse("AppLauncher", {
   },
   hotkeys = {
     b = "Brave Browser",
+    c = "Visual Studio Code",
     g = "Github Desktop",
+    i = "IntelliJ IDEA",
     k = "kitty",
     o = "Microsoft Outlook",
+    p = "Postman",
     t = "Microsoft Teams",
     s = "Slack",
     y = "YouTube Music",
