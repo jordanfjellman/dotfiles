@@ -1,11 +1,17 @@
 #!/usr/bin/env zsh
-export PATH=$HOME/bin:/usr/local/bin:$HOME/.local/bin:/usr/local/sbin:/usr/local/opt/python@3.8/bin:/Users/jfjellm/Library/Application\ Support/Coursier/bin:/usr/local/opt/kafka/bin:/usr/local/opt/ruby/bin:$PATH
+PATH=$HOME/bin:/usr/local/bin:$HOME/.local/bin:/usr/local/sbin:/Users/jfjellm/Library/Application\ Support/Coursier/bin:/usr/local/opt/kafka/bin:/usr/local/opt/ruby/bin:$PATH
+export PYENV_ROOT="$HOME/.pyenv"
+export PATH="$PYENV_ROOT/bin:$PATH"
+
+export LC_ALL=en_US.UTF-8
+export LANG=en_US.UTF-8
 
 alias vim="nvim"
 export EDITOR="nvim"
 export HISTSIZE=10000
 
 # homebrew
+eval "$(/opt/homebrew/bin/brew shellenv)"
 export HOMEBREW_NO_ANALYTICS=1
 
 # fzf
@@ -23,8 +29,9 @@ bindkey -s "M-f" vi-backward-blank-word
 bindkey -s "M-b" vi-forward-blank-word
 
 # nvm configuration
-export NVM_DIR="$HOME/.nvm"
-  . "/usr/local/opt/nvm/nvm.sh"
+export NVM_DIR="$([ -z "${XDG_CONFIG_HOME-}" ] &&
+  printf %s "${HOME}/.nvm" || printf %s "${XDG_CONFIG_HOME/nvm}")"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
 
 autoload -U add-zsh-hook
 load-nvmrc() {
@@ -47,12 +54,11 @@ load-nvmrc() {
 add-zsh-hook chpwd load-nvmrc
 load-nvmrc
 
-# java environment
-export JAVA_8_HOME=$(/usr/libexec/java_home -v1.8)
-alias java8='export JAVA_HOME=$JAVA_8_HOME'
-export JAVA_11_HOME=$(/usr/libexec/java_home -v11)
-alias java11='export JAVA_HOME=$JAVA_11_HOME'
-export JAVA_HOME=$JAVA_11_HOME
+# python
+if command -v pyenv 1>/dev/null 2>&1; then
+  eval "$(pyenv init --path)"
+  eval "$(pyenv init -)"
+fi
 
 # helm
 export HELM_HOME="$HOME/.helm"
