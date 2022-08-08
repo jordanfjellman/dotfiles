@@ -1,4 +1,5 @@
 .private_keys
 bin/.local/share/
 packer_compiled.lua
+bin/.local/state
 
