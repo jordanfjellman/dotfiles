@@ -13,7 +13,6 @@ hs.spoons.use("WindowManager", {
   }
 })
 
-
 spoon.SpoonInstall:andUse("AppLauncher", {
   config = {
     modifiers = meh
@@ -33,8 +32,13 @@ spoon.SpoonInstall:andUse("AppLauncher", {
   }
 })
 
+hs.hotkey.bind(meh, "n", function ()
+  hs.execute("open https://github.com/notifications")
+end)
+
 spoon.SpoonInstall:andUse("ReloadConfiguration", {
   hotkeys = { reloadConfiguration = { meh, "R" } },
   start = true
 })
+
 
