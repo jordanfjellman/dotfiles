@@ -1,7 +1,14 @@
 #!/usr/bin/env zsh
 PATH=$HOME/bin:/usr/local/bin:$HOME/.local/bin:/usr/local/sbin:/Users/jfjellm/Library/Application\ Support/Coursier/bin:/usr/local/opt/kafka/bin:/usr/local/opt/ruby/bin:$PATH
+
+# Add binaries for kubectl plugin manager, krew
+PATH="${PATH}:${HOME}/.krew/bin"
+
+# Add binaries for python environment manager
 export PYENV_ROOT="$HOME/.pyenv"
-export PATH="$PYENV_ROOT/bin:$PATH"
+PATH="$PYENV_ROOT/bin:$PATH"
+
+export PATH
 
 export LC_ALL=en_US.UTF-8
 export LANG=en_US.UTF-8
