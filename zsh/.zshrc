@@ -3,9 +3,6 @@ export ZSH=$HOME/.oh-my-zsh
 ZSH_THEME="robbyrussell"
 ZSH_TMUX_AUTOSTART=true
 
-source $(brew --prefix)/share/zsh-autosuggestions/zsh-autosuggestions.zsh
-source $(brew --prefix)/share/zsh/site-functions
-
 if type brew &>/dev/null; then
   FPATH=$(brew --prefix)/share/zsh-completions:$FPATH
   autoload -Uz compinit
@@ -15,7 +12,6 @@ fi
 source $ZSH/oh-my-zsh.sh
 
 plugins=(
-  brew
   git
   github
   tmux
@@ -23,7 +19,14 @@ plugins=(
   zsh-completions
 )
 
+source $(brew --prefix)/share/zsh-autosuggestions/zsh-autosuggestions.zsh
+source $(brew --prefix)/share/zsh/site-functions
+
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+
+if type kubectl &>/dev/null; then
+  source <(kubectl completion zsh)
+fi
 
 # tmux-sessionizer
 bindkey -s "^f" "tmux-sessionizer\n"
