@@ -28,6 +28,7 @@ require("settings.comment-nvim").setup()
 
 require("lualine").setup()
 require("nvim-autopairs").setup()
+require("nvim-surround").setup({})
 
 ----------------------------------
 -- Variables ---------------------

@@ -21,7 +21,7 @@ return require("packer").startup(function(use)
   })
   use({
     "iamcco/markdown-preview.nvim",
-    run = function() vim.fn["mkdp#util#install"]() end,
+    run = function() fn["mkdp#util#install"]() end,
   })
   use({
     "preservim/vim-markdown",
@@ -69,6 +69,7 @@ return require("packer").startup(function(use)
   use({
     "ray-x/lsp_signature.nvim",
   })
+  use({ "kylechui/nvim-surround" })
   use({ "windwp/nvim-autopairs" })
 
   -- Automatically set up your configuration after cloning packer.nvim
