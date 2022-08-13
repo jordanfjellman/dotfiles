@@ -11,6 +11,9 @@ PATH="$PYENV_ROOT/bin:$PATH"
 # Add binaries for coursier (scala development)
 PATH="$PATH:$HOME/Library/Application Support/Coursier/bin"
 
+# Add binaries for okta (assume aws role)
+PATH="$PATH:$HOME/.okta/bin"
+
 export PATH
 
 export LC_ALL=en_US.UTF-8
