@@ -8,6 +8,9 @@ PATH="${PATH}:${HOME}/.krew/bin"
 export PYENV_ROOT="$HOME/.pyenv"
 PATH="$PYENV_ROOT/bin:$PATH"
 
+# Add binaries for coursier (scala development)
+PATH="$PATH:$HOME/Library/Application Support/Coursier/bin"
+
 export PATH
 
 export LC_ALL=en_US.UTF-8
@@ -94,3 +97,4 @@ alias kl="kubectl login"
 alias kns="kubens"
 alias kc="kubectx"
 alias v="vim ."
+
