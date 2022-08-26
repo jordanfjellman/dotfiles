@@ -15,14 +15,11 @@ local global_opt = vim.opt_global
 require("plugins")
 require("globals")
 
-require("fjellyvim.diagnostic")
-
+require("fjellyvim")
 require("settings.gitsigns-nvim").setup()
 require("settings.telescope").setup()
-require("settings.theme").setup()
 require("settings.tree").setup()
 require("settings.treesitter").setup()
-require("settings.scrollbar").setup()
 
 require("lualine").setup()
 require("nvim-autopairs").setup()
@@ -156,8 +153,6 @@ map("n", "<leader>mf", [[<cmd>lua require"telescope".extensions.harpoon.marks()<
 ----------------------------------
 -- Commands ----------------------
 ----------------------------------
-cmd("colorscheme github_dimmed")
-
 -- markdown plugin?
 cmd([[au FileType markdown setlocal foldlevel=99]]) -- expand all folds on open
 
@@ -166,4 +161,3 @@ cmd([[hi! link LspReferenceText CursorColumn]])
 cmd([[hi! link LspReferenceRead CursorColumn]])
 cmd([[hi! link LspReferenceWrite CursorColumn]])
 cmd([[command! Format lua vim.lsp.buf.formatting()]])
-

@@ -52,6 +52,9 @@ return require("packer").startup(function(use)
     }
   })
 
+  -- Theme
+  use({ "projekt0n/github-nvim-theme" })
+
   -- Misc Plugins
   use({
     "iamcco/markdown-preview.nvim",
@@ -87,7 +90,6 @@ return require("packer").startup(function(use)
       { "xiyaowong/telescope-emoji.nvim" },
     }
   })
-  use({ "projekt0n/github-nvim-theme" })
   use({
     "tpope/vim-fugitive",
     requires = { "tpope/vim-rhubarb" },
