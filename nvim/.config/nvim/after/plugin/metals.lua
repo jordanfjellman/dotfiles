@@ -34,6 +34,8 @@ Metals_config.on_attach = function(_, _)
 end
 
 -- autocompletion
+-- warn: potential race condition with cmp configuration?
+-- todo: look into race condition
 local has_cmp, cmp = pcall(require, "cmp_nvim_lsp")
 if not has_cmp then
   return
