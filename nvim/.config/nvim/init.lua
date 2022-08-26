@@ -15,8 +15,7 @@ local global_opt = vim.opt_global
 require("plugins")
 require("globals")
 
-require("settings.cmp").setup()
-require("settings.diagnostic").setup()
+require("fjellyvim.diagnostic")
 require("settings.gitsigns-nvim").setup()
 require("settings.telescope").setup()
 require("settings.theme").setup()
