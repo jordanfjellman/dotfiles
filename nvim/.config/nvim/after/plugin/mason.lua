@@ -18,6 +18,7 @@ mason_lspconfig.setup({
   ensure_installed = {
     "bashls",
     "cssls",
+    "dockerls",
     "eslint",
     "html",
     "jsonls",
