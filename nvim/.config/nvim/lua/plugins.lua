@@ -16,6 +16,8 @@ vim.cmd [[packadd packer.nvim]]
 return require("packer").startup(function(use)
   use({ "wbthomason/packer.nvim", opt = true })
 
+  use({ "nvim-treesitter/nvim-treesitter", run = ":TSUpdate" })
+
   -- LSP and LSP Related Plugins
   use({
     "williamboman/mason.nvim",
@@ -41,6 +43,15 @@ return require("packer").startup(function(use)
     },
   })
 
+  -- Comments
+  use({
+    "JoosepAlviste/nvim-ts-context-commentstring",
+    requires = {
+      "nvim-treesitter/nvim-treesitter",
+      "numToStr/Comment.nvim",
+    }
+  })
+
   -- Misc Plugins
   use({
     "iamcco/markdown-preview.nvim",
@@ -58,8 +69,6 @@ return require("packer").startup(function(use)
     requires = "kyazdani42/nvim-web-devicons"
   })
   use({ "lewis6991/gitsigns.nvim", requires = { "nvim-lua/plenary.nvim" } })
-  use({ 'JoosepAlviste/nvim-ts-context-commentstring' })
-  use({ "numToStr/Comment.nvim" })
   use({
     "nvim-lualine/lualine.nvim",
     requires = { "kyazdani42/nvim-web-devicons", opt = true }
@@ -78,7 +87,6 @@ return require("packer").startup(function(use)
       { "xiyaowong/telescope-emoji.nvim" },
     }
   })
-  use({ "nvim-treesitter/nvim-treesitter", run = ":TSUpdate" })
   use({ "projekt0n/github-nvim-theme" })
   use({
     "tpope/vim-fugitive",

@@ -15,7 +15,7 @@ M.setup = function ()
     },
     context_commentstring = {
       enable = true,
-      enable_autocmd = false,
+      enable_autocmd = false, -- disable for comment ts context
     }
   })
 end
