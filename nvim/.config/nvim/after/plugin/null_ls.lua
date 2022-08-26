@@ -1,3 +1,8 @@
+---------------------------------------------------------------------------
+-- Null-LS
+-- Middleman between Neovim's builtin LSP and formatters, linters, or other
+-- utilities.
+---------------------------------------------------------------------------
 local has_null_ls, null_ls = pcall(require, "null-ls")
 if not has_null_ls then
   return

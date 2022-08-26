@@ -1,3 +1,7 @@
+----------------------------
+-- Metals
+-- Language server for Scala
+----------------------------
 local has_metals, metals = pcall(require, "metals")
 if not has_metals then
   return
