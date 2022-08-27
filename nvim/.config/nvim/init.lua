@@ -16,7 +16,6 @@ require("plugins")
 require("globals")
 
 require("fjellyvim")
-require("settings.telescope").setup()
 
 require("lualine").setup()
 require("nvim-autopairs").setup()
@@ -129,13 +128,6 @@ map("n", "<leader>dn", [[<cmd>lua vim.diagnostic.goto_next({wrap = true, float =
 map("n", "<leader>dp", [[<cmd>lua vim.diagnostic.goto_prev({wrap = true, float = true})<CR>]])
 map("n", "<leader>d", [[<cmd>lua vim.diagnostic.open_float(0, {scope = "line"})<CR>]])
 
--- telescope
-map("n", "<leader>ff", [[<cmd>lua require"telescope.builtin".find_files({ hidden = true, no_ignore = true })<CR>]])
-map("n", "<leader>lg", [[<cmd>lua require"telescope.builtin".live_grep({ hidden = true, no_ignore = true })<CR>]])
-map("n", "<leader>gs", [[<cmd>lua require"telescope.builtin".git_status()<CR>]])
-map("n", "<leader>mc", [[<cmd>lua require("telescope").extensions.metals.commands()<CR>]])
-map("n", "<leader>fe", [[<cmd>Telescope emoji<CR>]])
-
 -- harpoon
 map("n", "<leader>ma", [[<cmd>lua require"harpoon.mark".add_file()<CR>]])
 map("n", "<leader>mv", [[<cmd>lua require"harpoon.ui".toggle_quick_menu()<CR>]])
@@ -145,7 +137,6 @@ map("n", "<leader>m3", [[<cmd>lua require"harpoon.ui".nav_file(3)<CR>]])
 map("n", "<leader>m4", [[<cmd>lua require"harpoon.ui".nav_file(4)<CR>]])
 map("n", "<leader>mn", [[<cmd>lua require"harpoon.ui".nav_next()<CR>]])
 map("n", "<leader>mp", [[<cmd>lua require"harpoon.ui".nav_next()<CR>]])
-map("n", "<leader>mf", [[<cmd>lua require"telescope".extensions.harpoon.marks()<CR>]])
 
 ----------------------------------
 -- Commands ----------------------

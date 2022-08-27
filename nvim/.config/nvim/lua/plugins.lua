@@ -77,6 +77,25 @@ return require("packer").startup(function(use)
     requires = { "tpope/vim-rhubarb" },
   })
 
+  -- Telescope
+  -- todo: ensure ripgrep is installed (required for live_grep)
+  -- todo: ensure fd is installed (finder)
+  use({
+    "nvim-telescope/telescope.nvim",
+    tag = "0.1.x",
+    requires = {
+      { "nvim-lua/plenary.nvim" },
+      -- todo: ensure make is installed
+      -- info: had to run make manually after switching from fzy
+      -- https://github.com/nvim-telescope/telescope-fzf-native.nvim/issues/47#issuecomment-988353015
+      { "nvim-telescope/telescope-fzf-native.nvim", run = "make" },
+      { "ThePrimeagen/harpoon" },
+      { "xiyaowong/telescope-emoji.nvim" },
+      { "nvim-treesitter/nvim-treesitter" },
+      { "kyazdani42/nvim-web-devicons" },
+    }
+  })
+
   -- Misc Plugins
   use({
     "iamcco/markdown-preview.nvim",
@@ -89,16 +108,6 @@ return require("packer").startup(function(use)
     }
   })
   use({ "kevinhwang91/nvim-bqf", ft = "qf" })
-  use({
-    "nvim-telescope/telescope.nvim",
-    requires = {
-      { "nvim-lua/popup.nvim" },
-      { "nvim-lua/plenary.nvim" },
-      { "nvim-telescope/telescope-fzy-native.nvim" },
-      { "ThePrimeagen/harpoon" },
-      { "xiyaowong/telescope-emoji.nvim" },
-    }
-  })
   use({ "kylechui/nvim-surround" })
   use({ "windwp/nvim-autopairs" })
 
