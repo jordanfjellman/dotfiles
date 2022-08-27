@@ -17,7 +17,6 @@ require("globals")
 
 require("fjellyvim")
 require("settings.telescope").setup()
-require("settings.tree").setup()
 require("settings.treesitter").setup()
 
 require("lualine").setup()
