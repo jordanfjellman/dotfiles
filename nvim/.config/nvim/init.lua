@@ -13,7 +13,6 @@ local global_opt = vim.opt_global
 -- Setup Plugins -----------------
 ----------------------------------
 require("plugins")
-require("globals")
 
 require("fjellyvim")
 
