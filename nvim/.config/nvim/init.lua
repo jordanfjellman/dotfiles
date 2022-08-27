@@ -16,7 +16,6 @@ require("plugins")
 require("globals")
 
 require("fjellyvim")
-require("settings.gitsigns-nvim").setup()
 require("settings.telescope").setup()
 require("settings.tree").setup()
 require("settings.treesitter").setup()

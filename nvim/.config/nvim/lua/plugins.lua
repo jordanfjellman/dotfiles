@@ -52,8 +52,30 @@ return require("packer").startup(function(use)
     }
   })
 
-  -- Theme
+  -- Theme and UI
   use({ "projekt0n/github-nvim-theme" })
+  use({
+    "kyazdani42/nvim-tree.lua",
+    requires = "kyazdani42/nvim-web-devicons"
+  })
+  use({
+    "nvim-lualine/lualine.nvim",
+    requires = { "kyazdani42/nvim-web-devicons", opt = true }
+  })
+  use({
+    "petertriho/nvim-scrollbar",
+    requires = "kevinhwang91/nvim-hlslens"
+  })
+
+  -- Git
+  use({
+    "lewis6991/gitsigns.nvim",
+    requires = { "nvim-lua/plenary.nvim" },
+  })
+  use({
+    "tpope/vim-fugitive",
+    requires = { "tpope/vim-rhubarb" },
+  })
 
   -- Misc Plugins
   use({
@@ -68,19 +90,6 @@ return require("packer").startup(function(use)
   })
   use({ "kevinhwang91/nvim-bqf", ft = "qf" })
   use({
-    "kyazdani42/nvim-tree.lua",
-    requires = "kyazdani42/nvim-web-devicons"
-  })
-  use({ "lewis6991/gitsigns.nvim", requires = { "nvim-lua/plenary.nvim" } })
-  use({
-    "nvim-lualine/lualine.nvim",
-    requires = { "kyazdani42/nvim-web-devicons", opt = true }
-  })
-  use({
-    "petertriho/nvim-scrollbar",
-    requires = "kevinhwang91/nvim-hlslens"
-  })
-  use({
     "nvim-telescope/telescope.nvim",
     requires = {
       { "nvim-lua/popup.nvim" },
@@ -89,10 +98,6 @@ return require("packer").startup(function(use)
       { "ThePrimeagen/harpoon" },
       { "xiyaowong/telescope-emoji.nvim" },
     }
-  })
-  use({
-    "tpope/vim-fugitive",
-    requires = { "tpope/vim-rhubarb" },
   })
   use({ "kylechui/nvim-surround" })
   use({ "windwp/nvim-autopairs" })
