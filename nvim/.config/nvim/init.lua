@@ -42,7 +42,7 @@ local indent = 2
 -- global
 global_opt.backup = false
 global_opt.cmdheight = 2
-global_opt.completeopt = {"menu", "menuone", "noinsert", "noselect"} -- Completion options (for deoplete)
+global_opt.completeopt = { "menu", "menuone", "noinsert", "noselect" } -- Completion options (for deoplete)
 global_opt.hidden = true -- Enable background buffers
 global_opt.ignorecase = true -- Ignore case
 global_opt.mouse = "n"
@@ -58,7 +58,7 @@ global_opt.splitright = true -- Put new windows right of current
 global_opt.termguicolors = true -- True color support
 global_opt.updatetime = 300
 global_opt.wildignore = { ".git", "*/node_modules/*", "*/target/*", ".metals", ".bloop", ".ammonite" }
-global_opt.wildmode = {"list", "longest"} -- Command-line completion mode
+global_opt.wildmode = { "list", "longest" } -- Command-line completion mode
 
 -- window-scoped
 opt.colorcolumn = "120"
