@@ -106,28 +106,6 @@ map("n", "<leader>p", '"+p')
 map("v", "<leader>p", '"+p')
 map("v", "<leader>p", '"+p')
 
--- lsp
-map("n", "gD", [[<cmd>lua vim.lsp.buf.declaration()<CR>]])
-map("n", "gd", [[<cmd>lua vim.lsp.buf.definition()<CR>]])
-map("n", "K", [[<cmd>lua vim.lsp.buf.hover()<CR>]])
-map("v", "K", [[<cmd>lua require"metals".type_of_range()<CR>]])
-map("n", "gi", [[<cmd>lua vim.lsp.buf.implementation()<CR>]])
-map("n", "gr", [[<cmd>lua vim.lsp.buf.references()<CR>]])
-map("n", "gds", [[<cmd>lua vim.lsp.buf.document_symbol()<CR>]])
-map("n", "gws", [[<cmd>lua vim.lsp.buf.workspace_symbol()<CR>]])
-map("n", "<leader>D", [[<cmd>lua vim.lsp.buf.type_definition()<CR>]])
-map("n", "<leader>rn", [[<cmd>lua vim.lsp.buf.rename()<CR>]])
-map("n", "<leader>sh", [[<cmd>lua vim.lsp.buf.signature_help()<CR>]])
-map("n", "<leader>o", [[<cmd>lua vim.lsp.buf.formatting()<CR>]])
-map("n", "<leader>ca", [[<cmd>lua vim.lsp.buf.code_action()<CR>]])
-map("n", "<leader>cl", [[<cmd>lua vim.lsp.codelens.run()<CR>]])
-map("n", "<leader>ws", [[<cmd>lua require"metals".worksheet_hover()<CR>]])
-
--- diagnostic
-map("n", "<leader>dn", [[<cmd>lua vim.diagnostic.goto_next({wrap = true, float = true})<CR>]])
-map("n", "<leader>dp", [[<cmd>lua vim.diagnostic.goto_prev({wrap = true, float = true})<CR>]])
-map("n", "<leader>d", [[<cmd>lua vim.diagnostic.open_float(0, {scope = "line"})<CR>]])
-
 -- harpoon
 map("n", "<leader>ma", [[<cmd>lua require"harpoon.mark".add_file()<CR>]])
 map("n", "<leader>mv", [[<cmd>lua require"harpoon.ui".toggle_quick_menu()<CR>]])
