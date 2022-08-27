@@ -12,7 +12,7 @@ lsp_signature.setup {
   -- This setting only take effect in insert mode, it does not affect signature help in normal
   -- mode, 10 by default
 
-  floating_window = true, -- show hint in a floating window, set to false for virtual text only mode
+  floating_window = false, -- show hint in a floating window, set to false for virtual text only mode
   floating_window_above_cur_line = true, -- set to false will use whichever side has more space
   floating_window_off_x = 1, -- adjust float windows x position.
   floating_window_off_y = 1, -- adjust float windows y position.
