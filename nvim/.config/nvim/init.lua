@@ -106,16 +106,6 @@ map("n", "<leader>p", '"+p')
 map("v", "<leader>p", '"+p')
 map("v", "<leader>p", '"+p')
 
--- harpoon
-map("n", "<leader>ma", [[<cmd>lua require"harpoon.mark".add_file()<CR>]])
-map("n", "<leader>mv", [[<cmd>lua require"harpoon.ui".toggle_quick_menu()<CR>]])
-map("n", "<leader>m1", [[<cmd>lua require"harpoon.ui".nav_file(1)<CR>]])
-map("n", "<leader>m2", [[<cmd>lua require"harpoon.ui".nav_file(2)<CR>]])
-map("n", "<leader>m3", [[<cmd>lua require"harpoon.ui".nav_file(3)<CR>]])
-map("n", "<leader>m4", [[<cmd>lua require"harpoon.ui".nav_file(4)<CR>]])
-map("n", "<leader>mn", [[<cmd>lua require"harpoon.ui".nav_next()<CR>]])
-map("n", "<leader>mp", [[<cmd>lua require"harpoon.ui".nav_next()<CR>]])
-
 ----------------------------------
 -- Commands ----------------------
 ----------------------------------
