@@ -28,7 +28,5 @@ mason_lspconfig.setup({
   },
 })
 
------------------
--- Configure LSPs
------------------
-require("fjellyvim.lsp")
+-- setup servers after installation
+require("fjellyvim.lsp").setup_servers()

@@ -43,3 +43,6 @@ end
 
 local capabilities = vim.lsp.protocol.make_client_capabilities()
 Metals_config.capabilities = cmp.update_capabilities(capabilities)
+
+vim.keymap.set("v", "K", function() metals.type_of_range() end)
+vim.keymap.set("n", "<leader>ws", function() metals.worksheet_hover() end)
