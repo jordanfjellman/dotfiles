@@ -25,12 +25,11 @@ null_ls.setup({
   },
   on_attach = function(client)
     if client.resolved_capabilities.document_formatting then
-      vim.cmd([[
-            augroup LspFormatting
-              autocmd! * <buffer>
-              autocmd BufWritePre <buffer> lua vim.lsp.buf.formatting()
-            augroup END
-          ]])
+      vim.api.nvim_create_autocmd({ "BufWritePre" }, {
+        group = vim.api.nvim_create_augroup("LspFormatting", { clear = true }),
+        pattern = { "*" },
+        callback = vim.lsp.buf.formatting,
+      })
     end
   end,
 })
