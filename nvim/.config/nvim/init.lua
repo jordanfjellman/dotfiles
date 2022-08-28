@@ -10,17 +10,6 @@ local opt = vim.opt -- to set options
 local global_opt = vim.opt_global
 
 ----------------------------------
--- Setup Plugins -----------------
-----------------------------------
-require("plugins")
-
-require("fjellyvim")
-
-require("lualine").setup()
-require("nvim-autopairs").setup()
-require("nvim-surround").setup({})
-
-----------------------------------
 -- Variables ---------------------
 ----------------------------------
 g["mapleader"] = " "
@@ -116,3 +105,5 @@ cmd([[hi! link LspReferenceText CursorColumn]])
 cmd([[hi! link LspReferenceRead CursorColumn]])
 cmd([[hi! link LspReferenceWrite CursorColumn]])
 cmd([[command! Format lua vim.lsp.buf.formatting()]])
+
+require("fjellyvim")

@@ -17,3 +17,5 @@ tree.setup({
     adaptive_size = true,
   },
 })
+
+vim.keymap.set("n", "<leader>e", "<CMD>NvimTreeToggle<CR>")
