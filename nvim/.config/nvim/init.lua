@@ -2,12 +2,17 @@
 -- Aliases -----------------------
 ----------------------------------
 local cmd = vim.cmd -- to execute Vim commands e.g. cmd('pwd')
-local f = require("functions")
-local fn = vim.fn -- to call Vim functions e.g. fn.bufnr()
 local g = vim.g -- a table to access global variables
-local map = f.map
 local opt = vim.opt -- to set options
 local global_opt = vim.opt_global
+
+local function map(mode, lhs, rhs, opts)
+  local options = { noremap = true }
+  if opts then
+    options = vim.tbl_extend("force", options, opts)
+  end
+  vim.api.nvim_set_keymap(mode, lhs, rhs, options)
+end
 
 ----------------------------------
 -- Variables ---------------------
@@ -66,7 +71,6 @@ opt.tabstop = indent -- Number of spaces tabs count for
 map("n", "<SPACE>", "<NOP>")
 map("i", "jk", "<ESC>")
 map("n", "<leader>h", ":noh<CR>")
-map("n", "<leader>e", ":NvimTreeToggle<CR>")
 
 map("n", "<leader><leader>e", [[:luafile %<CR>]])
 
