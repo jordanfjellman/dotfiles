@@ -1,5 +1,6 @@
 require("fjellyvim.globals").setup()
 require("fjellyvim.options").setup()
+require("fjellyvim.keymaps").setup()
 require("fjellyvim.plugins").setup()
 require("fjellyvim.diagnostic").setup()
 require("fjellyvim.diagnostic").setup_keymaps()
