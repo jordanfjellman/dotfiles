@@ -108,7 +108,7 @@ local startup_packer = function(sync)
     -- Misc Plugins
     use({
       "iamcco/markdown-preview.nvim",
-      run = function() fn["mkdp#util#install"]() end,
+      run = function() vim.fn["mkdp#util#install"]() end,
     })
     use({
       "preservim/vim-markdown",
