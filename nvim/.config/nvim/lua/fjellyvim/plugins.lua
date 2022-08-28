@@ -38,7 +38,8 @@ local startup_packer = function(sync)
       requires = { "nvim-lua/plenary.nvim" },
     })
     use({ "jose-elias-alvarez/null-ls.nvim" })
-    use({ "ray-x/lsp_signature.nvim" })
+    -- info: disabled to test nvim-cmp builtin signature help
+    -- use({ "ray-x/lsp_signature.nvim" })
 
     -- Autocompletion
     use({
