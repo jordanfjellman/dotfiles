@@ -6,7 +6,7 @@ end
 local previewers = require("telescope.previewers")
 telescope.setup({
   defaults = {
-    file_ignore_patterns = { ".git", "node_modules", ".bloop", ".metals", "target" },
+    file_ignore_patterns = { "^.git/" },
     file_previewer = previewers.vim_buffer_cat.new,
     file_sorter = require("telescope.sorters").get_fzy_sorter,
     grep_previewer = previewers.vim_buffer_vimgrep.new,
@@ -33,8 +33,8 @@ telescope.load_extension("harpoon")
 telescope.load_extension("emoji")
 
 local builtin = require("telescope.builtin")
-vim.keymap.set("n", "<leader>ff", function() builtin.find_files({ hidden = true, no_ignore = true }) end)
-vim.keymap.set("n", "<leader>lg", function() builtin.live_grep({ hidden = true, no_ignore = true }) end)
+vim.keymap.set("n", "<leader>ff", function() builtin.find_files({ hidden = true }) end)
+vim.keymap.set("n", "<leader>lg", function() builtin.live_grep({ additional_args = function() return { "--hidden" } end }) end)
 vim.keymap.set("n", "<leader>fh", function() builtin.help_tags() end)
 vim.keymap.set("n", "<leader>fk", function() builtin.keymaps() end)
 vim.keymap.set("n", "<leader>gs", function() builtin.git_status() end)
