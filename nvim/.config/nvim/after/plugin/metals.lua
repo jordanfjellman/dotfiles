@@ -7,11 +7,14 @@ if not has_metals then
   return
 end
 
-vim.cmd([[augroup lsp]])
-vim.cmd([[autocmd!]])
-vim.cmd([[autocmd FileType scala setlocal omnifunc=v:lua.vim.lsp.omnifunc]])
-vim.cmd([[autocmd FileType scala,sbt lua require("metals").initialize_or_attach(Metals_config)]])
-vim.cmd([[augroup end]])
+local metals_group = vim.api.nvim_create_augroup("CustomMetals", { clear = true })
+vim.api.nvim_create_autocmd("FileType", {
+  group = metals_group,
+  callback = function()
+    metals.initialize_or_attach(Metals_config)
+  end,
+  pattern = { "scala", "sbt", "java" },
+})
 
 Metals_config = metals.bare_config()
 Metals_config.init_options.statusBarProvider = "on"
@@ -20,17 +23,29 @@ Metals_config.settings = {
   showImplicitArguments = true,
   showInferredType = true,
 }
-Metals_config.on_attach = function(_, _)
-  vim.cmd([[
-    augroup LspFormatting
-        autocmd! * <buffer>
-        autocmd BufWritePre <buffer> lua vim.lsp.buf.formatting_sync()
-    augroup END
-  ]])
-
-  vim.cmd([[autocmd CursorHold <buffer> lua vim.lsp.buf.document_highlight()]])
-  vim.cmd([[autocmd CursorMoved <buffer> lua vim.lsp.buf.clear_references()]])
-  vim.cmd([[autocmd BufEnter,CursorHold,InsertLeave <buffer> lua vim.lsp.codelens.refresh()]])
+Metals_config.on_attach = function(_, bufnr)
+  local metals_lsp_group = vim.api.nvim_create_augroup("CustomMetalsLsp", { clear = true })
+  vim.api.nvim_create_autocmd({ "BufWritePre" }, {
+    group = metals_lsp_group,
+    callback = vim.lsp.buf.formatting,
+    pattern = { "scala", "sbt", "java" },
+  })
+  vim.api.nvim_create_autocmd("CursorHold", {
+    buffer = bufnr,
+    callback = vim.lsp.buf.document_highlight,
+    group = metals_lsp_group,
+  })
+  vim.api.nvim_create_autocmd("CursorMoved", {
+    buffer = bufnr,
+    callback = vim.lsp.buf.clear_references,
+    group = metals_lsp_group,
+  })
+  vim.api.nvim_create_autocmd({ "BufEnter", "CursorHold", "InsertLeave" }, {
+    buffer = bufnr,
+    callback = vim.lsp.codelens.refresh,
+    group = metals_lsp_group,
+  })
+  vim.api.nvim_buf_set_option(bufnr, "omnifunc", "v:lua.vim.lsp.omnifunc")
 end
 
 -- autocompletion
