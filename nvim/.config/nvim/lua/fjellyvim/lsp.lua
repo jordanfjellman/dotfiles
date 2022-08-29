@@ -10,11 +10,19 @@ M.setup_servers = function()
     return
   end
 
+  local disable_builtin_lsp_formatter = function(client)
+    client.resolved_capabilities.document_formatting = false
+    client.resolved_capabilities.document_range_formatting = false
+  end
+
   -- info: recommended lua confiuration for neovim
   -- https://github.com/neovim/nvim-lspconfig/blob/master/doc/server_configurations.md#sumneko_lua
   lspconfig.sumneko_lua.setup {
     settings = {
       Lua = {
+        format = {
+          enable = true
+        },
         runtime = {
           -- Tell the language server which version of Lua you're using (most likely LuaJIT in the case of Neovim)
           version = 'LuaJIT',
@@ -31,22 +39,16 @@ M.setup_servers = function()
         telemetry = {
           enable = false,
         },
-      }
-    }
+      },
+    },
   }
 
   lspconfig.jsonls.setup {
-    on_attach = function(client)
-      client.resolved_capabilities.document_formatting = false
-      client.resolved_capabilities.document_range_formatting = false
-    end
+    on_attach = disable_builtin_lsp_formatter,
   }
 
   lspconfig.tsserver.setup {
-    on_attach = function(client)
-      client.resolved_capabilities.document_formatting = false
-      client.resolved_capabilities.document_range_formatting = false
-    end
+    on_attach = disable_builtin_lsp_formatter,
   }
 
   lspconfig.yamlls.setup {

@@ -5,7 +5,7 @@ M.setup = function()
 
   -- global
   vim.opt_global.backup = false
-  vim.opt_global.cmdheight = 2
+  vim.opt_global.cmdheight = 1
   vim.opt_global.completeopt = { "menu", "menuone", "noinsert", "noselect" } -- Completion options (for deoplete)
   vim.opt_global.hidden = true -- Enable background buffers
   vim.opt_global.ignorecase = true -- Ignore case
@@ -21,7 +21,14 @@ M.setup = function()
   vim.opt_global.splitright = true -- Put new windows right of current
   vim.opt_global.termguicolors = true -- True color support
   vim.opt_global.updatetime = 300
-  vim.opt_global.wildignore = { ".git", "*/node_modules/*", "*/target/*", ".metals", ".bloop", ".ammonite" }
+  vim.opt_global.wildignore = {
+    ".git",
+    "*/node_modules/*",
+    "*/target/*",
+    "*/.metals/*",
+    "*/.bloop/*",
+    "*/.ammonite/*",
+  }
   vim.opt_global.wildmode = { "list", "longest" } -- Command-line completion mode
 
   -- window-scoped
