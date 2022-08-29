@@ -30,6 +30,12 @@ M.setup = function()
   vim.keymap.set("n", "<leader>p", '"+p')
   vim.keymap.set("v", "<leader>p", '"+p')
   vim.keymap.set("v", "<leader>p", '"+p')
+
+  -- quickfix lists
+  vim.keymap.set("n", "qo", ":copen<CR>")
+  vim.keymap.set("n", "qc", ":cclose<CR>")
+  vim.keymap.set("n", "qn", ":cnext<CR>")
+  vim.keymap.set("n", "qp", ":cprevious<CR>")
 end
 
 return M
