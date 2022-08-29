@@ -1,7 +1,14 @@
-local has_harpoon = pcall(require, "harpoon")
+local has_harpoon, harpoon = pcall(require, "harpoon")
 if not has_harpoon then
   return
 end
+
+harpoon.setup({
+  menu = {
+    -- use a dynamic width for the popup menu
+    width = vim.api.nvim_win_get_width(0) - 4,
+  }
+})
 
 local ui = require("harpoon.ui")
 vim.keymap.set("n", "<leader>ma", function() require("harpoon.mark").add_file() end)
