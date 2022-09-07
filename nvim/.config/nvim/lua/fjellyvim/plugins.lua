@@ -83,10 +83,6 @@ local startup_packer = function(sync)
       "lewis6991/gitsigns.nvim",
       requires = { "nvim-lua/plenary.nvim" },
     })
-    use({
-      "tpope/vim-fugitive",
-      requires = { "tpope/vim-rhubarb" },
-    })
 
     -- Telescope
     -- todo: ensure ripgrep is installed (required for live_grep)
