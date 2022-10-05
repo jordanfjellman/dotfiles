@@ -78,7 +78,12 @@ cmp.setup {
     end,
   },
   sources = require("cmp").config.sources({
-    { name = "nvim_lsp" },
+    {
+      name = "nvim_lsp",
+      entry_filter = function(entry)
+        return require("cmp.types").lsp.CompletionItemKind[entry:get_kind()] ~= 'Text'
+      end,
+    },
     { name = "vsnip" },
     { name = "nvim_lsp_signature_help" },
   }, {
