@@ -79,6 +79,11 @@ export HELM_HOME="$HOME/.helm"
 # jest
 export DEBUG_PRINT_LIMIT=10000
 
+# android sdk
+export ANDROID_HOME=$HOME/Library/Android/sdk
+export ANDROID_SDK_ROOT=$HOME/Library/Android/sdk
+export ANDROID_AVD_HOME=$HOME/.android/avd
+
 # okta
 if [[ -f "$HOME/.okta/bash_functions" ]]; then
     . "$HOME/.okta/bash_functions"
