@@ -9,5 +9,7 @@
     "[json]": {
         "editor.defaultFormatter": "esbenp.prettier-vscode"
     },
-    "vim.vimrc.enable": true
+    "vim.vimrc.enable": true,
+    "workbench.colorTheme": "GitHub Dark Dimmed",
+    "workbench.iconTheme": "vscode-icons"
 }
