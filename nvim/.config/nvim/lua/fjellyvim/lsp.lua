@@ -11,8 +11,8 @@ M.setup_servers = function()
   end
 
   local disable_builtin_lsp_formatter = function(client)
-    client.resolved_capabilities.document_formatting = false
-    client.resolved_capabilities.document_range_formatting = false
+    client.server_capabilities.document_formatting = false
+    client.server_capabilities.document_range_formatting = false
   end
 
   -- info: recommended lua confiuration for neovim

@@ -14,7 +14,7 @@ M.setup = function()
   vim.opt_global.listchars = "trail:·"
   vim.opt_global.scrolloff = 8 -- Lines of context
   vim.opt_global.shiftround = true -- Round indent
-  vim.opt_global.shortmess:remove("F"):append("c") -- needed for nvim-metals
+  vim.opt_global.shortmess:remove("F") -- needed for nvim-metals
   vim.opt_global.sidescrolloff = 8 -- Columns of context
   vim.opt_global.smartcase = true -- Do not ignore case with capitals
   vim.opt_global.splitbelow = true -- Put new windows below current

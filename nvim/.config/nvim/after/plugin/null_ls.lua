@@ -24,7 +24,7 @@ null_ls.setup({
     formatting.prettier,
   },
   on_attach = function(client)
-    if client.resolved_capabilities.document_formatting then
+    if client.server_capabilities.document_formatting then
       vim.api.nvim_create_autocmd({ "BufWritePre" }, {
         group = vim.api.nvim_create_augroup("LspFormatting", { clear = true }),
         pattern = { "*" },
