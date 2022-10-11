@@ -117,6 +117,7 @@ local startup_packer = function(sync)
     use({ "kevinhwang91/nvim-bqf", ft = "qf" })
     use({ "kylechui/nvim-surround" })
     use({ "windwp/nvim-autopairs" })
+    use({ "lewis6991/impatient.nvim"})
 
     -- Automatically set up your configuration after cloning packer.nvim
     -- Put this at the end after all plugins
