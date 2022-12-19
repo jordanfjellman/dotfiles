@@ -11,5 +11,8 @@
     },
     "vim.vimrc.enable": true,
     "workbench.colorTheme": "GitHub Dark Dimmed",
-    "workbench.iconTheme": "vscode-icons"
+    "workbench.iconTheme": "vscode-icons",
+    "[typescriptreact]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    }
 }
