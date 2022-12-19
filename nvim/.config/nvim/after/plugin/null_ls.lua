@@ -28,7 +28,7 @@ null_ls.setup({
       vim.api.nvim_create_autocmd({ "BufWritePre" }, {
         group = vim.api.nvim_create_augroup("LspFormatting", { clear = true }),
         pattern = { "*" },
-        callback = vim.lsp.buf.formatting,
+        callback = vim.lsp.buf.format,
       })
     end
   end,

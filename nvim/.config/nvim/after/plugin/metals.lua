@@ -27,7 +27,7 @@ Metals_config.on_attach = function(_, bufnr)
   local metals_lsp_group = vim.api.nvim_create_augroup("CustomMetalsLsp", { clear = true })
   vim.api.nvim_create_autocmd({ "BufWritePre" }, {
     group = metals_lsp_group,
-    callback = vim.lsp.buf.formatting,
+    callback = vim.lsp.buf.format,
     pattern = { "scala", "sbt", "java" },
   })
   vim.api.nvim_create_autocmd("CursorHold", {
@@ -57,7 +57,7 @@ if not has_cmp then
 end
 
 local capabilities = vim.lsp.protocol.make_client_capabilities()
-Metals_config.capabilities = cmp.update_capabilities(capabilities)
+Metals_config.capabilities = cmp.default_capabilities(capabilities)
 
 vim.keymap.set("v", "K", function() metals.type_of_range() end)
 vim.keymap.set("n", "<leader>ws", function() metals.worksheet_hover() end)

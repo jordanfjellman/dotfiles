@@ -97,7 +97,7 @@ M.setup_keymaps = function()
   vim.keymap.set("n", "<leader>D", function() vim.lsp.buf.type_definition() end)
   vim.keymap.set("n", "<leader>rn", function() vim.lsp.buf.rename() end)
   vim.keymap.set("n", "<leader>sh", function() vim.lsp.buf.signature_help() end)
-  vim.keymap.set("n", "<leader>o", function() vim.lsp.buf.formatting() end)
+  vim.keymap.set("n", "<leader>o", function() vim.lsp.buf.format({ async = true}) end)
   vim.keymap.set("n", "<leader>ca", function() vim.lsp.buf.code_action() end)
   vim.keymap.set("n", "<leader>cl", function() vim.lsp.codelens.run() end)
 end
