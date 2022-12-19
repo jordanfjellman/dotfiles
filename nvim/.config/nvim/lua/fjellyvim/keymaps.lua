@@ -36,6 +36,12 @@ M.setup = function()
   vim.keymap.set("n", "<leader>lc", ":cclose<CR>")
   vim.keymap.set("n", "<leader>ln", ":cnext<CR>")
   vim.keymap.set("n", "<leader>lp", ":cprevious<CR>")
+
+  -- center after navigation
+  vim.keymap.set("n", "<C-d>", "<C-d>zz")
+  vim.keymap.set("n", "<C-u>", "<C-u>zz")
+  vim.keymap.set("n", "n", "nzzzu")
+  vim.keymap.set("n", "N", "Nzzzu")
 end
 
 return M
