@@ -1,4 +1,5 @@
 local meh = {"shift", "alt", "ctrl"}
+local hyper = {"shift", "alt", "ctrl", "cmd"}
 
 -- Pre-downloaded via external script
 hs.loadSpoon("SpoonInstall")
@@ -20,10 +21,11 @@ spoon.SpoonInstall:andUse("AppLauncher", {
   hotkeys = {
     b = "Brave Browser",
     c = "Visual Studio Code",
-    g = "Github Desktop",
+    g = "Github Desktop", -- git
     i = "IntelliJ IDEA",
     k = "kitty",
-    o = "Microsoft Outlook",
+    m = "Microsoft Outlook", -- mail
+    n = "Obsidian", -- notes
     p = "Postman",
     t = "Microsoft Teams",
     s = "Slack",
@@ -32,8 +34,16 @@ spoon.SpoonInstall:andUse("AppLauncher", {
   }
 })
 
-hs.hotkey.bind(meh, "n", function ()
+hs.hotkey.bind(hyper, "g", function ()
   hs.execute("open https://github.com/notifications")
+end)
+
+hs.hotkey.bind(hyper, "m", function ()
+  hs.execute("open https://mail.google.com")
+end)
+
+hs.hotkey.bind(hyper, "n", function ()
+  hs.execute("open https://keep.google.com")
 end)
 
 spoon.SpoonInstall:andUse("ReloadConfiguration", {
