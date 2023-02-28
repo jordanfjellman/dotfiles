@@ -55,6 +55,9 @@ if [[ -d "$HOME/.okta/bin" && ":$PATH:" != *":$HOME/.okta/bin:"* ]]; then
     PATH="$HOME/.okta/bin:$PATH"
 fi
 
+# Starship Prompt
+eval "$(starship init zsh)"
+
 # Tmux
 export ZSH_TMUX_AUTOSTART=true
 
