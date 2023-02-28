@@ -27,8 +27,9 @@ spoon.SpoonInstall:andUse("AppLauncher", {
     m = "Microsoft Outlook", -- mail
     n = "Obsidian", -- notes
     p = "Postman",
-    t = "Microsoft Teams",
+    r = "Reader",
     s = "Slack",
+    t = "Microsoft Teams",
     y = "YouTube Music",
     z = "zoom.us"
   }
@@ -47,7 +48,7 @@ hs.hotkey.bind(hyper, "n", function ()
 end)
 
 spoon.SpoonInstall:andUse("ReloadConfiguration", {
-  hotkeys = { reloadConfiguration = { meh, "R" } },
+  hotkeys = { reloadConfiguration = { hyper, "R" } },
   start = true
 })
 
