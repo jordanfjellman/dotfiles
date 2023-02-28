@@ -1,5 +1,4 @@
 #!/usr/bin/env zsh
-START="$(($(gdate +%s%N)/1000000))"
 
 # Homebrew
 #
@@ -96,6 +95,3 @@ else
   unset SDKMAN_OFFLINE_MODE
 fi
 unset original_sdkman_offline_mode
-
-DURATION=$[ $(($(gdate +%s%N)/1000000)) - ${START} ]
-echo "Milliseconds: $DURATION"
