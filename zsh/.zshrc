@@ -62,6 +62,8 @@ eval "$(starship init zsh)"
 export ZSH_TMUX_AUTOSTART=true
 
 # Bind Keys
+bindkey "^A" beginning-of-line
+bindkey "^E" end-of-line
 bindkey -s "M-f" vi-backward-blank-word
 bindkey -s "M-b" vi-forward-blank-word
 if type tmux-sessionizer &>/dev/null; then
