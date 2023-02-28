@@ -71,6 +71,9 @@ if type tmux-sessionizer &>/dev/null; then
 fi
 
 # Set Aliases
+alias cat="bat"
+alias ls="exa"
+alias tree="exa --tree"
 alias gd="github ."
 alias pr="gh pr create"
 alias prv="gh pr view --web"
