@@ -118,6 +118,7 @@ local startup_packer = function(sync)
     use({ "kylechui/nvim-surround" })
     use({ "windwp/nvim-autopairs" })
     use({ "lewis6991/impatient.nvim"})
+    use({ "b0o/schemastore.nvim" })
 
     -- Automatically set up your configuration after cloning packer.nvim
     -- Put this at the end after all plugins

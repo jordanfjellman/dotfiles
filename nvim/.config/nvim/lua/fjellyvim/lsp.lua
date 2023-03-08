@@ -9,6 +9,10 @@ M.setup_servers = function()
   if not has_lspconfig then
     return
   end
+  local has_schemastore, schemastore = pcall(require, "schemastore")
+  if not has_schemastore then
+    return
+  end
 
   local disable_builtin_lsp_formatter = function(client)
     client.server_capabilities.document_formatting = false
@@ -16,8 +20,8 @@ M.setup_servers = function()
   end
 
   -- info: recommended lua confiuration for neovim
-  -- https://github.com/neovim/nvim-lspconfig/blob/master/doc/server_configurations.md#sumneko_lua
-  lspconfig.sumneko_lua.setup {
+  -- https://github.com/neovim/nvim-lspconfig/blob/master/doc/server_configurations.md#lua_ls
+  lspconfig.lua_ls.setup {
     settings = {
       Lua = {
         format = {
@@ -43,8 +47,22 @@ M.setup_servers = function()
     },
   }
 
+  lspconfig.ansiblels.setup {
+    on_attach = disable_builtin_lsp_formatter,
+  }
+
+  lspconfig.graphql.setup {
+    on_attach = disable_builtin_lsp_formatter,
+  }
+
   lspconfig.jsonls.setup {
     on_attach = disable_builtin_lsp_formatter,
+    settings = {
+      json = {
+        schemas = schemastore.json.schemas(),
+        validate = { enable = true }
+      }
+    }
   }
 
   lspconfig.tsserver.setup {
@@ -97,7 +115,7 @@ M.setup_keymaps = function()
   vim.keymap.set("n", "<leader>D", function() vim.lsp.buf.type_definition() end)
   vim.keymap.set("n", "<leader>rn", function() vim.lsp.buf.rename() end)
   vim.keymap.set("n", "<leader>sh", function() vim.lsp.buf.signature_help() end)
-  vim.keymap.set("n", "<leader>o", function() vim.lsp.buf.format({ async = true}) end)
+  vim.keymap.set("n", "<leader>o", function() vim.lsp.buf.format({ async = true }) end)
   vim.keymap.set("n", "<leader>ca", function() vim.lsp.buf.code_action() end)
   vim.keymap.set("n", "<leader>cl", function() vim.lsp.codelens.run() end)
 end

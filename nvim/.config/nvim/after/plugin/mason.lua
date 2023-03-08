@@ -17,12 +17,15 @@ mason_lspconfig.setup({
   automatic_installation = false,
   ensure_installed = {
     "bashls",
+    "cmake",
     "cssls",
+    "diagnosticls",
     "dockerls",
+    "graphql",
     "eslint",
     "html",
     "jsonls",
-    "sumneko_lua",
+    "lua_ls",
     "tsserver",
     "yamlls"
   },
