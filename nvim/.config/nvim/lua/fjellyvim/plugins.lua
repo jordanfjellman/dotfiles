@@ -1,136 +1,124 @@
 local M = {}
 
-local bootstrap_packer = function()
-  local fn = vim.fn
-  local install_path = fn.stdpath("data") .. "/site/pack/packer/start/packer.nvim"
-  if fn.empty(fn.glob(install_path)) > 0 then
-    return fn.system({
+local bootstrap_lazy = function()
+  local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
+  if not vim.loop.fs_stat(lazypath) then
+    vim.fn.system({
       "git",
       "clone",
-      "--depth",
-      "1",
-      "https://github.com/wbthomason/packer.nvim",
-      install_path
+      "--filter=blob:none",
+      "https://github.com/folke/lazy.nvim.git",
+      "--branch=stable", -- latest stable release
+      lazypath,
     })
   end
-
-  vim.cmd [[packadd packer.nvim]]
+  vim.opt.rtp:prepend(lazypath)
 end
 
-local startup_packer = function(sync)
-  local has_packer, packer = pcall(require, "packer")
-  if not has_packer then
-    return
-  end
-  packer.startup(function(use)
-    use({ "wbthomason/packer.nvim", opt = true })
+local plugins = {
+  { "nvim-treesitter/nvim-treesitter", build = ":TSUpdate" },
 
-    use({ "nvim-treesitter/nvim-treesitter", run = ":TSUpdate" })
+  -- LSP and LSP Related Plugins
+  {
+    "williamboman/mason.nvim",
+    "williamboman/mason-lspconfig.nvim",
+    "neovim/nvim-lspconfig",
+  },
+  {
+    "scalameta/nvim-metals",
+    dependencies = { "nvim-lua/plenary.nvim" },
+  },
+  { "jose-elias-alvarez/null-ls.nvim" },
+  -- info: disabled to test nvim-cmp builtin signature help
+  -- use({ "ray-x/lsp_signature.nvim" })
 
-    -- LSP and LSP Related Plugins
-    use({
-      "williamboman/mason.nvim",
-      "williamboman/mason-lspconfig.nvim",
-      "neovim/nvim-lspconfig",
-    })
-    use({
-      "scalameta/nvim-metals",
-      requires = { "nvim-lua/plenary.nvim" },
-    })
-    use({ "jose-elias-alvarez/null-ls.nvim" })
-    -- info: disabled to test nvim-cmp builtin signature help
-    -- use({ "ray-x/lsp_signature.nvim" })
+  -- Autocompletion
+  {
+    "hrsh7th/nvim-cmp",
+    dependencies = {
+      { "hrsh7th/cmp-buffer" },
+      { "hrsh7th/cmp-nvim-lsp" },
+      { "hrsh7th/cmp-path" },
+      { "hrsh7th/cmp-vsnip" },
+      { "hrsh7th/vim-vsnip" },
+      { "hrsh7th/cmp-nvim-lsp-signature-help" },
+    },
+  },
 
-    -- Autocompletion
-    use({
-      "hrsh7th/nvim-cmp",
-      requires = {
-        { "hrsh7th/cmp-buffer" },
-        { "hrsh7th/cmp-nvim-lsp" },
-        { "hrsh7th/cmp-path" },
-        { "hrsh7th/cmp-vsnip" },
-        { "hrsh7th/vim-vsnip" },
-        { "hrsh7th/cmp-nvim-lsp-signature-help" },
-      },
-    })
+  -- Comments
+  {
+    "JoosepAlviste/nvim-ts-context-commentstring",
+    dependencies = {
+      "nvim-treesitter/nvim-treesitter",
+      "numToStr/Comment.nvim",
+    }
+  },
 
-    -- Comments
-    use({
-      "JoosepAlviste/nvim-ts-context-commentstring",
-      requires = {
-        "nvim-treesitter/nvim-treesitter",
-        "numToStr/Comment.nvim",
-      }
-    })
+  -- Theme and UI
+  "projekt0n/github-nvim-theme",
+  {
+    "kyazdani42/nvim-tree.lua",
+    dependencies = "kyazdani42/nvim-web-devicons"
+  },
+  {
+    "nvim-lualine/lualine.nvim",
+    dependencies = { "kyazdani42/nvim-web-devicons", opt = true }
+  },
+  {
+    "petertriho/nvim-scrollbar",
+    dependencies = "kevinhwang91/nvim-hlslens"
+  },
 
-    -- Theme and UI
-    use({ "projekt0n/github-nvim-theme" })
-    use({
-      "kyazdani42/nvim-tree.lua",
-      requires = "kyazdani42/nvim-web-devicons"
-    })
-    use({
-      "nvim-lualine/lualine.nvim",
-      requires = { "kyazdani42/nvim-web-devicons", opt = true }
-    })
-    use({
-      "petertriho/nvim-scrollbar",
-      requires = "kevinhwang91/nvim-hlslens"
-    })
+  -- Git
+  {
+    "lewis6991/gitsigns.nvim",
+    dependencies = { "nvim-lua/plenary.nvim" },
+  },
 
-    -- Git
-    use({
-      "lewis6991/gitsigns.nvim",
-      requires = { "nvim-lua/plenary.nvim" },
-    })
+  -- Telescope
+  -- todo: ensure ripgrep is installed (required for live_grep)
+  -- todo: ensure fd is installed (finder)
+  {
+    "nvim-telescope/telescope.nvim",
+    branch = "0.1.x",
+    dependencies = {
+      { "nvim-lua/plenary.nvim" },
+      -- todo: ensure make is installed
+      -- info: had to run make manually after switching from fzy
+      -- https://github.com/nvim-telescope/telescope-fzf-native.nvim/issues/47#issuecomment-988353015
+      { "nvim-telescope/telescope-fzf-native.nvim", build = "make" },
+      { "ThePrimeagen/harpoon" },
+      { "xiyaowong/telescope-emoji.nvim" },
+      { "nvim-treesitter/nvim-treesitter" },
+      { "kyazdani42/nvim-web-devicons" },
+    }
+  },
 
-    -- Telescope
-    -- todo: ensure ripgrep is installed (required for live_grep)
-    -- todo: ensure fd is installed (finder)
-    use({
-      "nvim-telescope/telescope.nvim",
-      tag = "0.1.x",
-      requires = {
-        { "nvim-lua/plenary.nvim" },
-        -- todo: ensure make is installed
-        -- info: had to run make manually after switching from fzy
-        -- https://github.com/nvim-telescope/telescope-fzf-native.nvim/issues/47#issuecomment-988353015
-        { "nvim-telescope/telescope-fzf-native.nvim", run = "make" },
-        { "ThePrimeagen/harpoon" },
-        { "xiyaowong/telescope-emoji.nvim" },
-        { "nvim-treesitter/nvim-treesitter" },
-        { "kyazdani42/nvim-web-devicons" },
-      }
-    })
+  -- Misc Plugins
+  {
+    "iamcco/markdown-preview.nvim",
+    build = function() vim.fn["mkdp#util#install"]() end,
+  },
+  {
+    "preservim/vim-markdown",
+    dependencies = {
+      "godlygeek/tabular",
+    }
+  },
+  { "kevinhwang91/nvim-bqf",      ft = "qf" },
+  "kylechui/nvim-surround",
+  "windwp/nvim-autopairs",
+  "lewis6991/impatient.nvim",
+  "b0o/schemastore.nvim",
+}
 
-    -- Misc Plugins
-    use({
-      "iamcco/markdown-preview.nvim",
-      run = function() vim.fn["mkdp#util#install"]() end,
-    })
-    use({
-      "preservim/vim-markdown",
-      requires = {
-        "godlygeek/tabular",
-      }
-    })
-    use({ "kevinhwang91/nvim-bqf", ft = "qf" })
-    use({ "kylechui/nvim-surround" })
-    use({ "windwp/nvim-autopairs" })
-    use({ "lewis6991/impatient.nvim"})
-    use({ "b0o/schemastore.nvim" })
+local opts = {
 
-    -- Automatically set up your configuration after cloning packer.nvim
-    -- Put this at the end after all plugins
-    if sync then
-      require("packer").sync()
-    end
-  end)
-end
+}
 
 M.setup = function()
-  local bootstrap = bootstrap_packer()
-  startup_packer(bootstrap)
+  bootstrap_lazy()
+  require("lazy").setup(plugins, opts)
 end
 
 return M
