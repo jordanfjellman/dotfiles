@@ -84,6 +84,8 @@ alias kc="kubectx"
 alias v="vim ."
 alias vim="nvim"
 alias s="source $HOME/.zprofile && source $HOME/.zshrc"
+alias jj="pbpaste | jsonpp | pbcopy"
+alias jjj="pbpaste | jsonpp"
 
 # Setup SDKMAN
 #
