@@ -39,6 +39,10 @@ hs.hotkey.bind(hyper, "g", function ()
   hs.execute("open https://github.com/notifications")
 end)
 
+hs.hotkey.bind(hyper, "j", function ()
+  hs.execute("open https://lifeway.atlassian.net/jira/software/c/projects/DCD/boards/416?quickFilter=1142&quickFilter=1141")
+end)
+
 hs.hotkey.bind(hyper, "m", function ()
   hs.execute("open https://mail.google.com")
 end)
