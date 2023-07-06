@@ -96,6 +96,8 @@ alias vim="nvim"
 alias s="source $HOME/.zprofile && source $HOME/.zshrc"
 alias jj="pbpaste | jsonpp | pbcopy"
 alias jjj="pbpaste | jsonpp"
+alias buo="brew update --quiet && brew outdated --quiet"
+alias bu="brew upgrade --quiet"
 
 # Setup SDKMAN
 #
