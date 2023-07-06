@@ -1,18 +1,62 @@
 {
-    "workbench.startupEditor": "none",
-    "window.zoomLevel": 2,
-    "files.watcherExclude": {
-        "**/.bloop": true,
-        "**/.metals": true,
-        "**/.ammonite": true
-    },
-    "[json]": {
-        "editor.defaultFormatter": "esbenp.prettier-vscode"
-    },
-    "vim.vimrc.enable": true,
-    "workbench.colorTheme": "GitHub Dark Dimmed",
-    "workbench.iconTheme": "vscode-icons",
-    "[typescriptreact]": {
-        "editor.defaultFormatter": "esbenp.prettier-vscode"
-    }
+  "workbench.startupEditor": "none",
+  "files.watcherExclude": {
+    "**/.bloop": true,
+    "**/.metals": true,
+    "**/.ammonite": true
+  },
+  "[json]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "vim.vimrc.enable": true,
+  "workbench.colorTheme": "GitHub Dark Dimmed",
+  "workbench.iconTheme": "vscode-icons",
+  "[typescriptreact]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "cSpell.userWords": [
+    "Brightcove",
+    "EPUB",
+    "Hostcast",
+    "Hostcasts",
+    "PKCE",
+    "Pressable",
+    "styleguide",
+    "tanstack",
+    "unarchived",
+    "unauthenticate"
+  ],
+  "[javascriptreact]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "totalTypeScript.hideAllTips": false,
+  "totalTypeScript.hideBasicTips": false,
+  "[markdown]": {
+    "editor.defaultFormatter": "yzhang.markdown-all-in-one",
+    "editor.wordWrap": "wordWrapColumn",
+    "editor.wrappingIndent": "same",
+    "editor.wordWrapColumn": 80,
+    "vim.textwidth": 80
+  },
+  "git.openRepositoryInParentFolders": "always",
+  "workbench.activityBar.visible": false,
+  "editor.scrollbar.horizontal": "hidden",
+  "editor.renderWhitespace": "boundary",
+  "editor.lineNumbers": "relative",
+  "editor.minimap.enabled": false,
+  "editor.fontFamily": "FiraCode Nerd Font Mono Regular,Menlo, Monaco, 'Courier New', monospace",
+  "[typescript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[javascript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "editor.tabSize": 2,
+  "editor.formatOnSave": true,
+  "[jsonc]": {
+    "editor.defaultFormatter": "vscode.json-language-features"
+  },
+  "vsicons.dontShowNewVersionMessage": true,
+  "editor.accessibilitySupport": "off",
+  "window.zoomLevel": 2
 }
