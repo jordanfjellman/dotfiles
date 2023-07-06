@@ -31,6 +31,7 @@ local plugins = {
   { "jose-elias-alvarez/null-ls.nvim" },
   -- info: disabled to test nvim-cmp builtin signature help
   -- use({ "ray-x/lsp_signature.nvim" })
+  "j-hui/fidget.nvim", -- display status updates for LSP
 
   -- Autocompletion
   {
