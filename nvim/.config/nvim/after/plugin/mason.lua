@@ -23,6 +23,8 @@ if has_mason_lspconfig then
       "html",
       "jsonls",
       "lua_ls",
+      "rust_analyzer",
+      "taplo",
       "tsserver",
       "yamlls"
     },
@@ -34,6 +36,7 @@ local has_mason_null_ls, mason_null_ls = pcall(require, "mason-null-ls")
 if has_mason_null_ls then
   mason_null_ls.setup({
     ensure_installed = {
+      "codelldb",
       "eslint_d",
       "prettierd",
       "stylua",

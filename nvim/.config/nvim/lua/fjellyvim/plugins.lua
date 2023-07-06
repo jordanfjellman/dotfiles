@@ -42,7 +42,18 @@ local plugins = {
     "scalameta/nvim-metals",
     dependencies = { "nvim-lua/plenary.nvim" },
   },
+  {
+    "simrat39/rust-tools.nvim",
+    ft = "rust",
+    dependencies = { "neovim/nvim-lspconfig" },
+  },
   "j-hui/fidget.nvim", -- display status updates for LSP
+
+  -- Debugging
+  {
+    "mfussenegger/nvim-dap",
+    dependencies = { "nvim-lua/plenary.nvim" },
+  },
 
   -- Autocompletion
   {
@@ -122,7 +133,10 @@ local plugins = {
       "godlygeek/tabular",
     }
   },
-  { "kevinhwang91/nvim-bqf",           ft = "qf" },
+  {
+    "kevinhwang91/nvim-bqf",
+    ft = "qf"
+  },
   "kylechui/nvim-surround",
   "windwp/nvim-autopairs",
   "lewis6991/impatient.nvim",
