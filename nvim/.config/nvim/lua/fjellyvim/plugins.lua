@@ -55,14 +55,19 @@ local plugins = {
   },
 
   -- Theme and UI
-  "projekt0n/github-nvim-theme",
+  {
+    "projekt0n/github-nvim-theme"
+  },
   {
     "kyazdani42/nvim-tree.lua",
-    dependencies = "kyazdani42/nvim-web-devicons"
+    dependencies = { "kyazdani42/nvim-web-devicons", opt = true }
   },
   {
     "nvim-lualine/lualine.nvim",
-    dependencies = { "kyazdani42/nvim-web-devicons", opt = true }
+    dependencies = {
+      { "kyazdani42/nvim-web-devicons", opt = true },
+      { "projekt0n/github-nvim-theme",  opt = true }
+    },
   },
   {
     "petertriho/nvim-scrollbar",

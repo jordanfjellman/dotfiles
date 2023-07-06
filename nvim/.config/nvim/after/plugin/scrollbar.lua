@@ -3,7 +3,15 @@ if not has_scrollbar then
   return
 end
 
-local colors = require("fjellyvim.theme").colors()
+local has_theme, theme = pcall(require, "fjellyvim.theme")
+if not has_theme then
+  return
+end
+
+local colors = theme.colors()
+if not colors then
+  return
+end
 
 -- warn: The plugin documentation shows setup parameters
 -- todo: Why is there a diagnostic error
