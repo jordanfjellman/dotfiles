@@ -19,18 +19,29 @@ local plugins = {
   { "nvim-treesitter/nvim-treesitter", build = ":TSUpdate" },
 
   -- LSP and LSP Related Plugins
+  "williamboman/mason.nvim",
   {
-    "williamboman/mason.nvim",
     "williamboman/mason-lspconfig.nvim",
-    "neovim/nvim-lspconfig",
+    dependencies = {
+      "williamboman/mason.nvim",
+      "neovim/nvim-lspconfig",
+    },
+  },
+  {
+    "jose-elias-alvarez/null-ls.nvim",
+    dependencies = { "nvim-lua/plenary.nvim" },
+  },
+  {
+    "jay-babu/mason-null-ls.nvim",
+    dependencies = {
+      "williamboman/mason.nvim",
+      "jose-elias-alvarez/null-ls.nvim",
+    },
   },
   {
     "scalameta/nvim-metals",
     dependencies = { "nvim-lua/plenary.nvim" },
   },
-  { "jose-elias-alvarez/null-ls.nvim" },
-  -- info: disabled to test nvim-cmp builtin signature help
-  -- use({ "ray-x/lsp_signature.nvim" })
   "j-hui/fidget.nvim", -- display status updates for LSP
 
   -- Autocompletion
@@ -111,7 +122,7 @@ local plugins = {
       "godlygeek/tabular",
     }
   },
-  { "kevinhwang91/nvim-bqf",      ft = "qf" },
+  { "kevinhwang91/nvim-bqf",           ft = "qf" },
   "kylechui/nvim-surround",
   "windwp/nvim-autopairs",
   "lewis6991/impatient.nvim",

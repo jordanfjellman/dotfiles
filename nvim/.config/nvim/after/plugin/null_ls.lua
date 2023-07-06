@@ -20,8 +20,12 @@ null_ls.setup({
     code_actions.eslint,
     code_actions.gitsigns,
     completion.spell,
-    diagnostics.eslint,
-    formatting.prettier,
+    diagnostics.eslint_d.with({
+      condition = function(utils)
+        return utils.root_has_file(".eslintrc.js", ".eslintrc.json", ".eslintrc.cjs")
+      end,
+    }),
+    formatting.prettierd,
   },
   on_attach = function(client)
     if client.server_capabilities.document_formatting then
