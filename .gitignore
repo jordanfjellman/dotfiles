@@ -3,4 +3,5 @@ bin/.local/share/
 packer_compiled.lua
 bin/.local/state/
 hammerspoon/.hammerspoon/Spoons/
+.luarc.json
 
