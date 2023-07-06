@@ -19,7 +19,7 @@ vim.api.nvim_create_autocmd("FileType", {
 Metals_config = metals.bare_config()
 Metals_config.init_options.statusBarProvider = "on"
 Metals_config.settings = {
-  serverVersion = "0.11.10",
+  serverVersion = "0.11.12",
   showImplicitArguments = true,
   showInferredType = true,
 }
@@ -60,4 +60,4 @@ local capabilities = vim.lsp.protocol.make_client_capabilities()
 Metals_config.capabilities = cmp.default_capabilities(capabilities)
 
 vim.keymap.set("v", "K", function() metals.type_of_range() end)
-vim.keymap.set("n", "<leader>ws", function() metals.worksheet_hover() end)
+vim.keymap.set("n", "<leader>ws", function() metals.hover_worksheet() end)
