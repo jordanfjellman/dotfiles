@@ -1,5 +1,15 @@
 #!/usr/bin/env zsh
 
+# ZSH Options
+setopt append_history
+setopt hist_ignore_all_dups
+setopt hist_ignore_space
+setopt inc_append_history # write history as soon as they are entered, not when the session is closed
+
+export HISTFILE=$HOME/.zsh_history
+export HISTSIZE=100000
+export HISTFILESIZE=100000
+
 # Homebrew
 #
 # "brew" is used in this script, so it needs to be set early
