@@ -21,6 +21,7 @@
     "Hostcasts",
     "PKCE",
     "Pressable",
+    "RTBF",
     "styleguide",
     "tanstack",
     "unarchived",
@@ -39,7 +40,6 @@
     "vim.textwidth": 80
   },
   "git.openRepositoryInParentFolders": "always",
-  "workbench.activityBar.visible": false,
   "editor.scrollbar.horizontal": "hidden",
   "editor.renderWhitespace": "boundary",
   "editor.lineNumbers": "relative",
@@ -58,5 +58,13 @@
   },
   "vsicons.dontShowNewVersionMessage": true,
   "editor.accessibilitySupport": "off",
-  "window.zoomLevel": 2
+  "window.zoomLevel": 2,
+  "editor.inlineSuggest.enabled": true,
+  "github.copilot.enable": {
+    "*": true,
+    "plaintext": false,
+    "markdown": true,
+    "scminput": false
+  },
+  "workbench.activityBar.location": "hidden"
 }
