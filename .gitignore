@@ -1,7 +1,8 @@
+.luarc.json
 .private_keys
-bin/.local/share/
 packer_compiled.lua
+bin/.local/bin/maelstrom/
+bin/.local/share/
 bin/.local/state/
 hammerspoon/.hammerspoon/Spoons/
-.luarc.json
 
