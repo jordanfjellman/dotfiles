@@ -19,7 +19,7 @@ vim.api.nvim_create_autocmd("FileType", {
 Metals_config = metals.bare_config()
 Metals_config.init_options.statusBarProvider = "on"
 Metals_config.settings = {
-  serverVersion = "1.0.1",
+  serverVersion = "1.1.0",
   showImplicitArguments = true,
   showInferredType = true,
 }
