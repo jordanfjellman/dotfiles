@@ -21,6 +21,7 @@ require("nvim-treesitter.configs").setup({
     "lua",
     "markdown",
     "scala",
+    "terraform",
     "tsx",
     "typescript",
     "yaml",
