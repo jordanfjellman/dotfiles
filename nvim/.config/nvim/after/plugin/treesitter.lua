@@ -4,10 +4,6 @@ if not has_treesitter then
 end
 
 require("nvim-treesitter.configs").setup({
-  context_commentstring = {
-    enable = true,
-    enable_autocmd = false, -- disable for comment ts context
-  },
   ensure_installed = {
     "bash",
     "css",
