@@ -47,7 +47,10 @@ local plugins = {
     ft = "rust",
     dependencies = { "neovim/nvim-lspconfig" },
   },
-  "j-hui/fidget.nvim", -- display status updates for LSP
+  {
+    "j-hui/fidget.nvim", -- display status updates for LSP
+    tag = "legacy",
+  },
 
   -- Debugging
   {
