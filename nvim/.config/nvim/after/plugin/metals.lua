@@ -46,6 +46,29 @@ Metals_config.on_attach = function(_, bufnr)
     group = metals_lsp_group,
   })
   vim.api.nvim_buf_set_option(bufnr, "omnifunc", "v:lua.vim.lsp.omnifunc")
+  local has_dap, dap = pcall(require, "dap")
+  if has_dap then
+    dap.configurations.scala = {
+      {
+        type = "scala",
+        request = "launch",
+        name = "RunOrTest",
+        metals = {
+          runType = "runOrTestFile",
+          --args = { "firstArg", "secondArg", "thirdArg" }, -- here just as an example
+        },
+      },
+      {
+        type = "scala",
+        request = "launch",
+        name = "Test Target",
+        metals = {
+          runType = "testTarget",
+        },
+      },
+    }
+  end
+  metals.setup_dap()
 end
 
 -- autocompletion

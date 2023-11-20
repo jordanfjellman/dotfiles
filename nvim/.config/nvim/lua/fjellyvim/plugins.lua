@@ -40,7 +40,10 @@ local plugins = {
   },
   {
     "scalameta/nvim-metals",
-    dependencies = { "nvim-lua/plenary.nvim" },
+    dependencies = {
+      "nvim-lua/plenary.nvim",
+      "mfussenegger/nvim-dap",
+    },
   },
   {
     "simrat39/rust-tools.nvim",
