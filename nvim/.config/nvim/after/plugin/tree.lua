@@ -3,21 +3,6 @@ if not has_tree then
   return
 end
 
-tree.setup({
-  actions = {
-    open_file = {
-      quit_on_open = true,
-    },
-  },
-  disable_netrw = true,
-  git = {
-    ignore = false,
-  },
-  view = {
-    adaptive_size = true,
-  },
-})
-
 local function open_nvim_tree(data)
   -- buffer is a directory
   local directory = vim.fn.isdirectory(data.file) == 1
@@ -34,5 +19,3 @@ local function open_nvim_tree(data)
 end
 
 vim.api.nvim_create_autocmd({ "VimEnter" }, { callback = open_nvim_tree })
-
-vim.keymap.set("n", "<leader>e", "<CMD>NvimTreeToggle<CR>")
