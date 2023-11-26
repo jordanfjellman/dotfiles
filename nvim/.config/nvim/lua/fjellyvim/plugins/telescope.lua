@@ -12,7 +12,7 @@ return {
     { "nvim-treesitter/nvim-treesitter" },
     { "kyazdani42/nvim-web-devicons" },
   },
-  config = function ()
+  config = function()
     local telescope = require("telescope")
     local previewers = require("telescope.previewers")
 
@@ -36,8 +36,8 @@ return {
           override_generic_sorter = true,
           override_file_sorter = true,
           case_mode = "smart_case",
-        }
-      }
+        },
+      },
     })
 
     telescope.load_extension("fzf")
@@ -45,18 +45,39 @@ return {
     telescope.load_extension("emoji")
 
     local builtin = require("telescope.builtin")
-    vim.keymap.set("n", "<leader>ff", function() builtin.git_files({ show_untracked = true }) end)
-    vim.keymap.set("n", "<C-p>", function() builtin.find_files({ hidden = true }) end)
-    vim.keymap.set("n", "<leader>lg", function()
-      builtin.live_grep({ additional_args = function() return { "--hidden" } end })
+    vim.keymap.set("n", "<leader>ff", function()
+      builtin.git_files({ show_untracked = true })
     end)
-    vim.keymap.set("n", "<leader>fh", function() builtin.help_tags() end)
-    vim.keymap.set("n", "<leader>fk", function() builtin.keymaps() end)
-    vim.keymap.set("n", "<leader>fs", function() builtin.lsp_document_symbols() end)
-    vim.keymap.set("n", "<leader>gs", function() builtin.git_status() end)
+    vim.keymap.set("n", "<C-p>", function()
+      builtin.find_files({ hidden = true })
+    end)
+    vim.keymap.set("n", "<leader>lg", function()
+      builtin.live_grep({
+        additional_args = function()
+          return { "--hidden" }
+        end,
+      })
+    end)
+    vim.keymap.set("n", "<leader>fh", function()
+      builtin.help_tags()
+    end)
+    vim.keymap.set("n", "<leader>fk", function()
+      builtin.keymaps()
+    end)
+    vim.keymap.set("n", "<leader>fs", function()
+      builtin.lsp_document_symbols()
+    end)
+    vim.keymap.set("n", "<leader>gs", function()
+      builtin.git_status()
+    end)
 
-    vim.keymap.set("n", "<leader>mf", function() telescope.extensions.harpoon.marks() end)
-    vim.keymap.set("n", "<leader>mc", function() telescope.extensions.metals.commands() end)
-    vim.keymap.set("n", "<leader>fe", '<CMD>Telescope emoji<CR>')
-  end
+    vim.keymap.set("n", "<leader>mf", function()
+      telescope.extensions.harpoon.marks()
+    end)
+    vim.keymap.set("n", "<leader>mc", function()
+      telescope.extensions.metals.commands()
+    end)
+    vim.keymap.set("n", "<leader>fe", "<CMD>Telescope emoji<CR>")
+  end,
 }
+
