@@ -79,8 +79,8 @@ bindkey -s "M-b" vi-forward-blank-word
 if type tmux-sessionizer &>/dev/null; then
   bindkey -s "^f" "tmux-sessionizer\n"
 fi
-if type tmux-session-manager &>/dev/null; then
-  bindkey -s "^x" "tmux-session-manager\n"
+if type tmux-session-killer &>/dev/null; then
+  bindkey -s "^x" "tmux-session-killer\n"
 fi
 
 # Set Aliases

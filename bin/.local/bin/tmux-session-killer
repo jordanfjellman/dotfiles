@@ -1,0 +1,24 @@
+#!/bin/bash
+
+# get current session
+current_session=$(tmux display-message -p "#S")
+
+# get sessions
+tmux list-sessions -F "#S" |\
+  # exclude current session
+  grep --invert-match $current_session |\
+  # multiselect sessions to kill
+  fzf -m --prompt="Select Sessions to Kill ($current_session):" |\
+  while read session
+  do
+    [[ "$session" ]] || break # if none selected, exit loop
+    if [ $session = $current_session ]
+    then
+      # should never be here
+      echo "Skipped killing \"$session\". It is the current session.";
+    else
+      tmux kill-session -t $session;
+      echo "Killed Session: $session";
+    fi
+  done
+
