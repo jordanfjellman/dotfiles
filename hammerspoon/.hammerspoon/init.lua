@@ -1,5 +1,5 @@
-local meh = {"shift", "alt", "ctrl"}
-local hyper = {"shift", "alt", "ctrl", "cmd"}
+local meh = { "shift", "alt", "ctrl" }
+local hyper = { "shift", "alt", "ctrl", "cmd" }
 
 -- Pre-downloaded via external script
 hs.loadSpoon("SpoonInstall")
@@ -11,12 +11,12 @@ hs.spoons.use("WindowManager", {
     Left = "left",
     Up = "fullscreen",
     Down = "center",
-  }
+  },
 })
 
 spoon.SpoonInstall:andUse("AppLauncher", {
   config = {
-    modifiers = meh
+    modifiers = meh,
   },
   hotkeys = {
     b = "Brave Browser",
@@ -31,29 +31,29 @@ spoon.SpoonInstall:andUse("AppLauncher", {
     s = "Slack",
     t = "Microsoft Teams",
     y = "YouTube Music",
-    z = "zoom.us"
-  }
+    z = "zoom.us",
+  },
 })
 
-hs.hotkey.bind(hyper, "g", function ()
+hs.hotkey.bind(hyper, "g", function()
   hs.execute("open https://github.com/notifications")
 end)
 
-hs.hotkey.bind(hyper, "j", function ()
-  hs.execute("open https://lifeway.atlassian.net/jira/software/c/projects/DCD/boards/416?quickFilter=1142&quickFilter=1141")
+hs.hotkey.bind(hyper, "j", function()
+  hs.execute(
+    "open https://lifeway.atlassian.net/jira/software/c/projects/DCD/boards/416?quickFilter=1142&quickFilter=1141"
+  )
 end)
 
-hs.hotkey.bind(hyper, "m", function ()
+hs.hotkey.bind(hyper, "m", function()
   hs.execute("open https://mail.google.com")
 end)
 
-hs.hotkey.bind(hyper, "n", function ()
+hs.hotkey.bind(hyper, "n", function()
   hs.execute("open https://keep.google.com")
 end)
 
 spoon.SpoonInstall:andUse("ReloadConfiguration", {
   hotkeys = { reloadConfiguration = { hyper, "R" } },
-  start = true
+  start = true,
 })
-
-
