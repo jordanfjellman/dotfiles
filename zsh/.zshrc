@@ -102,6 +102,7 @@ alias jjj="pbpaste | jsonpp"
 alias buo="brew update --quiet && brew outdated --quiet"
 alias bu="brew upgrade --quiet"
 alias sso='_sso() { $(aws configure export-credentials --format env --profile $1) };_sso'
+alias g="lazygit"
 
 # Setup SDKMAN
 #
