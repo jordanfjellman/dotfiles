@@ -29,7 +29,7 @@ spoon.SpoonInstall:andUse("AppLauncher", {
     p = "Postman",
     r = "Reader",
     s = "Slack",
-    t = "Microsoft Teams",
+    t = "Microsoft Teams (work or school)",
     y = "YouTube Music",
     z = "zoom.us",
   },
