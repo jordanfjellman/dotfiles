@@ -53,6 +53,10 @@ hs.hotkey.bind(hyper, "n", function()
   hs.execute("open https://keep.google.com")
 end)
 
+hs.hotkey.bind(hyper, "c", function()
+  hs.execute("open https://chat.openai.com")
+end)
+
 spoon.SpoonInstall:andUse("ReloadConfiguration", {
   hotkeys = { reloadConfiguration = { hyper, "R" } },
   start = true,
