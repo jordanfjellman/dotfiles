@@ -18,7 +18,7 @@ return {
 
     telescope.setup({
       defaults = {
-        file_ignore_patterns = { "^.git/", "^.bloop/" },
+        file_ignore_patterns = { ".git/", ".bloop/", ".metals/", ".yarn/" },
         file_previewer = previewers.vim_buffer_cat.new,
         file_sorter = require("telescope.sorters").get_fzy_sorter,
         grep_previewer = previewers.vim_buffer_vimgrep.new,
@@ -80,4 +80,3 @@ return {
     vim.keymap.set("n", "<leader>fe", "<CMD>Telescope emoji<CR>")
   end,
 }
-
