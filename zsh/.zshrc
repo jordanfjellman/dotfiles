@@ -71,6 +71,14 @@ eval "$(starship init zsh)"
 # Tmux
 export ZSH_TMUX_AUTOSTART=true
 
+# Kitty Shell Integration in all shells, including Tmux 
+if [[ -n "$KITTY_INSTALLATION_DIR" ]]; then
+  export KITTY_SHELL_INTEGRATION="enabled"
+  autoload -Uz -- "$KITTY_INSTALLATION_DIR"/shell-integration/zsh/kitty-integration
+  kitty-integration
+  unfunction kitty-integration
+fi
+
 # Bind Keys
 bindkey "^A" beginning-of-line
 bindkey "^E" end-of-line
