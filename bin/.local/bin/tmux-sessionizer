@@ -6,7 +6,7 @@
 if [[ $# -eq 1 ]]; then
   selected=$1
 else
-  selected=$(find $HOME/code -name .git -type d -prune -mindepth 1 -maxdepth 3 | sed 's/\/.git$//' | fzf --select-1)
+  selected=$(find $HOME/code -name .git -o -name worktrees -type d -prune -mindepth 1 -maxdepth 3 | sed 's/\/.git$//' | sed 's/\/worktrees$//' | fzf --select-1)
 fi
 
 if [[ -z $selected ]]; then
