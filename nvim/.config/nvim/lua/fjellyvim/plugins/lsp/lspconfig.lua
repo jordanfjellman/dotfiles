@@ -7,7 +7,7 @@ return {
     end,
   },
   {
-    "williamoman/mason-lspconfig.nvim",
+    "williamboman/mason-lspconfig.nvim",
     lazy = false,
     opts = {
       ensure_installed = {
