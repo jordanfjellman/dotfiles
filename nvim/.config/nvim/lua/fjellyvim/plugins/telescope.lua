@@ -19,7 +19,7 @@ return {
 
     telescope.setup({
       defaults = {
-        file_ignore_patterns = { ".git/", ".bloop/", ".metals/", ".yarn/" },
+        file_ignore_patterns = { ".git/", ".bloop/", ".metals/", ".yarn/", "target/" },
         file_previewer = previewers.vim_buffer_cat.new,
         file_sorter = require("telescope.sorters").get_fzy_sorter,
         grep_previewer = previewers.vim_buffer_vimgrep.new,
