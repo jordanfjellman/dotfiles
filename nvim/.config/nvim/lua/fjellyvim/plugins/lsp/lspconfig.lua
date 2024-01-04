@@ -1,42 +1,49 @@
 return {
   {
-    "williamboman/mason-lspconfig.nvim",
+    "williamboman/mason.nvim",
+    lazy = false,
+    config = function()
+      require("mason").setup()
+    end,
+  },
+  {
+    "williamoman/mason-lspconfig.nvim",
+    lazy = false,
+    opts = {
+      ensure_installed = {
+        "bashls",
+        "cmake",
+        "cssls",
+        "diagnosticls",
+        "dockerls",
+        "graphql",
+        "html",
+        "jsonls",
+        "lua_ls",
+        "rust_analyzer",
+        "taplo",
+        "tsserver",
+        "yamlls",
+      },
+    },
+  },
+  {
+    "neovim/nvim-lspconfig",
     dependencies = {
-      "williamboman/mason.nvim",
-      "neovim/nvim-lspconfig",
       "b0o/schemastore.nvim",
     },
     event = { "BufReadPre", "BufNewFile" },
     config = function()
-      require("mason").setup()
-
-      require("mason-lspconfig").setup({
-        automatic_installation = false,
-        ensure_installed = {
-          "bashls",
-          "cmake",
-          "cssls",
-          "diagnosticls",
-          "dockerls",
-          "graphql",
-          "html",
-          "jsonls",
-          "lua_ls",
-          "rust_analyzer",
-          "taplo",
-          "tsserver",
-          "yamlls",
-        },
-      })
-
       local disable_builtin_lsp_formatter = function(client)
         client.server_capabilities.document_formatting = false
         client.server_capabilities.document_range_formatting = false
       end
 
       local lspconfig = require("lspconfig")
+      local capabilties = require("cmp_nvim_lsp").default_capabilities()
 
       lspconfig.lua_ls.setup({
+        capabilities = capabilties,
         on_attach = disable_builtin_lsp_formatter,
         settings = {
           Lua = {
@@ -52,6 +59,7 @@ return {
               globals = { "vim" },
             },
             workspace = {
+              checkThirdParty = false,
               -- Make the server aware of Neovim runtime files
               library = vim.api.nvim_get_runtime_file("", true),
             },
@@ -64,14 +72,17 @@ return {
       })
 
       lspconfig.ansiblels.setup({
+        capabilities = capabilties,
         on_attach = disable_builtin_lsp_formatter,
       })
 
       lspconfig.graphql.setup({
+        capabilities = capabilties,
         on_attach = disable_builtin_lsp_formatter,
       })
 
       lspconfig.jsonls.setup({
+        capabilities = capabilties,
         on_attach = disable_builtin_lsp_formatter,
         settings = {
           json = {
@@ -82,6 +93,7 @@ return {
       })
 
       lspconfig.yamlls.setup({
+        capabilities = capabilties,
         filetypes = { "yaml", "yml" },
         settings = {
           yaml = {
