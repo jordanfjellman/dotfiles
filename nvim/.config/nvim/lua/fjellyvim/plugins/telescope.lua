@@ -11,6 +11,7 @@ return {
     { "xiyaowong/telescope-emoji.nvim" },
     { "nvim-treesitter/nvim-treesitter" },
     { "kyazdani42/nvim-web-devicons" },
+    { "ThePrimeagen/git-worktree.nvim" },
   },
   config = function()
     local telescope = require("telescope")
@@ -43,6 +44,7 @@ return {
     telescope.load_extension("fzf")
     telescope.load_extension("harpoon")
     telescope.load_extension("emoji")
+    telescope.load_extension("git_worktree")
 
     local builtin = require("telescope.builtin")
     vim.keymap.set("n", "<leader>ff", function()
@@ -78,5 +80,9 @@ return {
       telescope.extensions.metals.commands()
     end)
     vim.keymap.set("n", "<leader>fe", "<CMD>Telescope emoji<CR>")
+
+    vim.keymap.set("n", "<leader>fw", function()
+      telescope.extensions.git_worktree.git_worktrees()
+    end)
   end,
 }
