@@ -175,7 +175,7 @@ return {
         sources = cmp.config.sources({
           { name = "path" },
         }, {
-          { name = "cmdline" },
+          { name = "cmdline", keyword_length = 2 }, -- prevent cmp for single character commands like :w
         }),
       })
     end,
