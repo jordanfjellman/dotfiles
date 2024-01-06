@@ -151,12 +151,14 @@ return {
         function()
           vim.lsp.buf.implementation()
         end,
+        { desc = "List implementations in quickfix" },
       },
       {
         "gr",
         function()
           vim.lsp.buf.references()
         end,
+        { desc = "Find references in quickfix" },
       },
       {
         "gds",
