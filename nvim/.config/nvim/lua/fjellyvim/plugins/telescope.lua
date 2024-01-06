@@ -16,6 +16,7 @@ return {
   config = function()
     local telescope = require("telescope")
     local previewers = require("telescope.previewers")
+    -- local previewers = require("telescope.previewers")
 
     telescope.setup({
       defaults = {
@@ -47,42 +48,53 @@ return {
     telescope.load_extension("git_worktree")
 
     local builtin = require("telescope.builtin")
+
     vim.keymap.set("n", "<leader>ff", function()
-      builtin.git_files({ show_untracked = true })
-    end)
-    vim.keymap.set("n", "<C-p>", function()
       builtin.find_files({ hidden = true })
-    end)
-    vim.keymap.set("n", "<leader>lg", function()
+    end, { desc = "Find files with Telescope" })
+
+    vim.keymap.set("n", "<C-p>", function()
+      builtin.git_files({ show_untracked = true })
+    end, { desc = "Find tracked files with Telescope" })
+
+    vim.keymap.set("n", "<leader>fw", function()
+      local word = vim.fn.expand("<cword>")
+      builtin.grep_string({ search = word })
+    end, { desc = "Grep word under cursor with Telescope" })
+
+    vim.keymap.set("n", "<leader>fW", function()
+      local word = vim.fn.expand("<cWORD>")
+      builtin.grep_string({ search = word })
+    end, { desc = "Grep entire word under cursor with Telescope" })
+
+    vim.keymap.set("n", "<leader>fs", function()
       builtin.live_grep({
         additional_args = function()
           return { "--hidden" }
         end,
       })
-    end)
+    end, { desc = "Grep search with Telescope" })
+
     vim.keymap.set("n", "<leader>fh", function()
       builtin.help_tags()
-    end)
+    end, { desc = "List help tags with Telescope" })
+
     vim.keymap.set("n", "<leader>fk", function()
       builtin.keymaps()
-    end)
-    vim.keymap.set("n", "<leader>fs", function()
-      builtin.lsp_document_symbols()
-    end)
-    vim.keymap.set("n", "<leader>gs", function()
-      builtin.git_status()
-    end)
+    end, { desc = "List keymaps with Telescope" })
 
-    vim.keymap.set("n", "<leader>mf", function()
-      telescope.extensions.harpoon.marks()
-    end)
-    vim.keymap.set("n", "<leader>mc", function()
-      telescope.extensions.metals.commands()
-    end)
     vim.keymap.set("n", "<leader>fe", "<CMD>Telescope emoji<CR>")
 
-    vim.keymap.set("n", "<leader>fw", function()
+    vim.keymap.set("n", "<leader>fg", function()
       telescope.extensions.git_worktree.git_worktrees()
     end)
+
+    vim.keymap.set("n", "<leader>gs", function()
+      builtin.git_status()
+    end, { desc = "List files with changes" })
+
+    vim.keymap.set("n", "<leader>mc", function()
+      telescope.extensions.metals.commands()
+    end, { desc = "List Metals commands" })
   end,
 }
