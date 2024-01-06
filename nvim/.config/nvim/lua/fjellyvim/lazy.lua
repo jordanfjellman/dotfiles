@@ -13,6 +13,9 @@ end
 vim.opt.rtp:prepend(lazypath)
 
 require("lazy").setup({
-  { import = "fjellyvim.plugins" },
-  { import = "fjellyvim.plugins.lsp" },
+  spec = {
+    change_detection = { notify = false },
+    { import = "fjellyvim.plugins" },
+    { import = "fjellyvim.plugins.lsp" },
+  },
 })
