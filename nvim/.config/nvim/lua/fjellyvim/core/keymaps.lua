@@ -37,6 +37,10 @@ M.setup = function()
   vim.keymap.set("n", "<leader>ln", ":cnext<CR>")
   vim.keymap.set("n", "<leader>lp", ":cprevious<CR>")
 
+  -- move lines
+  vim.keymap.set("v", "K", ":m '<-2<CR>gv=gv", { desc = "move line up" })
+  vim.keymap.set("v", "J", ":m '>+1<CR>gv=gv", { desc = "move line down" })
+
   -- center after navigation
   vim.keymap.set("n", "<C-d>", "<C-d>zz")
   vim.keymap.set("n", "<C-u>", "<C-u>zz")

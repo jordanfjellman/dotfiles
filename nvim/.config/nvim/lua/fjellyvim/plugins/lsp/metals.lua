@@ -106,11 +106,11 @@ return {
     local capabilities = vim.lsp.protocol.make_client_capabilities()
     Metals_config.capabilities = cmp.default_capabilities(capabilities)
 
-    vim.keymap.set("v", "K", function()
+    vim.keymap.set("v", "T", function()
       metals.type_of_range()
-    end)
+    end, { desc = "Show type of selection" })
     vim.keymap.set("n", "<leader>ws", function()
       metals.hover_worksheet()
-    end)
+    end, { desc = "Show worksheet" })
   end,
 }
