@@ -49,11 +49,11 @@ return {
 
     local builtin = require("telescope.builtin")
 
-    vim.keymap.set("n", "<leader>ff", function()
+    vim.keymap.set("n", "<C-p>", function()
       builtin.find_files({ hidden = true })
     end, { desc = "Find files with Telescope" })
 
-    vim.keymap.set("n", "<C-p>", function()
+    vim.keymap.set("n", "<leader>ff", function()
       builtin.git_files({ show_untracked = true })
     end, { desc = "Find tracked files with Telescope" })
 
