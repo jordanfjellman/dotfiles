@@ -7,12 +7,6 @@ M.setup = function()
 
   vim.keymap.set("n", "<leader><leader>e", [[:luafile %<CR>]])
 
-  -- window navigation
-  vim.keymap.set("n", "<C-h>", "<C-w>h")
-  vim.keymap.set("n", "<C-j>", "<C-w>j")
-  vim.keymap.set("n", "<C-k>", "<C-w>k")
-  vim.keymap.set("n", "<C-l>", "<C-w>l")
-
   -- resizing splits
   vim.keymap.set("n", "<leader>[", ":vertical resize -3<CR>")
   vim.keymap.set("n", "<leader>]", ":vertical resize +3<CR>")
