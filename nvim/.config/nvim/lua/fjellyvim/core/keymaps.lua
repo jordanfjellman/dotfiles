@@ -3,7 +3,7 @@ local M = {}
 M.setup = function()
   vim.keymap.set("n", "<SPACE>", "<NOP>")
   vim.keymap.set("i", "jk", "<ESC>")
-  vim.keymap.set("n", "<leader>h", ":noh<CR>")
+  vim.keymap.set("n", "<leader>h", ":noh<CR>") -- not needed, duplicate of <C-L>
 
   vim.keymap.set("n", "<leader><leader>e", [[:luafile %<CR>]])
 
