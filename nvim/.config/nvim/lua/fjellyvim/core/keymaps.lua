@@ -32,10 +32,10 @@ M.setup = function()
   vim.keymap.set("v", "<leader>p", '"+p')
 
   -- quickfix lists
-  vim.keymap.set("n", "<leader>lo", ":copen<CR>")
-  vim.keymap.set("n", "<leader>lc", ":cclose<CR>")
-  vim.keymap.set("n", "<leader>ln", ":cnext<CR>")
-  vim.keymap.set("n", "<leader>lp", ":cprevious<CR>")
+  vim.keymap.set("n", "<leader>xo", ":copen<CR>", { desc = "open quickfix list" })
+  vim.keymap.set("n", "<leader>xc", ":cclose<CR>", { desc = "close quickfix list" })
+  vim.keymap.set("n", "<C-K>", "<cmd>cnext<CR>zz", { desc = "next quickfix item" })
+  vim.keymap.set("n", "<C-J>", "<cmd>cprevious<CR>zz", { desc = "previous quickfix item" })
 
   -- move lines
   vim.keymap.set("v", "K", ":m '<-2<CR>gv=gv", { desc = "move line up" })
