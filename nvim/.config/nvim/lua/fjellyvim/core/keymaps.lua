@@ -18,8 +18,8 @@ M.setup = function()
   vim.keymap.set("n", "<leader>]", ":vertical resize +3<CR>")
 
   -- indenting
-  vim.keymap.set("v", ">", ">gv")
-  vim.keymap.set("v", "<", "<gv")
+  vim.keymap.set("v", ">", ">gv", { desc = "indent right" })
+  vim.keymap.set("v", "<", "<gv", { desc = "indent left" })
 
   -- clipboard
   vim.keymap.set("v", "<leader>y", '"+y')
