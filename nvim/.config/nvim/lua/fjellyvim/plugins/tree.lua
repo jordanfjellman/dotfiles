@@ -19,6 +19,9 @@ return {
       git = {
         ignore = false,
       },
+      hijack_directories = {
+        enable = false,
+      },
       sync_root_with_cwd = true,
       update_focused_file = {
         enable = true,
