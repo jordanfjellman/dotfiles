@@ -25,11 +25,6 @@ return {
         file_sorter = require("telescope.sorters").get_fzy_sorter,
         grep_previewer = previewers.vim_buffer_vimgrep.new,
         layout_strategy = "vertical",
-        mappings = {
-          n = {
-            ["f"] = require("telescope.actions").send_to_qflist,
-          },
-        },
         prompt_prefix = "❯",
       },
       extensions = {
