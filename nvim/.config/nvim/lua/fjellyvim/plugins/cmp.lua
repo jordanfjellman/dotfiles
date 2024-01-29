@@ -3,6 +3,14 @@ return {
     "hrsh7th/cmp-nvim-lsp", -- you also need to setup the completions for the lsp servers
   },
   {
+    "L3MON4D3/LuaSnip",
+    -- follow latest release.
+    version = "v2.*", -- Replace <CurrentMajor> by the latest released major (first number of latest release)
+    -- install jsregexp (optional!).
+    build = "make install_jsregexp",
+    dependencies = { "rafamadriz/friendly-snippets" },
+  },
+  {
     "hrsh7th/nvim-cmp",
     dependencies = {
       { "hrsh7th/cmp-buffer" },
@@ -12,6 +20,7 @@ return {
     },
     config = function()
       local cmp = require("cmp")
+      require("luasnip.loaders.from_vscode").lazy_load()
 
       local kind_icons = {
         Text = "󰉿",
@@ -49,6 +58,11 @@ return {
       end
 
       cmp.setup({
+        snippet = {
+          expand = function(args)
+            require("luasnip").lsp_expand(args.body)
+          end,
+        },
         enabled = function()
           -- disable completion in comments
           local context = require("cmp.config.context")
@@ -72,6 +86,8 @@ return {
           end,
         },
         mapping = {
+          ["<C-b>"] = cmp.mapping.scroll_docs(-4),
+          ["<C-f>"] = cmp.mapping.scroll_docs(4),
           ["<CR>"] = cmp.mapping.confirm(),
           ["<Tab>"] = cmp.mapping(function(fallback)
             -- local copilot_keys = vim.fn["copilot#Accept"]()
