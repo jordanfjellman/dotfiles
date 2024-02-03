@@ -28,8 +28,8 @@ M.setup = function()
   -- quickfix lists
   vim.keymap.set("n", "<leader>xo", ":copen<CR>", { desc = "open quickfix list" })
   vim.keymap.set("n", "<leader>xc", ":cclose<CR>", { desc = "close quickfix list" })
-  vim.keymap.set("n", "<C-K>", "<cmd>cnext<CR>zz", { desc = "next quickfix item" })
-  vim.keymap.set("n", "<C-J>", "<cmd>cprevious<CR>zz", { desc = "previous quickfix item" })
+  vim.keymap.set("n", "<C-J>", "<cmd>cnext<CR>zz", { desc = "next quickfix item" })
+  vim.keymap.set("n", "<C-K>", "<cmd>cprevious<CR>zz", { desc = "previous quickfix item" })
 
   -- center after navigation
   vim.keymap.set("n", "<C-d>", "<C-d>zz")
