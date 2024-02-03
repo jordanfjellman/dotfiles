@@ -19,6 +19,7 @@ spoon.SpoonInstall:andUse("AppLauncher", {
     modifiers = meh,
   },
   hotkeys = {
+    a = "Android Studio",
     b = "Brave Browser",
     c = "Visual Studio Code",
     g = "Github Desktop", -- git
@@ -30,6 +31,7 @@ spoon.SpoonInstall:andUse("AppLauncher", {
     r = "Reader",
     s = "Slack",
     t = "Microsoft Teams (work or school)",
+    x = "Xcode",
     y = "YouTube Music",
     z = "zoom.us",
   },
