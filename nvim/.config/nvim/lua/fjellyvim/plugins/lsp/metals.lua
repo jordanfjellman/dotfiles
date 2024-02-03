@@ -20,7 +20,7 @@ return {
     Metals_config = metals.bare_config()
     Metals_config.init_options.statusBarProvider = "on"
     Metals_config.settings = {
-      serverVersion = "1.1.0",
+      serverVersion = "1.2.0",
       showImplicitArguments = true,
       showInferredType = true,
     }
