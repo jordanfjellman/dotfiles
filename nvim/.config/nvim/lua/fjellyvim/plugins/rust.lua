@@ -1,9 +1,8 @@
 return {
-  "simrat39/rust-tools.nvim",
-  ft = "rust",
+  "mrcjkb/rustaceanvim",
+  version = "^4", -- Recommended
+  ft = { "rust" },
   dependencies = {
-    "neovim/nvim-lspconfig",
-
     -- required for debugging
     "nvim-lua/plenary.nvim",
     "mfussenegger/nvim-dap",
@@ -15,16 +14,30 @@ return {
     local codelldb_path = extension_path .. "adapter/codelldb"
     local liblldb_path = extension_path .. "lldb/lib/liblldb.dylib"
 
-    local rust_tools = require("rust-tools")
-    rust_tools.setup({
+    local cfg = require("rustaceanvim.config")
+    vim.g.rustaceanvim = {
       dap = {
-        adapter = require("rust-tools.dap").get_codelldb_adapter(codelldb_path, liblldb_path),
+        adapter = cfg.get_codelldb_adapter(codelldb_path, liblldb_path),
       },
       server = {
         on_attach = function(_, bufnr)
           -- Hover actions
-          vim.keymap.set("n", "<Leader>k", rust_tools.hover_actions.hover_actions, { buffer = bufnr })
+          vim.keymap.set("n", "<leader>E", function()
+            vim.cmd.RustLsp("explainError")
+          end, { buffer = bufnr })
         end,
+      },
+      settings = {
+        ["rust-analyzer"] = {
+          ["rust-analyzer.check.overrideCommand"] = {
+            "cargo",
+            "component",
+            "check",
+            "--workspace",
+            "--all-targets",
+            "--message-format=json",
+          },
+        },
       },
       tools = {
         hover_actions = {
@@ -32,6 +45,6 @@ return {
           border = "none",
         },
       },
-    })
+    }
   end,
 }

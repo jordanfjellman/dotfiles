@@ -74,6 +74,7 @@ return {
         "markdown_inline",
         "python",
         "query",
+        "rust",
         "regex",
         "scala",
         "terraform",
