@@ -1,8 +1,5 @@
-[user]
-  name = Jordan Fjellman
-  email = 8724130+jordanfjellman@users.noreply.github.com
 [core]
-  editor = vim
+  editor = neovim
   excludesfile = /Users/jfjellm/.gitignore_global
 [alias]
   co = checkout
@@ -14,10 +11,10 @@
   pr = pull-request
   undo = reset --soft HEAD~1
 [filter "lfs"]
-	clean = git-lfs clean -- %f
-	smudge = git-lfs smudge -- %f
-	process = git-lfs filter-process
-	required = true
+  clean = git-lfs clean -- %f
+  smudge = git-lfs smudge -- %f
+  process = git-lfs filter-process
+  required = true
 [init]
   templatedir = ~/.git-templates
   defaultBranch = master
@@ -30,4 +27,12 @@
 [pull]
   ff = only
 [fetch]
-	prune = true
+  prune = true
+[gpg]
+  format = ssh
+[commit]
+  gpgsign = true
+[includeIf "gitdir:~/code/work/"]
+  path = .gitconfig_work
+[includeIf "gitdir:~/code/personal/"]
+  path = .gitconfig_personal
