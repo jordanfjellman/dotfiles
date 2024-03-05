@@ -60,6 +60,7 @@ return {
         "diff",
         "dockerfile",
         "gitignore",
+        "go",
         "graphql",
         "hocon",
         "html",

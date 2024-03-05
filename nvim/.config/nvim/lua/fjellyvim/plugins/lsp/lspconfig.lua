@@ -16,6 +16,7 @@ return {
         "cssls",
         "diagnosticls",
         "dockerls",
+        "gopls",
         "graphql",
         "html",
         "jsonls",
@@ -74,6 +75,14 @@ return {
       lspconfig.ansiblels.setup({
         capabilities = capabilties,
         on_attach = disable_builtin_lsp_formatter,
+      })
+
+      lspconfig.gopls.setup({
+        capabilties = capabilties,
+        on_attach = disable_builtin_lsp_formatter,
+        cmd = { "gopls" },
+        filetypes = { "go", "gomod", "gowork", "gotmpl" },
+        project_root = { "go.work", "go.mod", ".git" },
       })
 
       lspconfig.graphql.setup({
@@ -222,6 +231,9 @@ return {
         "stylua", -- lua formatter
         "pylint", -- python linter
         "eslint_d", -- js linter
+        "gofumpt", -- more strict than gofmt
+        "goimports-reviser", -- organizes imports
+        "golines", -- cleans up long lines
 
         -- scalafmt cannot be ensured to be installed, install via Coursier
         -- https://github.com/mason-org/mason-registry/pull/2019

@@ -10,8 +10,8 @@ M.setup = function()
   vim.opt_global.hidden = true -- Enable background buffers
   vim.opt_global.ignorecase = true -- Ignore case
   vim.opt_global.mouse = "n"
-  vim.opt_global.list = true -- Show some invisible characters
-  vim.opt_global.listchars = "trail:·"
+  vim.opt_global.list = false -- Show some invisible characters
+  vim.opt_global.listchars = "tab:!·,trail:·,eol:¬"
   vim.opt_global.scrolloff = 8 -- Lines of context
   vim.opt_global.shiftround = true -- Round indent
   vim.opt_global.shortmess:remove("F") -- needed for nvim-metals

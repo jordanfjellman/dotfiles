@@ -12,6 +12,11 @@ return {
         javascript = { "prettier" },
         javascriptreact = { "prettier" },
         json = { "prettier" },
+        go = {
+          "goimports-reviser",
+          "golines",
+          "gofumpt",
+        },
         lua = { "stylua" },
         markdown = { "prettier" },
         typescript = { "prettier" },
@@ -35,4 +40,3 @@ return {
     end, { desc = "Format file or range (in visual mode)" })
   end,
 }
-
