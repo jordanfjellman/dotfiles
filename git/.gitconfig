@@ -1,5 +1,5 @@
 [core]
-  editor = neovim
+  editor = nvim
   excludesfile = /Users/jfjellm/.gitignore_global
 [alias]
   co = checkout
