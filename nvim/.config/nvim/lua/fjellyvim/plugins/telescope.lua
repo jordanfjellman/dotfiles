@@ -44,52 +44,48 @@ return {
 
     local builtin = require("telescope.builtin")
 
-    vim.keymap.set("n", "<C-p>", function()
+    vim.keymap.set("n", "<leader>sf", function()
       builtin.find_files({ hidden = true })
-    end, { desc = "Find files with Telescope" })
+    end, { desc = "[S]earch [F]iles" })
 
-    vim.keymap.set("n", "<leader>ff", function()
-      builtin.git_files({ show_untracked = true })
-    end, { desc = "Find tracked files with Telescope" })
-
-    vim.keymap.set("n", "<leader>fw", function()
+    vim.keymap.set("n", "<leader>sw", function()
       local word = vim.fn.expand("<cword>")
       builtin.grep_string({ search = word })
-    end, { desc = "Grep word under cursor with Telescope" })
+    end, { desc = "[S]earch [W]ord" })
 
-    vim.keymap.set("n", "<leader>fW", function()
+    vim.keymap.set("n", "<leader>sW", function()
       local word = vim.fn.expand("<cWORD>")
       builtin.grep_string({ search = word })
-    end, { desc = "Grep entire word under cursor with Telescope" })
+    end, { desc = "[S]earch Entire [W]ord" })
 
-    vim.keymap.set("n", "<leader>fs", function()
+    vim.keymap.set("n", "<leader>sg", function()
       builtin.live_grep({
         additional_args = function()
           return { "--hidden" }
         end,
       })
-    end, { desc = "Grep search with Telescope" })
+    end, { desc = "[S]earch by [G]rep" })
 
-    vim.keymap.set("n", "<leader>fh", function()
+    vim.keymap.set("n", "<leader>sh", function()
       builtin.help_tags()
-    end, { desc = "List help tags with Telescope" })
+    end, { desc = "[S]earch [H]elp" })
 
-    vim.keymap.set("n", "<leader>fk", function()
+    vim.keymap.set("n", "<leader>sk", function()
       builtin.keymaps()
-    end, { desc = "List keymaps with Telescope" })
+    end, { desc = "[S]earch [K]eymaps" })
 
-    vim.keymap.set("n", "<leader>fe", "<CMD>Telescope emoji<CR>")
+    vim.keymap.set("n", "<leader>se", "<CMD>Telescope emoji<CR>", { desc = "[S]earch [E]mojis" })
 
-    vim.keymap.set("n", "<leader>fg", function()
+    vim.keymap.set("n", "<leader>sw", function()
       telescope.extensions.git_worktree.git_worktrees()
-    end)
+    end, { desc = "[S]earch [W]orktrees" })
 
-    vim.keymap.set("n", "<leader>gs", function()
+    vim.keymap.set("n", "<leader>sd", function()
       builtin.git_status()
-    end, { desc = "List files with changes" })
+    end, { desc = "[S]earch Git [D]iffs" })
 
     vim.keymap.set("n", "<leader>mc", function()
       telescope.extensions.metals.commands()
-    end, { desc = "List Metals commands" })
+    end, { desc = "Preview [M]etals [C]ommands" })
   end,
 }
