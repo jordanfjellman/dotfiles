@@ -45,29 +45,6 @@ return {
             linehl = "GitSignsChangeLn",
           },
         },
-        signcolumn = true, -- Toggle with `:Gitsigns toggle_signs`
-        numhl = false, -- Toggle with `:Gitsigns toggle_numhl`
-        linehl = false, -- Toggle with `:Gitsigns toggle_linehl`
-        word_diff = false, -- Toggle with `:Gitsigns toggle_word_diff`
-        watch_gitdir = {
-          interval = 1000,
-          follow_files = true,
-        },
-        attach_to_untracked = true,
-        current_line_blame = false, -- Toggle with `:Gitsigns toggle_current_line_blame`
-        current_line_blame_opts = {
-          virt_text = true,
-          virt_text_pos = "eol", -- "eol" | "overlay" | "right_align"
-          delay = 1000,
-          ignore_whitespace = false,
-        },
-        current_line_blame_formatter_opts = {
-          relative_time = false,
-        },
-        sign_priority = 6,
-        update_debounce = 100,
-        status_formatter = nil, -- Use default
-        max_file_length = 40000,
         preview_config = {
           -- Options passed to nvim_open_win
           border = "none",
@@ -75,9 +52,6 @@ return {
           relative = "cursor",
           row = 0,
           col = 1,
-        },
-        yadm = {
-          enable = false,
         },
         on_attach = function(bufnr)
           local gs = package.loaded.gitsigns
@@ -89,7 +63,7 @@ return {
           end
 
           -- Navigation
-          map("n", "<leader>hn", function()
+          map("n", "]c", function()
             if vim.wo.diff then
               return "]c"
             end
@@ -97,9 +71,9 @@ return {
               gs.next_hunk()
             end)
             return "<Ignore>"
-          end, { expr = true })
+          end, { expr = true, desc = "Next Change" })
 
-          map("n", "<leader>hp", function()
+          map("n", "[c", function()
             if vim.wo.diff then
               return "[c"
             end
@@ -107,27 +81,33 @@ return {
               gs.prev_hunk()
             end)
             return "<Ignore>"
-          end, { expr = true })
+          end, { expr = true, desc = "Previous Change" })
 
           -- Actions
-          map({ "n", "v" }, "<leader>hs", ":Gitsigns stage_hunk<CR>")
-          map({ "n", "v" }, "<leader>hr", ":Gitsigns reset_hunk<CR>")
-          map("n", "<leader>hS", gs.stage_buffer)
-          map("n", "<leader>hu", gs.undo_stage_hunk)
-          map("n", "<leader>hR", gs.reset_buffer)
-          map("n", "<leader>hp", gs.preview_hunk)
+          map("n", "<leader>hs", gs.stage_hunk, { desc = "[H]unk [S]tage" })
+          map("n", "<leader>hr", gs.reset_hunk, { desc = "[H]unk [R]eset" })
+          map("v", "<leader>hs", function()
+            gs.stage_hunk({ vim.fn.line("."), vim.fn.line("v") })
+          end, { desc = "[H]unk [S]tage" })
+          map("v", "<leader>hr", function()
+            gs.reset_hunk({ vim.fn.line("."), vim.fn.line("v") })
+          end, { desc = "[H]unk [R]eset" })
+          map("n", "<leader>hS", gs.stage_buffer, { desc = "[H]unk [S]tage Entire Buffer" })
+          map("n", "<leader>hu", gs.undo_stage_hunk, { desc = "[H]unk [U]ndo" })
+          map("n", "<leader>hR", gs.reset_buffer, { desc = "[H]unk [R]eset Entire Buffer" })
+          map("n", "<leader>hp", gs.preview_hunk, { desc = "[H]unk [P]review" })
           map("n", "<leader>hb", function()
             gs.blame_line({ full = true })
-          end)
+          end, { desc = "[H]unk [B]lame" })
           map("n", "<leader>tb", gs.toggle_current_line_blame)
           map("n", "<leader>hd", gs.diffthis)
           map("n", "<leader>hD", function()
             gs.diffthis("~")
           end)
-          map("n", "<leader>td", gs.toggle_deleted)
+          map("n", "<leader>td", gs.toggle_deleted, { desc = "[T]oggle [D]eleted" })
 
           -- Text object
-          map({ "o", "x" }, "<leader>hy", ":<C-U>Gitsigns select_hunk<CR>")
+          map({ "o", "x" }, "ih", ":<C-U>Gitsigns select_hunk<CR>")
         end,
       })
     end,
