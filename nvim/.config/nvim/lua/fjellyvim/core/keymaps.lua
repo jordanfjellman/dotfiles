@@ -38,7 +38,12 @@ M.setup = function()
   vim.keymap.set("n", "N", "Nzzzu")
 
   -- external commands
-  vim.keymap.set("n", "<C-f>", "<cmd>silent !tmux neww tmux-sessionizer<CR>", { desc = "open tmux sessionizer" })
+  vim.keymap.set(
+    "n",
+    "<leader>ot",
+    "<cmd>silent !tmux neww tmux-sessionizer<CR>",
+    { desc = "[O]open [T]mux Sessionizer" }
+  )
 end
 
 return M
