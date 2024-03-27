@@ -86,32 +86,53 @@ return {
           end,
         },
         mapping = {
+          -- Select the [n]ext item
+          ["<C-n>"] = cmp.mapping.select_next_item(),
+          -- Select the [p]revious item
+          ["<C-p>"] = cmp.mapping.select_prev_item(),
+
+          -- [E]xit completion
+          ["<C-e>"] = cmp.mapping.abort(),
+
+          -- Scroll the documentation window [b]ack / [f]orward
           ["<C-b>"] = cmp.mapping.scroll_docs(-4),
           ["<C-f>"] = cmp.mapping.scroll_docs(4),
-          ["<CR>"] = cmp.mapping.confirm(),
-          ["<Tab>"] = cmp.mapping(function(fallback)
-            -- local copilot_keys = vim.fn["copilot#Accept"]()
-            if cmp.visible() then
-              cmp.select_next_item()
-            elseif has_words_before() then
-              cmp.complete()
-            else
-              fallback()
+
+          this = has_words_before and cmp.mapping.complete() or nil,
+          -- Accept ([y]es) the completion.
+          --  This will auto-import if your LSP supports it.
+          --  This will expand snippets if the LSP sent a snippet.
+          ["<C-y>"] = cmp.mapping.confirm({ select = true }),
+
+          -- Manually trigger a completion from nvim-cmp.
+          --  Generally you don't need this, because nvim-cmp will display
+          --  completions whenever it has completion options available.
+          ["<C-Space>"] = cmp.mapping.complete({}),
+
+          -- Think of <c-l> as moving to the right of your snippet expansion.
+          --  So if you have a snippet that's like:
+          --  function $name($args)
+          --    $body
+          --  end
+          --
+          -- <c-l> will move you to the right of each of the expansion locations.
+          -- <c-h> is similar, except moving you backwards.
+          ["<C-l>"] = cmp.mapping(function()
+            local luasnip = require("luasnip")
+            if luasnip.expand_or_locally_jumpable() then
+              luasnip.expand_or_jump()
+              cmp.mapping.confirm({ select = true })()
             end
           end, { "i", "s" }),
-          ["<S-Tab>"] = cmp.mapping(function(fallback)
-            if cmp.visible() then
-              cmp.select_prev_item()
-            elseif has_words_before() then
-              cmp.complete()
-            else
-              fallback()
+          ["<C-h>"] = cmp.mapping(function()
+            local luasnip = require("luasnip")
+            if luasnip.locally_jumpable(-1) then
+              luasnip.jump(-1)
             end
-            cmp.complete()
-            cmp.mapping.select_prev_item()
-            cmp.complete()
           end, { "i", "s" }),
-          ["<C-E>"] = cmp.mapping.abort(),
+
+          -- For more advanced Luasnip keymaps (e.g. selecting choice nodes, expansion) see:
+          --    https://github.com/L3MON4D3/LuaSnip?tab=readme-ov-file#keymaps
         },
         sources = cmp.config.sources({
           {
@@ -157,6 +178,33 @@ return {
         }, {
           { name = "cmdline", keyword_length = 2 }, -- prevent cmp for single character commands like :w
         }),
+      })
+    end,
+  },
+  {
+    "zbirenbaum/copilot.lua",
+    cmd = "Copilot",
+    event = "InsertEnter",
+    config = function()
+      require("copilot").setup({
+        panel = { enable = false },
+        suggestion = {
+          auto_trigger = true,
+          keymap = {
+            -- [y]es, accept completion
+            -- note: if this conflicts with a normal completion, try using <C-space> instead
+            accept = "<C-y>",
+            -- next [s]uggestion
+            next = "]s",
+            -- previous [s]uggestion
+            prev = "[s",
+            -- [e]xit completion
+            dismiss = "<C-e>",
+          },
+        },
+        filetypes = {
+          yaml = true,
+        },
       })
     end,
   },
