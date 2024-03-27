@@ -32,6 +32,8 @@
   format = ssh
 [commit]
   gpgsign = true
+[rebase]
+	updateRefs = true
 [includeIf "gitdir:~/code/work/"]
   path = .gitconfig_work
 [includeIf "gitdir:~/code/personal/"]
