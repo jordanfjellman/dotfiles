@@ -38,22 +38,19 @@ return {
     opts = {},
     keys = {
       {
-        "<leader>tt",
+        "<leader>od",
         function()
-          require("trouble").toggle()
+          require("trouble").toggle("document_diagnostics")
         end,
+        { desc = "[O]pen [D]ocument Diagnostics" },
       },
+
       {
-        "<leader>tn",
+        "<leader>ow",
         function()
-          require("trouble").next({ skip_groups = true, jump = true })
+          require("trouble").toggle("workspace_diagnostics")
         end,
-      },
-      {
-        "<leader>tp",
-        function()
-          require("trouble").previous({ skip_groups = true, jump = true })
-        end,
+        { desc = "[O]pen [W]orkspace Diagnostics" },
       },
       {
         "gR",

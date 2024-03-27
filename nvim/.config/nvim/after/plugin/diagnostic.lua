@@ -32,12 +32,12 @@ vim.diagnostic.config({
   virtual_text = false,
 })
 
-vim.keymap.set("n", "<leader>dn", function()
+vim.keymap.set("n", "]d", function()
   vim.diagnostic.goto_next({ wrap = true, float = true })
-end)
-vim.keymap.set("n", "<leader>dp", function()
+end, { desc = "Next [D]iagnostic" })
+vim.keymap.set("n", "[d", function()
   vim.diagnostic.goto_prev({ wrap = true, float = true })
-end)
+end, { desc = "Previous [D]iagnostic" })
 vim.keymap.set("n", "<leader>d", function()
   vim.diagnostic.open_float(0, { scope = "line" })
 end)
