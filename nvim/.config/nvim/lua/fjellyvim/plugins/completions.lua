@@ -100,7 +100,8 @@ return {
           -- Manually trigger a completion from nvim-cmp.
           --  Generally you don't need this, because nvim-cmp will display
           --  completions whenever it has completion options available.
-          ["<C-Space>"] = cmp.mapping.complete({}),
+          --  note: temporarily disabled because it conflicts with copilot
+          -- ["<C-space>"] = cmp.mapping.complete({}),
 
           -- Think of <c-l> as moving to the right of your snippet expansion.
           --  So if you have a snippet that's like:
@@ -180,18 +181,18 @@ return {
     event = "InsertEnter",
     config = function()
       require("copilot").setup({
-        panel = { enable = false },
+        panel = { enabled = false },
         suggestion = {
           auto_trigger = true,
           keymap = {
             -- [y]es, accept completion
             -- note: if this conflicts with a normal completion, try using <C-space> instead
-            accept = "<C-y>",
+            accept = "<C-space>",
             -- next [s]uggestion
-            next = "]s",
-            -- previous [s]uggestion
-            prev = "[s",
-            -- [e]xit completion
+            next = "<C-s>",
+            -- cycle to get to previous suggestion
+            prev = false,
+            -- [e]xit suggestions
             dismiss = "<C-e>",
           },
         },
