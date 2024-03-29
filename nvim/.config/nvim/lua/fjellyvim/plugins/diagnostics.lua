@@ -4,33 +4,48 @@ return {
     keys = {},
     config = function()
       local dap = require("dap")
-      vim.keymap.set("n", "<Leader>dr", function()
+      vim.keymap.set("n", "<leader>tr", function()
         dap.repl.toggle()
-      end)
-      vim.keymap.set("n", "<Leader>dl", function()
+      end, { desc = "[T]oggle [R]EPL" })
+      vim.keymap.set("n", "<leader>dl", function()
         dap.run_last()
-      end)
-      vim.keymap.set("n", "<leader>dt", function()
+      end, { desc = "[D]ebug [L]atest" })
+      vim.keymap.set("n", "<leader>dp", function()
         dap.toggle_breakpoint()
-      end)
+      end, { desc = "[D]ebug [P]oint" })
       vim.keymap.set("n", "<leader>dc", function()
         dap.continue()
-      end)
+      end, { desc = "[D]ebug [C]ontinue" })
       vim.keymap.set("n", "<leader>do", function()
         dap.step_over()
-      end)
+      end, { desc = "[D]ebug [O]ver" })
       vim.keymap.set("n", "<leader>di", function()
         dap.step_into()
-      end)
-      vim.keymap.set("n", "<leader>dx", function()
+      end, { desc = "[D]ebug [I]nto" })
+      vim.keymap.set("n", "<leader>de", function()
         dap.terminate()
-      end)
+      end, { desc = "[D]ebug [E]xit" })
     end,
   },
   {
     "rcarriga/nvim-dap-ui",
-    dependencies = { "mfussenegger/nvim-dap" },
+    dependencies = { "mfussenegger/nvim-dap", "nvim-neotest/nvim-nio" },
     events = { "VeryLazy" },
+    config = function()
+      local dap, dapui = require("dap"), require("dapui")
+      dap.listeners.before.attach.dapui_config = function()
+        dapui.open()
+      end
+      dap.listeners.before.launch.dapui_config = function()
+        dapui.open()
+      end
+      dap.listeners.before.event_terminated.dapui_config = function()
+        dapui.close()
+      end
+      dap.listeners.before.event_exited.dapui_config = function()
+        dapui.close()
+      end
+    end,
   },
   {
     "folke/trouble.nvim",
