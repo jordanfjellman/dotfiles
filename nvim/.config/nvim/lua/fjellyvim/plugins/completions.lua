@@ -183,7 +183,7 @@ return {
       require("copilot").setup({
         panel = { enabled = false },
         suggestion = {
-          auto_trigger = true,
+          auto_trigger = false,
           keymap = {
             -- [y]es, accept completion
             -- note: if this conflicts with a normal completion, try using <C-space> instead
