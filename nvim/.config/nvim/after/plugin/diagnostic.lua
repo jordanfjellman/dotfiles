@@ -23,7 +23,9 @@ vim.diagnostic.config({
     header = "",
     prefix = "",
   },
-  underline = true,
+  underline = {
+    severity = vim.diagnostic.severity.ERROR,
+  },
   update_in_insert = true,
   severity_sort = true,
   signs = {
