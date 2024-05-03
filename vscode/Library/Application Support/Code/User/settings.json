@@ -66,5 +66,6 @@
     "markdown": true,
     "scminput": false
   },
-  "workbench.activityBar.location": "hidden"
+  "workbench.activityBar.location": "hidden",
+  "aws.telemetry": false
 }
