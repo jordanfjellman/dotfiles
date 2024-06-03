@@ -112,5 +112,4 @@ return {
       })
     end,
   },
-  "ThePrimeagen/git-worktree.nvim",
 }
