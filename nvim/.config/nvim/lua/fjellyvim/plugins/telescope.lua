@@ -15,7 +15,7 @@ return {
 				return vim.fn.executable("make") == 1
 			end,
 		},
-		{ "nvim-telescope/telescope-live-grep-args.nvim", { version = "^1.0.0" } },
+		{ "nvim-telescope/telescope-live-grep-args.nvim", version = "^1.0.0" },
 		{ "ThePrimeagen/harpoon" },
 		{ "xiyaowong/telescope-emoji.nvim" },
 		{ "nvim-treesitter/nvim-treesitter" },
@@ -82,6 +82,8 @@ return {
 		end, { desc = "[S]earch [K]eymaps" })
 
 		vim.keymap.set("n", "<leader>se", "<CMD>Telescope emoji<CR>", { desc = "[S]earch [E]mojis" })
+
+		vim.keymap.set("n", "<leader>/", builtin.current_buffer_fuzzy_find, { desc = "Search Current Buffer" })
 
 		vim.keymap.set("n", "<leader>sd", function()
 			builtin.git_status()
