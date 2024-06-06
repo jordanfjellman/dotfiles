@@ -92,5 +92,13 @@ return {
 		vim.keymap.set("n", "<leader>mc", function()
 			telescope.extensions.metals.commands()
 		end, { desc = "Preview [M]etals [C]ommands" })
+
+		vim.keymap.set("n", "<leader>ed", function()
+			builtin.find_files({ cwd = "~/code/personal/dotfiles", hidden = true })
+		end, { desc = "[E]dit [D]otfiles" })
+
+		vim.keymap.set("n", "<leader>ec", function()
+			builtin.find_files({ cwd = vim.fs.joinpath(vim.fn.stdpath("config")) })
+		end, { desc = "[E]dit Neovim [C]onfig" })
 	end,
 }
