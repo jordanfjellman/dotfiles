@@ -15,6 +15,7 @@ return {
 				return vim.fn.executable("make") == 1
 			end,
 		},
+		{ "nvim-telescope/telescope-live-grep-args.nvim", { version = "^1.0.0" } },
 		{ "ThePrimeagen/harpoon" },
 		{ "xiyaowong/telescope-emoji.nvim" },
 		{ "nvim-treesitter/nvim-treesitter" },
@@ -46,6 +47,7 @@ return {
 		telescope.load_extension("fzf")
 		telescope.load_extension("harpoon")
 		telescope.load_extension("emoji")
+		telescope.load_extension("live_grep_args")
 
 		local builtin = require("telescope.builtin")
 
