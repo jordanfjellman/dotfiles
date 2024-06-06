@@ -41,6 +41,10 @@ if type kubectl &>/dev/null; then
   source <(kubectl completion zsh)
 fi
 
+if type stern &>/dev/null; then
+  source <(stern --completion=zsh)
+fi
+
 # fnm
 eval "$(fnm env --use-on-cd)"
 
