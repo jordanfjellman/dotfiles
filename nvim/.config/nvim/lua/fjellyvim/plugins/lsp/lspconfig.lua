@@ -47,6 +47,18 @@ return {
       local lspconfig = require("lspconfig")
       local capabilties = require("cmp_nvim_lsp").default_capabilities()
 
+      local ThePrimeagenGroup = vim.api.nvim_create_augroup("ThePrimeagen", {})
+
+      vim.api.nvim_create_autocmd("LspAttach", {
+        group = ThePrimeagenGroup,
+        callback = function(e)
+          local opts = { buffer = e.buf }
+          vim.keymap.set("i", "<C-h>", function()
+            vim.lsp.buf.signature_help()
+          end, opts)
+        end,
+      })
+
       lspconfig.lua_ls.setup({
         capabilities = capabilties,
         on_attach = disable_builtin_lsp_formatter,
