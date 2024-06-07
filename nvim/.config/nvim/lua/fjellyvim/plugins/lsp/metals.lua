@@ -125,12 +125,13 @@ return {
           group = metals_lsp_group,
           desc = "[METALS] Clear references on cursor moved",
         })
-        vim.api.nvim_create_autocmd({ "BufEnter", "CursorHold", "InsertLeave" }, {
-          buffer = bufnr,
-          callback = vim.lsp.codelens.refresh,
-          group = metals_lsp_group,
-          desc = "[METALS] Refresh code lens on bufenter, cursorhold, insertleave",
-        })
+        -- disable after upgrade to neovim 0.10
+        -- vim.api.nvim_create_autocmd({ "BufEnter", "CursorHold", "InsertLeave" }, {
+        --   buffer = bufnr,
+        --   callback = vim.lsp.codelens.refresh,
+        --   group = metals_lsp_group,
+        --   desc = "[METALS] Refresh code lens on bufenter, cursorhold, insertleave",
+        -- })
         vim.api.nvim_buf_set_option(bufnr, "omnifunc", "v:lua.vim.lsp.omnifunc")
       end
 
