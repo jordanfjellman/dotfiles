@@ -228,6 +228,13 @@ return {
           vim.lsp.codelens.run()
         end,
       },
+      {
+        "<leader>th",
+        function()
+          vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled({}))
+        end,
+        { desc = "[T]oggle Inlay [H]ints" },
+      },
     },
   },
   {
