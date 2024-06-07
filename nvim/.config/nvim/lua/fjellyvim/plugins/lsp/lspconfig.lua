@@ -12,6 +12,7 @@ return {
     opts = {
       ensure_installed = {
         "bashls",
+        "biome",
         "cmake",
         "cssls",
         "diagnosticls",
@@ -19,6 +20,7 @@ return {
         "gopls",
         "graphql",
         "html",
+        "marksman",
         "jsonls",
         "lua_ls",
         "rust_analyzer",
@@ -101,6 +103,11 @@ return {
             validate = { enable = true },
           },
         },
+      })
+
+      lspconfig.marksman.setup({
+        capabilities = capabilties,
+        on_attach = disable_builtin_lsp_formatter,
       })
 
       lspconfig.yamlls.setup({
