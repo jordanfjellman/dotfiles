@@ -67,5 +67,6 @@
     "scminput": false
   },
   "workbench.activityBar.location": "hidden",
-  "aws.telemetry": false
+  "aws.telemetry": false,
+  "amazonQ.telemetry": false
 }
