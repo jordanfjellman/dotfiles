@@ -55,6 +55,9 @@ export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
 export FZF_ALT_C_COMMAND="$FZF_DEFAULT_COMMAND"
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
+# Postgress (Added for Rust Workshop)
+export DATABASE_URL=postgres://localhost:5432/postgres
+
 # Helm
 export HELM_HOME="$HOME/.helm"
 
