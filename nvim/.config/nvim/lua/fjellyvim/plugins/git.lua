@@ -32,19 +32,29 @@ return {
     "lewis6991/gitsigns.nvim",
     dependencies = { "nvim-lua/plenary.nvim" },
     config = function()
+      -- 'signs.topdelete.linehl' is now deprecated, please define highlight 'GitSignsTopdeleteLn' e.g:
+      --   vim.api.nvim_set_hl(0, 'GitSignsTopdeleteLn', { link = 'GitSignsDeleteLn' })
       require("gitsigns").setup({
         signs = {
-          add = { hl = "GitSignsAdd", text = "▎", numhl = "GitSignsAddNr", linehl = "GitSignsAddLn" },
-          change = { hl = "GitSignsChange", text = "▎", numhl = "GitSignsChangeNr", linehl = "GitSignsChangeLn" },
-          delete = { hl = "GitSignsDelete", text = "", numhl = "GitSignsDeleteNr", linehl = "GitSignsDeleteLn" },
-          topdelete = { hl = "GitSignsDelete", text = "", numhl = "GitSignsDeleteNr", linehl = "GitSignsDeleteLn" },
-          changedelete = {
-            hl = "GitSignsChange",
-            text = "▎",
-            numhl = "GitSignsChangeNr",
-            linehl = "GitSignsChangeLn",
-          },
+          add = { text = "┃" },
+          change = { text = "┃" },
+          delete = { text = "_" },
+          topdelete = { text = "‾" },
+          changedelete = { text = "~" },
+          untracked = { text = "┆" },
         },
+        -- signs = {
+        --   add = { hl = "GitSignsAdd", text = "▎", numhl = "GitSignsAddNr", linehl = "GitSignsAddLn" },
+        --   change = { hl = "GitSignsChange", text = "▎", numhl = "GitSignsChangeNr", linehl = "GitSignsChangeLn" },
+        --   delete = { hl = "GitSignsDelete", text = "", numhl = "GitSignsDeleteNr", linehl = "GitSignsDeleteLn" },
+        --   topdelete = { hl = "GitSignsDelete", text = "", numhl = "GitSignsDeleteNr", linehl = "GitSignsDeleteLn" },
+        --   changedelete = {
+        --     hl = "GitSignsChange",
+        --     text = "▎",
+        --     numhl = "GitSignsChangeNr",
+        --     linehl = "GitSignsChangeLn",
+        --   },
+        -- },
         preview_config = {
           -- Options passed to nvim_open_win
           border = "none",
@@ -54,7 +64,7 @@ return {
           col = 1,
         },
         on_attach = function(bufnr)
-          local gs = package.loaded.gitsigns
+          local gs = require("gitsigns")
 
           local function map(mode, l, r, opts)
             opts = opts or {}
@@ -65,22 +75,18 @@ return {
           -- Navigation
           map("n", "]c", function()
             if vim.wo.diff then
-              return "]c"
+              vim.cmd.normal({ "]c", bang = true })
+            else
+              gs.nav_hunk("next")
             end
-            vim.schedule(function()
-              gs.next_hunk()
-            end)
-            return "<Ignore>"
           end, { expr = true, desc = "Next Change" })
 
           map("n", "[c", function()
             if vim.wo.diff then
-              return "[c"
+              vim.cmd.normal({ "[c", bang = true })
+            else
+              gs.nav_hunk("prev")
             end
-            vim.schedule(function()
-              gs.prev_hunk()
-            end)
-            return "<Ignore>"
           end, { expr = true, desc = "Previous Change" })
 
           -- Actions

@@ -10,6 +10,8 @@ export HISTFILE=$HOME/.zsh_history
 export HISTSIZE=100000
 export HISTFILESIZE=100000
 
+#export NODE_OPTIONS=--openssl-legacy-provider
+
 # Homebrew
 #
 # "brew" is used in this script, so it needs to be set early
