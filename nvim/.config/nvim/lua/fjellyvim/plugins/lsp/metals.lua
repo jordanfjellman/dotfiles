@@ -105,20 +105,6 @@ return {
 
         -- Autocommands
         local metals_lsp_group = vim.api.nvim_create_augroup("fjellyvim-metals-lsp", { clear = true })
-        vim.api.nvim_create_autocmd({ "CursorHold", "CursorHoldI" }, {
-          buffer = bufnr,
-          callback = function()
-            local r, _ = unpack(vim.api.nvim_win_get_cursor(0))
-            local line_diagnostics = vim.diagnostic.get(bufnr, { lnum = r - 1 })
-            if line_diagnostics and #line_diagnostics == 0 then
-              vim.lsp.buf.hover()
-            else
-              vim.diagnostic.open_float(bufnr, { scope = "line" })
-            end
-          end,
-          group = metals_lsp_group,
-          desc = "[METALS] Show hover on cursor hold",
-        })
         vim.api.nvim_create_autocmd("CursorMoved", {
           buffer = bufnr,
           callback = vim.lsp.buf.clear_references,
