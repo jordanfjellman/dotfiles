@@ -22,7 +22,8 @@ spoon.SpoonInstall:andUse("AppLauncher", {
     a = "Android Studio",
     b = "Brave Browser",
     c = "Visual Studio Code",
-    g = "Github Desktop", -- git
+    f = "Firefox Developer Edition",
+    g = "Google Chrome Canary",
     i = "IntelliJ IDEA",
     k = "kitty",
     m = "Microsoft Outlook", -- mail
@@ -30,7 +31,7 @@ spoon.SpoonInstall:andUse("AppLauncher", {
     p = "Postman",
     r = "Reader",
     s = "Slack",
-    t = "Microsoft Teams (work or school)",
+    t = "Microsoft Teams",
     x = "Xcode",
     y = "YouTube Music",
     z = "zoom.us",
@@ -42,9 +43,7 @@ hs.hotkey.bind(hyper, "g", function()
 end)
 
 hs.hotkey.bind(hyper, "j", function()
-  hs.execute(
-    "open https://lifeway.atlassian.net/jira/software/c/projects/DCD/boards/416?quickFilter=1142&quickFilter=1141"
-  )
+  hs.execute("open https://lifeway.atlassian.net/jira/software/c/projects/DCD/boards/475/timeline?statuses=2%2C4")
 end)
 
 hs.hotkey.bind(hyper, "m", function()
