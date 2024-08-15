@@ -68,5 +68,8 @@
   },
   "workbench.activityBar.location": "hidden",
   "aws.telemetry": false,
-  "amazonQ.telemetry": false
+  "amazonQ.telemetry": false,
+  "[css]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  }
 }
