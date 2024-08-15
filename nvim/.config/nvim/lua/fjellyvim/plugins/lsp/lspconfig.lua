@@ -59,6 +59,8 @@ return {
         end,
       })
 
+      lspconfig.dockerls.setup({})
+
       lspconfig.lua_ls.setup({
         capabilities = capabilties,
         on_attach = disable_builtin_lsp_formatter,
