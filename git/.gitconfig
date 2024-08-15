@@ -38,3 +38,5 @@
   path = .gitconfig_work
 [includeIf "gitdir:~/code/personal/"]
   path = .gitconfig_personal
+[includeIf "gitdir:~/code/poc/"]
+  path = .gitconfig_work
