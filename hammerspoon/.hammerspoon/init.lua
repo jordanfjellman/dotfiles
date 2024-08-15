@@ -22,6 +22,7 @@ spoon.SpoonInstall:andUse("AppLauncher", {
     a = "Android Studio",
     b = "Brave Browser",
     c = "Visual Studio Code",
+    d = "Claude",
     f = "Firefox Developer Edition",
     g = "Google Chrome Canary",
     i = "IntelliJ IDEA",
