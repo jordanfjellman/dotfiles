@@ -16,18 +16,17 @@ M.show_pull_requests = function(opts)
     .new(opts, {
       finder = finders.new_async_job({
         command_generator = function()
-          return { "gh", "pr", "list", "--json", "number,title,body", "--jq", ".[]" }
+          return { "gh", "pr", "list", "--json", "number,title,body,author", "--jq", ".[]" }
         end,
 
         entry_maker = function(entry)
-          log.debug(entry)
           local parsed = vim.json.decode(entry)
           log.debug(parsed)
           if parsed then
             return {
               value = parsed,
-              display = parsed.title,
-              ordinal = parsed.title .. " " .. tostring(parsed.number), -- search by title and issue number
+              display = "#" .. parsed.number .. "\t| " .. parsed.title,
+              ordinal = parsed.title .. " " .. tostring(parsed.number), -- .. " " .. parsed.author.name, -- search by title, issue number, and author name
             }
           end
         end,
@@ -36,6 +35,12 @@ M.show_pull_requests = function(opts)
       previewer = previewers.new_buffer_previewer({
         title = "Pull Request Details",
         define_preview = function(self, entry)
+          local body = vim.tbl_flatten(vim.split(entry.value.body, "\r\n"))
+          local lines_table = {}
+          for _, value in ipairs(body) do
+            local lines = vim.split(value, "\n")
+            table.insert(lines_table, lines)
+          end
           vim.api.nvim_buf_set_lines(
             self.state.bufnr,
             0,
@@ -45,10 +50,11 @@ M.show_pull_requests = function(opts)
               .iter({
                 "# " .. entry.value.title .. " (#" .. entry.value.number .. ")",
                 "",
-                vim.split(entry.value.body, "\r\n", { trimempty = true }),
-                "```lua",
-                vim.split(vim.inspect(entry), "\n"),
-                "```",
+                -- "Authored by " .. entry.value.author.name .. " (@" .. entry.value.author.login .. ")",
+                "Authored by @" .. entry.value.author.login,
+                "---",
+                "",
+                vim.tbl_flatten(lines_table),
               })
               :flatten()
               :totable()
@@ -80,6 +86,6 @@ M.show_pull_requests = function(opts)
     :find()
 end
 
-vim.keymap.set("n", "<Leader>opr", M.show_pull_requests, { desc = "[O]pen [P]ull Requests" })
+vim.keymap.set("n", "<leader>spr", M.show_pull_requests, { desc = "[S]earch [P]ull [R]equests" })
 
 return M
