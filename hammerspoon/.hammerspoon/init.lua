@@ -16,7 +16,7 @@ hs.spoons.use("WindowManager", {
 
 spoon.SpoonInstall:andUse("AppLauncher", {
   config = {
-    modifiers = meh,
+    modifiers = hyper,
   },
   hotkeys = {
     a = "Android Studio",
@@ -39,27 +39,27 @@ spoon.SpoonInstall:andUse("AppLauncher", {
   },
 })
 
-hs.hotkey.bind(hyper, "g", function()
+hs.hotkey.bind(meh, "g", function()
   hs.execute("open https://github.com/notifications")
 end)
 
-hs.hotkey.bind(hyper, "j", function()
+hs.hotkey.bind(meh, "j", function()
   hs.execute("open https://lifeway.atlassian.net/jira/software/c/projects/DCD/boards/475/timeline?statuses=2%2C4")
 end)
 
-hs.hotkey.bind(hyper, "m", function()
+hs.hotkey.bind(meh, "m", function()
   hs.execute("open https://mail.google.com")
 end)
 
-hs.hotkey.bind(hyper, "n", function()
+hs.hotkey.bind(meh, "n", function()
   hs.execute("open https://keep.google.com")
 end)
 
-hs.hotkey.bind(hyper, "c", function()
+hs.hotkey.bind(meh, "c", function()
   hs.execute("open https://chat.openai.com")
 end)
 
 spoon.SpoonInstall:andUse("ReloadConfiguration", {
-  hotkeys = { reloadConfiguration = { hyper, "R" } },
+  hotkeys = { reloadConfiguration = { meh, "R" } },
   start = true,
 })
