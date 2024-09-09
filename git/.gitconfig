@@ -32,6 +32,7 @@
   format = ssh
 [commit]
   gpgsign = true
+	template = /Users/jordan.fjellman/.gitmessage
 [rebase]
 	updateRefs = true
 [includeIf "gitdir:~/code/work/"]
