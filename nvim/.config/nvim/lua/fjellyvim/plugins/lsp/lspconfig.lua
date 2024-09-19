@@ -124,6 +124,12 @@ return {
         on_attach = disable_builtin_lsp_formatter,
       })
 
+      -- local swift_capabilities = require("cmp_nvim_lsp").default_capabilities()
+      -- swift_capabilities.workspace.didChangeWatchedFiles = { dynamicRegistration = true }
+      lspconfig.sourcekit.setup({
+        capabilties = capabilties,
+      })
+
       lspconfig.yamlls.setup({
         capabilities = capabilties,
         filetypes = { "yaml", "yml" },

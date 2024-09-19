@@ -6,6 +6,9 @@ hs.loadSpoon("SpoonInstall")
 
 -- Pre-downloaded via external script
 hs.spoons.use("WindowManager", {
+  config = {
+    modifiers = meh,
+  },
   hotkeys = {
     Right = "right",
     Left = "left",
