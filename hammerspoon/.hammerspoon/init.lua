@@ -24,19 +24,19 @@ spoon.SpoonInstall:andUse("AppLauncher", {
   hotkeys = {
     a = "Android Studio",
     b = "Brave Browser",
-    c = "Visual Studio Code",
-    d = "Claude",
+    c = "Claude", -- ai [c]hat
+    e = "Zed", -- code [e]ditor
     f = "Firefox Developer Edition",
     g = "Google Chrome Canary",
     i = "IntelliJ IDEA",
     k = "kitty",
-    m = "Microsoft Outlook", -- mail
-    n = "Obsidian", -- notes
+    m = "Microsoft Outlook", -- [m]ail
+    n = "Obsidian", -- [n]otes
     p = "Postman",
     r = "Reader",
     s = "Slack",
     t = "Microsoft Teams",
-    x = "Xcode",
+    x = "Xcode", -- [x]code
     y = "YouTube Music",
     z = "zoom.us",
   },
