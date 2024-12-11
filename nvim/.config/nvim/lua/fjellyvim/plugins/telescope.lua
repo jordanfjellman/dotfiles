@@ -81,9 +81,9 @@ return {
 
     vim.keymap.set("n", "<leader>/", builtin.current_buffer_fuzzy_find, { desc = "Search Current Buffer" })
 
-    vim.keymap.set("n", "<leader>sd", function()
+    vim.keymap.set("n", "<leader>sc", function()
       builtin.git_status()
-    end, { desc = "[S]earch Git [D]iffs" })
+    end, { desc = "[S]earch Git [C]hanges" })
 
     vim.keymap.set("n", "<leader>mc", function()
       telescope.extensions.metals.commands()
@@ -98,6 +98,6 @@ return {
     end, { desc = "[E]dit Neovim [C]onfig" })
 
     require("fjellyvim.telescope.gh").setup()
-    require("fjellyvim.telescope.multigrep").setup()
+    require("fjellyvim.telescope.dirgrep").setup()
   end,
 }

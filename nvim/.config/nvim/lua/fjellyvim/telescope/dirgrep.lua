@@ -9,7 +9,7 @@ log.level = "debug"
 
 local M = {}
 
-M.live_multigrep = function(opts)
+M.live_dirgrep = function(opts)
   opts = opts or {}
   opts.cwd = opts.cwd or vim.uv.cwd()
 
@@ -20,13 +20,14 @@ M.live_multigrep = function(opts)
       end
       local parts = vim.split(prompt, "  ") -- two spaces for quick typing
       local args = { "rg" }
+
       if parts[1] then
-        table.insert(args, "--regexp")
-        table.insert(args, parts[1])
+        table.insert(args, "--glob")
+        table.insert(args, "**/" .. parts[1] .. "/**")
       end
 
       if parts[2] then
-        table.insert(args, "--glob")
+        table.insert(args, "--regexp")
         table.insert(args, parts[2])
       end
 
@@ -51,7 +52,7 @@ M.live_multigrep = function(opts)
   pickers
     .new(opts, {
       debounce = 100,
-      prompt_title = "Multigrep",
+      prompt_title = "Grep in Directory",
       finder = finder,
       previewer = config.grep_previewer(opts),
       sorter = sorters.empty(), -- sorted automatically by rg
@@ -60,7 +61,7 @@ M.live_multigrep = function(opts)
 end
 
 M.setup = function()
-  vim.keymap.set("n", "<leader>sm", M.live_multigrep, { desc = "[S]earch [M]ultigrep" })
+  vim.keymap.set("n", "<leader>sd", M.live_dirgrep, { desc = "[S]earch within [D]irectory Glob" })
 end
 
 return M
