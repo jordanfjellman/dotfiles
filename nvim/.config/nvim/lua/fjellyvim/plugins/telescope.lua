@@ -15,9 +15,7 @@ return {
         return vim.fn.executable("make") == 1
       end,
     },
-    { "nvim-telescope/telescope-live-grep-args.nvim", version = "^1.0.0" },
     { "ThePrimeagen/harpoon" },
-    { "xiyaowong/telescope-emoji.nvim" },
     { "nvim-treesitter/nvim-treesitter" },
     { "nvim-tree/nvim-web-devicons" },
   },
@@ -31,7 +29,7 @@ return {
         file_previewer = previewers.vim_buffer_cat.new,
         file_sorter = require("telescope.sorters").get_fzy_sorter,
         grep_previewer = previewers.vim_buffer_vimgrep.new,
-        layout_strategy = "vertical",
+        layout_strategy = "horizontal",
         prompt_prefix = "❯",
       },
       extensions = {
@@ -46,8 +44,6 @@ return {
 
     telescope.load_extension("fzf")
     telescope.load_extension("harpoon")
-    telescope.load_extension("emoji")
-    telescope.load_extension("live_grep_args")
 
     local builtin = require("telescope.builtin")
 
@@ -100,5 +96,8 @@ return {
     vim.keymap.set("n", "<leader>ec", function()
       builtin.find_files({ cwd = vim.fs.joinpath(vim.fn.stdpath("config")) })
     end, { desc = "[E]dit Neovim [C]onfig" })
+
+    require("fjellyvim.telescope.gh").setup()
+    require("fjellyvim.telescope.multigrep").setup()
   end,
 }

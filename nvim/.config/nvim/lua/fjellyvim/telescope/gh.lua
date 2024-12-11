@@ -7,7 +7,6 @@ local utils = require("telescope.previewers.utils")
 local config = require("telescope.config").values
 
 local log = require("plenary.log"):new()
-log.level = "debug"
 
 local M = {}
 
@@ -86,6 +85,8 @@ M.show_pull_requests = function(opts)
     :find()
 end
 
-vim.keymap.set("n", "<leader>spr", M.show_pull_requests, { desc = "[S]earch [P]ull [R]equests" })
+M.setup = function()
+  vim.keymap.set("n", "<leader>spr", M.show_pull_requests, { desc = "[S]earch [P]ull [R]equests" })
+end
 
 return M
