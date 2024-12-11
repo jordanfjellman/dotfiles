@@ -32,11 +32,13 @@
   format = ssh
 [commit]
   gpgsign = true
-	template = /Users/jordan.fjellman/.gitmessage
+	template = ~/.gitmessage
 [rebase]
 	updateRefs = true
 [includeIf "gitdir:~/code/work/"]
   path = .gitconfig_work
+[includeIf "gitdir:~/code/oss/"]
+  path = .gitconfig_personal
 [includeIf "gitdir:~/code/personal/"]
   path = .gitconfig_personal
 [includeIf "gitdir:~/code/poc/"]
