@@ -45,7 +45,7 @@ return {
       end
 
       local lspconfig = require("lspconfig")
-      local capabilties = require("cmp_nvim_lsp").default_capabilities()
+      local capabilities = require("cmp_nvim_lsp").default_capabilities()
 
       local ThePrimeagenGroup = vim.api.nvim_create_augroup("ThePrimeagen", {})
 
@@ -62,7 +62,7 @@ return {
       lspconfig.dockerls.setup({})
 
       lspconfig.lua_ls.setup({
-        capabilities = capabilties,
+        capabilities = capabilities,
         on_attach = disable_builtin_lsp_formatter,
         settings = {
           Lua = {
@@ -91,12 +91,12 @@ return {
       })
 
       lspconfig.ansiblels.setup({
-        capabilities = capabilties,
+        capabilities = capabilities,
         on_attach = disable_builtin_lsp_formatter,
       })
 
       lspconfig.gopls.setup({
-        capabilties = capabilties,
+        capabilties = capabilities,
         on_attach = disable_builtin_lsp_formatter,
         cmd = { "gopls" },
         filetypes = { "go", "gomod", "gowork", "gotmpl" },
@@ -104,12 +104,12 @@ return {
       })
 
       lspconfig.graphql.setup({
-        capabilities = capabilties,
+        capabilities = capabilities,
         on_attach = disable_builtin_lsp_formatter,
       })
 
       lspconfig.jsonls.setup({
-        capabilities = capabilties,
+        capabilities = capabilities,
         on_attach = disable_builtin_lsp_formatter,
         settings = {
           json = {
@@ -120,18 +120,18 @@ return {
       })
 
       lspconfig.marksman.setup({
-        capabilities = capabilties,
+        capabilities = capabilities,
         on_attach = disable_builtin_lsp_formatter,
       })
 
       -- local swift_capabilities = require("cmp_nvim_lsp").default_capabilities()
       -- swift_capabilities.workspace.didChangeWatchedFiles = { dynamicRegistration = true }
       lspconfig.sourcekit.setup({
-        capabilties = capabilties,
+        capabilties = capabilities,
       })
 
       lspconfig.yamlls.setup({
-        capabilities = capabilties,
+        capabilities = capabilities,
         filetypes = { "yaml", "yml" },
         settings = {
           yaml = {
