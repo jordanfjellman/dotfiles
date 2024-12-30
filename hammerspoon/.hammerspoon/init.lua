@@ -29,7 +29,7 @@ spoon.SpoonInstall:andUse("AppLauncher", {
     f = "Firefox Developer Edition",
     g = "Google Chrome Canary",
     i = "IntelliJ IDEA",
-    k = "kitty",
+    k = "ghostty",
     m = "Microsoft Outlook", -- [m]ail
     n = "Obsidian", -- [n]otes
     p = "Postman",
