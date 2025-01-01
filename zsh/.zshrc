@@ -1,54 +1,64 @@
 #!/usr/bin/env zsh
 
 # ZSH Options
-setopt append_history
-setopt hist_ignore_all_dups
-setopt hist_ignore_space
-setopt inc_append_history # write history as soon as they are entered, not when the session is closed
+setopt APPEND_HISTORY
+setopt EXTENDED_HISTORY # Write the history file in the ":start:elapsed;command" format
+setopt HIST_IGNORE_ALL_DUPS
+setopt HIST_IGNORE_SPACE
+setopt HIST_REDUCE_BLANKS # Remove superfluous blanks before recording entry
+setopt HIST_VERIFY # Don't execute immediately upon history expansion
+setopt INC_APPEND_HISTORY # write history as soon as they are entered, not when the session is closed
 
 export HISTFILE=$HOME/.zsh_history
 export HISTSIZE=100000
 export HISTFILESIZE=100000
 
-#export NODE_OPTIONS=--openssl-legacy-provider
-
 # Homebrew
-#
-# "brew" is used in this script, so it needs to be set early
-eval "$(/opt/homebrew/bin/brew shellenv)"
+export HOMEBREW_PREFIX="/opt/homebrew";
+export HOMEBREW_CELLAR="/opt/homebrew/Cellar";
 export HOMEBREW_NO_ANALYTICS=1
-
-# Python Environment Manager
-#
-# Warning: Intentionally disabled; adds an additional 1.5s to shell init.
-local disable_python_env=true
-if [ "$disable_python_env" = false ] && command -v pyenv 1>/dev/null 2>&1; then
-  eval "$(pyenv init --path)"
-  eval "$(pyenv init -)"
-fi
-unset disable_python_env
+export HOMEBREW_REPOSITORY="/opt/homebrew";
+export PATH="/opt/homebrew/bin:/opt/homebrew/sbin${PATH+:$PATH}";
+export MANPATH="/opt/homebrew/share/man${MANPATH+:$MANPATH}:";
+export INFOPATH="/opt/homebrew/share/info:${INFOPATH:-}";
 
 # Shell Autocompletion
-#
-# Warning: Setting up auto completion slows down initializing the shell about 500ms.
-source $(brew --prefix)/share/zsh-autosuggestions/zsh-autosuggestions.zsh
-source $(brew --prefix)/share/zsh/site-functions # third-party autoloadable functions
+source $HOMEBREW_PREFIX/share/zsh-autosuggestions/zsh-autosuggestions.zsh
+source $HOMEBREW_PREFIX/share/zsh/site-functions # third-party autoloadable functions
+# Only check cache once per day
 autoload -Uz compinit
-compinit
-# Temporarily removed; zsh-completions appears to be largely unused.
-# if type brew &>/dev/null; then
-  # FPATH=$(brew --prefix)/share/zsh-completions:$FPATH # takes about 200ms
-# fi
-if type kubectl &>/dev/null; then
-  source <(kubectl completion zsh)
+if [ $(date +'%j') != $(/usr/bin/stat -f '%Sm' -t '%j' ${ZDOTDIR:-$HOME}/.zcompdump) ]; then
+  compinit
+else
+  compinit -C
 fi
 
-if type stern &>/dev/null; then
-  source <(stern --completion=zsh)
-fi
+# Python
+export PYENV_ROOT="$HOME/.pyenv"
+command -v pyenv >/dev/null || export PATH="$PYENV_ROOT/bin:$PATH"
+function pyenv() {
+    unset -f pyenv
+    eval "$(command pyenv init -)"
+    eval "$(command pyenv virtualenv-init -)"
+    pyenv "$@"
+}
+
+# Kubernetes
+function kubectl() {
+    if ! type __start_kubectl >/dev/null 2>&1; then
+        source <(command kubectl completion zsh)
+    fi
+    command kubectl "$@"
+}
+function stern() {
+    if ! type __start_stern >/dev/null 2>&1; then
+        source <(command stern --completion=zsh)
+    fi
+    command stern "$@"
+}
 
 # fnm
-eval "$(fnm env --use-on-cd)"
+eval "$(fnm env --use-on-cd --shell zsh)"
 
 # fzf
 export FZF_DEFAULT_OPS="--extended"
@@ -56,9 +66,6 @@ export FZF_DEFAULT_COMMAND="fd --type f"
 export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
 export FZF_ALT_C_COMMAND="$FZF_DEFAULT_COMMAND"
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
-
-# Postgress (Added for Rust Workshop)
-export DATABASE_URL=postgres://localhost:5432/postgres
 
 # Helm
 export HELM_HOME="$HOME/.helm"
@@ -80,14 +87,6 @@ eval "$(starship init zsh)"
 # Tmux
 export ZSH_TMUX_AUTOSTART=true
 
-# Kitty Shell Integration in all shells, including Tmux 
-if [[ -n "$KITTY_INSTALLATION_DIR" ]]; then
-  export KITTY_SHELL_INTEGRATION="enabled"
-  autoload -Uz -- "$KITTY_INSTALLATION_DIR"/shell-integration/zsh/kitty-integration
-  kitty-integration
-  unfunction kitty-integration
-fi
-
 # Bind Keys
 bindkey "^A" beginning-of-line
 bindkey "^E" end-of-line
@@ -104,7 +103,6 @@ fi
 alias cat="bat"
 alias ls="exa"
 alias tree="exa --tree"
-alias gd="github ."
 alias pr="gh pr create"
 alias prv="gh pr view --web"
 alias k="kubectl"
@@ -114,14 +112,30 @@ alias kc="kubectx"
 alias v="vim ."
 alias vim="nvim"
 alias s="source $HOME/.zprofile && source $HOME/.zshrc"
-alias jj="pbpaste | jsonpp | pbcopy"
-alias jjj="pbpaste | jsonpp"
 alias buo="brew update --quiet && brew outdated --quiet"
 alias bu="brew upgrade --quiet"
 alias sso='_sso() { $(aws configure export-credentials --format env --profile $1) };_sso'
 alias g="lazygit"
-alias y="yarn"
 alias yw="yarn workspace"
+
+# Change the current working directory when exiting Yazi
+function y() {
+	local tmp="$(mktemp -t "yazi-cwd.XXXXXX")" cwd
+	yazi "$@" --cwd-file="$tmp"
+	if cwd="$(command cat -- "$tmp")" && [ -n "$cwd" ] && [ "$cwd" != "$PWD" ]; then
+		builtin cd -- "$cwd"
+	fi
+	rm -f -- "$tmp"
+}
+
+# Format json in clipboard
+function jj() {
+    if [ -p /dev/stdin ]; then
+        cat - | jsonpp | pbcopy
+    else
+        pbpaste | jsonpp | pbcopy
+    fi
+}
 
 # Setup SDKMAN
 #
@@ -131,13 +145,13 @@ alias yw="yarn workspace"
 # checks will in other cases), so it should be re-enabled.
 #
 # THIS MUST BE AT THE END OF THE FILE FOR SDKMAN TO WORK!!!
-export SDKMAN_DIR="$HOME/.sdkman"
-local original_sdkman_offline_mode=${SDKMAN_OFFLINE_MODE:-}
-export SDKMAN_OFFLINE_MODE=true
-[[ -s "$HOME/.sdkman/bin/sdkman-init.sh" ]] && source "$HOME/.sdkman/bin/sdkman-init.sh" 
-if [[ -n $original_sdkman_offline_mode ]]; then
-  export SDKMAN_OFFLINE_MODE=$original_sdkman_offline_mode
-else
-  unset SDKMAN_OFFLINE_MODE
-fi
-unset original_sdkman_offline_mode
+# SDKMAN lazy loading with common Scala/Java tools
+for cmd in sdk java mvn sbt scala bloop; do
+    eval "function $cmd() {
+        unset -f $cmd
+        export SDKMAN_DIR=\"\$HOME/.sdkman\"
+        export SDKMAN_OFFLINE_MODE=true
+        [[ -s \"\$SDKMAN_DIR/bin/sdkman-init.sh\" ]] && source \"\$SDKMAN_DIR/bin/sdkman-init.sh\"
+        command $cmd \"\$@\"
+    }"
+done
