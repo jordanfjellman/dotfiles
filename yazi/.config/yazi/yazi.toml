@@ -1,0 +1,6 @@
+[manager]
+show_hidden = true
+ratio = [2, 3, 4]
+
+[preview]
+max_width = 400
