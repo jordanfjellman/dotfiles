@@ -101,14 +101,15 @@ fi
 
 # Set Aliases
 alias cat="bat"
-alias ls="exa"
-alias tree="exa --tree"
+alias ls="eza"
+alias tree="eza --tree"
 alias pr="gh pr create"
 alias prv="gh pr view --web"
 alias k="kubectl"
 alias kl="kubectl login"
 alias kns="kubens"
 alias kc="kubectx"
+alias python="python3"
 alias v="vim ."
 alias vim="nvim"
 alias s="source $HOME/.zprofile && source $HOME/.zshrc"
@@ -117,16 +118,6 @@ alias bu="brew upgrade --quiet"
 alias sso='_sso() { $(aws configure export-credentials --format env --profile $1) };_sso'
 alias g="lazygit"
 alias yw="yarn workspace"
-
-# Change the current working directory when exiting Yazi
-function y() {
-	local tmp="$(mktemp -t "yazi-cwd.XXXXXX")" cwd
-	yazi "$@" --cwd-file="$tmp"
-	if cwd="$(command cat -- "$tmp")" && [ -n "$cwd" ] && [ "$cwd" != "$PWD" ]; then
-		builtin cd -- "$cwd"
-	fi
-	rm -f -- "$tmp"
-}
 
 # Format json in clipboard
 function jj() {
@@ -155,3 +146,4 @@ for cmd in sdk java mvn sbt scala bloop; do
         command $cmd \"\$@\"
     }"
 done
+export PYTHON=/usr/bin/python3

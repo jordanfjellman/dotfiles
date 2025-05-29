@@ -27,7 +27,7 @@ PATH="$PATH:$HOME/.okta/bin"
 export ANDROID_HOME=$HOME/Library/Android/sdk
 export ANDROID_SDK_ROOT=$HOME/Library/Android/sdk
 export ANDROID_AVD_HOME=$HOME/.android/avd
-export ANDROID_NDK_HOME=$HOME/Library/Android/ndk
+export ANDROID_NDK_HOME=$HOME/Library/Android/sdk/ndk
 PATH="$PATH:$ANDROID_HOME/platform-tools"
 PATH="$PATH:$ANDROID_NDK_HOME"
 
