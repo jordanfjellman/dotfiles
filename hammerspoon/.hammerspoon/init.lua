@@ -36,9 +36,9 @@ spoon.SpoonInstall:andUse("AppLauncher", {
     r = "Reader",
     s = "Slack",
     t = "Microsoft Teams",
+    v = "zoom.us", -- [v]ideo calls
     x = "Xcode", -- [x]code
     y = "YouTube Music",
-    z = "zoom.us",
   },
 })
 
