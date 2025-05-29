@@ -71,5 +71,12 @@
   "amazonQ.telemetry": false,
   "[css]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "amazonQ.suppressPrompts": {
+    "amazonQSessionConfigurationMessage": true,
+    "codeWhispererConnectionExpired": true
+  },
+  "[handlebars]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
   }
 }
