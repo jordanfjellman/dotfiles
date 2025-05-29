@@ -4,17 +4,14 @@ return {
   config = function()
     local conform = require("conform")
 
-    -- local biome_with_fallback = { "biome", "prettier" }
-    local biome_with_fallback = { "prettier" }
-
     conform.setup({
       formatters_by_ft = {
         css = { "prettier" },
         graphql = { "prettier" },
         html = { "prettier" },
-        javascript = biome_with_fallback,
-        javascriptreact = biome_with_fallback,
-        json = biome_with_fallback,
+        javascript = { "prettier" },
+        javascriptreact = { "prettier" },
+        json = { "prettier" },
         go = {
           "goimports-reviser",
           "golines",
@@ -22,9 +19,10 @@ return {
         },
         lua = { "stylua" },
         markdown = { "prettier" },
-        typescript = biome_with_fallback,
-        typescriptreact = biome_with_fallback,
+        rust = { "rustfmt" },
         scala = { "scalafmt" },
+        typescript = { "prettier" },
+        typescriptreact = { "prettier" },
         yaml = { "prettier" },
       },
       format_on_save = {
@@ -32,13 +30,6 @@ return {
         async = false,
         timeout_ms = 500,
       },
-      -- formatters = {
-      --   biome = {
-      --     command = "biome",
-      --     args = { "--stdin" },
-      --     rootPatterns = { ".biome" },
-      --   },
-      -- },
     })
 
     vim.keymap.set({ "n", "v" }, "<leader>mp", function()

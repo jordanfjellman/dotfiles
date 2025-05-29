@@ -33,7 +33,7 @@ M.setup = function()
   vim.opt_global.wildmode = { "list", "longest" } -- Command-line completion mode
 
   -- window-scoped
-  vim.opt.colorcolumn = "120"
+  vim.opt.colorcolumn = "80"
   vim.opt.number = true -- Show line numbers
   vim.opt.relativenumber = true -- Relative line numbers
   vim.opt.signcolumn = "yes"

@@ -29,7 +29,7 @@ return {
         file_previewer = previewers.vim_buffer_cat.new,
         file_sorter = require("telescope.sorters").get_fzy_sorter,
         grep_previewer = previewers.vim_buffer_vimgrep.new,
-        layout_strategy = "horizontal",
+        layout_strategy = "vertical",
         prompt_prefix = "❯",
       },
       extensions = {
