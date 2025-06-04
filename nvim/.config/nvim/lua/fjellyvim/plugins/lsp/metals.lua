@@ -8,11 +8,9 @@ return {
         opts = {},
       },
       {
-        "rcarriga/nvim-dap-ui",
-        dependencies = { "mfussenegger/nvim-dap", "nvim-neotest/nvim-nio" },
-        events = { "VeryLazy" },
+        "mfussenegger/nvim-dap",
         config = function()
-          local dap, dapui = require("dap"), require("dapui")
+          local dap = require("dap")
 
           dap.configurations.scala = {
             {
@@ -33,19 +31,6 @@ return {
               },
             },
           }
-
-          -- dap.listeners.before.attach.dapui_config = function()
-          --   dapui.open()
-          -- end
-          -- dap.listeners.before.launch.dapui_config = function()
-          --   dapui.open()
-          -- end
-          -- dap.listeners.before.event_terminated.dapui_config = function()
-          --   dapui.close()
-          -- end
-          -- dap.listeners.before.event_exited.dapui_config = function()
-          --   dapui.close()
-          -- end
         end,
       },
     },
@@ -66,34 +51,10 @@ return {
       -- Setup fidget progress handler for LSP updates
       metals_config.init_options.statusBarProvider = "on"
 
-      local function metals_status_handler(_, status, ctx)
-        -- https://github.com/scalameta/nvim-metals/blob/main/lua/metals/status.lua#L36-L50
-        local val = {}
-        if status.hide then
-          val = { kind = "end" }
-        elseif status.show then
-          val = { kind = "begin", message = status.text }
-        elseif status.text then
-          val = { kind = "report", message = status.text }
-        else
-          return
-        end
-        local info = { client_id = ctx.client_id }
-        local msg = { token = "metals", value = val }
-        -- call fidget progress handler
-        vim.lsp.handlers["$/progress"](nil, msg, info)
-      end
-
-      local handlers = {}
-      handlers["metals/status"] = metals_status_handler
-      metals_config.handlers = handlers
-
       -- Finish setup after attaching to the LSP server
-      metals_config.on_attach = function(_, bufnr)
+      metals_config.on_attach = function()
         local metals = require("metals")
         metals.setup_dap()
-        -- setup dapui after dap via metals to avoid issues
-        require("dapui").setup()
 
         -- LSP mappings
         vim.keymap.set("n", "<leader>ws", function()
@@ -102,23 +63,6 @@ return {
         vim.keymap.set("v", "K", function()
           metals.type_of_range()
         end, { desc = "Show type on hover" })
-
-        -- Autocommands
-        local metals_lsp_group = vim.api.nvim_create_augroup("fjellyvim-metals-lsp", { clear = true })
-        vim.api.nvim_create_autocmd("CursorMoved", {
-          buffer = bufnr,
-          callback = vim.lsp.buf.clear_references,
-          group = metals_lsp_group,
-          desc = "[METALS] Clear references on cursor moved",
-        })
-        -- disable after upgrade to neovim 0.10
-        -- vim.api.nvim_create_autocmd({ "BufEnter", "CursorHold", "InsertLeave" }, {
-        --   buffer = bufnr,
-        --   callback = vim.lsp.codelens.refresh,
-        --   group = metals_lsp_group,
-        --   desc = "[METALS] Refresh code lens on bufenter, cursorhold, insertleave",
-        -- })
-        vim.api.nvim_buf_set_option(bufnr, "omnifunc", "v:lua.vim.lsp.omnifunc")
       end
 
       return metals_config
