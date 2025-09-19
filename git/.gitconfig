@@ -35,6 +35,7 @@
 	template = ~/.gitmessage
 [rebase]
 	updateRefs = true
+	autoStash = true
 [includeIf "gitdir:~/code/work/"]
   path = .gitconfig_work
 [includeIf "gitdir:~/code/oss/"]
