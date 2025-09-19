@@ -47,7 +47,7 @@ hs.hotkey.bind(meh, "g", function()
 end)
 
 hs.hotkey.bind(meh, "j", function()
-  hs.execute("open https://lifeway.atlassian.net/jira/software/c/projects/DCD/boards/475/timeline?statuses=2%2C4")
+  hs.execute("open https://lifeway.atlassian.net/jira/software/c/projects/DCD/boards/489")
 end)
 
 hs.hotkey.bind(meh, "m", function()
