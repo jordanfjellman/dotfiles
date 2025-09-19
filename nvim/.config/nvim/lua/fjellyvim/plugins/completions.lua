@@ -94,11 +94,9 @@ return {
               return require("cmp.types").lsp.CompletionItemKind[entry:get_kind()] ~= "Text"
             end,
           },
+          { name = "supermaven" },
         }, {
           { name = "buffer", keyword_length = 5 },
-        }, {
-          name = "lazydev",
-          group_index = 0, -- set group index to 0 to skip loading LuaLS completions
         }),
         view = {
           entries = "custom", -- can be "custom", "wildmenu" or "native"
@@ -161,6 +159,12 @@ return {
           yaml = true,
         },
       })
+    end,
+  },
+  {
+    "supermaven-inc/supermaven-nvim",
+    config = function()
+      require("supermaven-nvim").setup({})
     end,
   },
 }
