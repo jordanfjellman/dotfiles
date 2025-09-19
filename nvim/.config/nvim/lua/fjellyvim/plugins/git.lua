@@ -66,7 +66,7 @@ return {
             else
               gs.nav_hunk("next")
             end
-          end, { expr = true, desc = "Next Change" })
+          end, { desc = "Next [C]hange" })
 
           map("n", "[c", function()
             if vim.wo.diff then
@@ -74,7 +74,7 @@ return {
             else
               gs.nav_hunk("prev")
             end
-          end, { expr = true, desc = "Previous Change" })
+          end, { desc = "Previous [C]hange" })
 
           -- Actions
           map("n", "<leader>hs", gs.stage_hunk, { desc = "[H]unk [S]tage" })
