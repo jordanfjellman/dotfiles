@@ -7,4 +7,5 @@ bin/.local/bin/maelstrom/
 bin/.local/share/
 bin/.local/state/
 hammerspoon/.hammerspoon/Spoons/
-
+nushell/.config/nushell/history.txt
+nushell/.config/nushell/plugin.msgpackz
