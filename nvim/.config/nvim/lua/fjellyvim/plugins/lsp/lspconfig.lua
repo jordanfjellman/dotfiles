@@ -44,7 +44,6 @@ return {
         client.server_capabilities.document_range_formatting = false
       end
 
-      local lspconfig = require("lspconfig")
       local capabilities = require("cmp_nvim_lsp").default_capabilities()
 
       local ThePrimeagenGroup = vim.api.nvim_create_augroup("ThePrimeagen", {})
@@ -59,16 +58,16 @@ return {
         end,
       })
 
-      lspconfig.dockerls.setup({})
+      vim.lsp.config("dockerls", {})
 
-      lspconfig.cssls.setup({ capabilities = capabilities })
+      vim.lsp.config("cssls", { capabilities = capabilities })
 
-      lspconfig.ansiblels.setup({
+      vim.lsp.config("ansiblels", {
         capabilities = capabilities,
         on_attach = disable_builtin_lsp_formatter,
       })
 
-      lspconfig.gopls.setup({
+      vim.lsp.config("gopls", {
         capabilties = capabilities,
         on_attach = disable_builtin_lsp_formatter,
         cmd = { "gopls" },
@@ -76,12 +75,12 @@ return {
         project_root = { "go.work", "go.mod", ".git" },
       })
 
-      lspconfig.graphql.setup({
+      vim.lsp.config("graphql", {
         capabilities = capabilities,
         on_attach = disable_builtin_lsp_formatter,
       })
 
-      lspconfig.jsonls.setup({
+      vim.lsp.config("jsonls", {
         capabilities = capabilities,
         on_attach = disable_builtin_lsp_formatter,
         settings = {
@@ -92,18 +91,18 @@ return {
         },
       })
 
-      lspconfig.marksman.setup({
+      vim.lsp.config("marksman", {
         capabilities = capabilities,
         on_attach = disable_builtin_lsp_formatter,
       })
 
       -- local swift_capabilities = require("cmp_nvim_lsp").default_capabilities()
       -- swift_capabilities.workspace.didChangeWatchedFiles = { dynamicRegistration = true }
-      lspconfig.sourcekit.setup({
+      vim.lsp.config("sourcekit", {
         capabilties = capabilities,
       })
 
-      lspconfig.yamlls.setup({
+      vim.lsp.config("yamlls", {
         capabilities = capabilities,
         filetypes = { "yaml", "yml" },
         settings = {
