@@ -43,7 +43,7 @@ spoon.SpoonInstall:andUse("AppLauncher", {
 })
 
 for _, pair in ipairs({
-  { "c", "https://chat.openai.com" },
+  { "c", "https://grok.com" },
   { "d", "https://discord.com/channels/@me" },
   { "g", "https://github.com/notifications" },
   { "j", "https://lifeway.atlassian.net/jira/software/c/projects/DCD/boards/489" },
