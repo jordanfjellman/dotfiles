@@ -42,25 +42,19 @@ spoon.SpoonInstall:andUse("AppLauncher", {
   },
 })
 
-hs.hotkey.bind(meh, "g", function()
-  hs.execute("open https://github.com/notifications")
-end)
-
-hs.hotkey.bind(meh, "j", function()
-  hs.execute("open https://lifeway.atlassian.net/jira/software/c/projects/DCD/boards/489")
-end)
-
-hs.hotkey.bind(meh, "m", function()
-  hs.execute("open https://mail.google.com")
-end)
-
-hs.hotkey.bind(meh, "n", function()
-  hs.execute("open https://keep.google.com")
-end)
-
-hs.hotkey.bind(meh, "c", function()
-  hs.execute("open https://chat.openai.com")
-end)
+for _, pair in ipairs({
+  { "c", "https://chat.openai.com" },
+  { "d", "https://discord.com/channels/@me" },
+  { "g", "https://github.com/notifications" },
+  { "j", "https://lifeway.atlassian.net/jira/software/c/projects/DCD/boards/489" },
+  { "m", "https://mail.google.com" },
+  { "n", "https://keep.google.com" },
+}) do
+  local hotkey, link = table.unpack(pair)
+  hs.hotkey.bind(meh, hotkey, function()
+    hs.execute("open " .. link)
+  end)
+end
 
 spoon.SpoonInstall:andUse("ReloadConfiguration", {
   hotkeys = { reloadConfiguration = { meh, "R" } },
