@@ -56,6 +56,7 @@ return {
       indent = { enable = true },
       ensure_installed = {
         "bash",
+        "brightscript",
         "css",
         "diff",
         "dockerfile",
@@ -111,6 +112,8 @@ return {
         end, opts.ensure_installed)
       end
       require("nvim-treesitter.configs").setup(opts)
+      vim.treesitter.language.register("brightscript", "bs")
+      vim.treesitter.language.register("brightscript", "brs")
     end,
   },
 

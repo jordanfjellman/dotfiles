@@ -13,6 +13,7 @@ return {
       ensure_installed = {
         "bashls",
         "biome",
+        "bright_script",
         "cmake",
         "cssls",
         "diagnosticls",
@@ -96,6 +97,13 @@ return {
         on_attach = disable_builtin_lsp_formatter,
       })
 
+      vim.lsp.config("bright_script", {
+        capabilities = capabilities,
+        on_attach = disable_builtin_lsp_formatter,
+        cmd = { "bsc", "--lsp", "--stdio" },
+        filetypes = { "bs", "brs" },
+        root_markers = { "bsconfig.json", "makefile", "Makefile", ".git" },
+      })
       -- local swift_capabilities = require("cmp_nvim_lsp").default_capabilities()
       -- swift_capabilities.workspace.didChangeWatchedFiles = { dynamicRegistration = true }
       vim.lsp.config("sourcekit", {
