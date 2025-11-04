@@ -97,17 +97,33 @@ return {
         on_attach = disable_builtin_lsp_formatter,
       })
 
-      vim.lsp.config("bright_script", {
-        capabilities = capabilities,
-        on_attach = disable_builtin_lsp_formatter,
-        cmd = { "bsc", "--lsp", "--stdio" },
-        filetypes = { "bs", "brs" },
-        root_markers = { "bsconfig.json", "makefile", "Makefile", ".git" },
-      })
+      -- vim.lsp.config("bright_script", {
+      --   capabilities = capabilities,
+      --   on_attach = disable_builtin_lsp_formatter,
+      --   cmd = { "bsc", "--lsp", "--stdio" },
+      --   filetypes = { "bs", "brs", "brightscript" },
+      --   root_markers = { "bsconfig.json", "makefile", "Makefile", ".git" },
+      -- })
+
       -- local swift_capabilities = require("cmp_nvim_lsp").default_capabilities()
       -- swift_capabilities.workspace.didChangeWatchedFiles = { dynamicRegistration = true }
       vim.lsp.config("sourcekit", {
         capabilties = capabilities,
+      })
+
+      vim.api.nvim_create_autocmd("FileType", {
+        pattern = { "brightscript", "xml" },
+        callback = function(e)
+          local client = vim.lsp.start({
+            name = "bright",
+            cmd = { "/Users/jordan.fjellman/code/oss/bright/target/debug/bright", "lsp", "--verbose" },
+          })
+          if not client then
+            vim.notify("bright lsp failed to start")
+          else
+            vim.lsp.buf_attach_client(e.buf, client)
+          end
+        end,
       })
 
       vim.lsp.config("yamlls", {
