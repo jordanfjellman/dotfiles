@@ -1,6 +1,6 @@
 vim.filetype.add({
   extension = {
-    bs = "bs",
-    brs = "brs",
+    bs = "brightscript",
+    brs = "brightscript",
   },
 })
