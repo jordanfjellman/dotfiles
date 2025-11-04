@@ -118,6 +118,9 @@ alias bu="brew upgrade --quiet"
 alias sso='_sso() { $(aws configure export-credentials --format env --profile $1) };_sso'
 alias g="lazygit"
 alias yw="yarn workspace"
+alias uuid="uuidgen | tr '[a-zA-Z]' '[A-Za-z]' | tr -d '\n' | pbcopy"
+alias submit="gh workflow run mobile.submit-to-testflight.yml --repo lifewayit/lifeway-discipleship && gh workflow run mobile.submit-to-play-store.yml --repo lifewayit/lifeway-discipleship"
+alias jwt="pbpaste | jq -R 'split(\".\") | .[0],.[1] | @base64d | fromjson'"
 
 # Format json in clipboard
 function jj() {

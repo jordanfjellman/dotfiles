@@ -11,6 +11,7 @@ PATH="$HOME/bin:/usr/local/bin:$HOME/.local/bin:/usr/local/sbin::$PATH"
 PATH="$PATH:/usr/local/opt/ruby/bin"
 PATH="$PATH:/usr/local/opt/kafka/bin"
 PATH="$PATH:/opt/homebrew/opt/llvm/bin" # install llvm for fast-linking during rust compilation
+# PATH="$PATH:/opt/homebrew/opt/llvm/bin/clang"
 PATH="$PATH:$HOME/.krew/bin" # Add binaries for kubectl plugin manager, krew
 
 # Add binaries for python environment manager
@@ -37,3 +38,8 @@ export PATH
 if [[ -f "$HOME/.private_keys" ]]; then
   source $HOME/.private_keys
 fi
+
+# Setting PATH for Python 3.7
+# The original version is saved in .zprofile.pysave
+PATH="/Library/Frameworks/Python.framework/Versions/3.7/bin:${PATH}"
+export PATH
