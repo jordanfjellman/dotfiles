@@ -49,6 +49,8 @@ for _, pair in ipairs({
   { "j", "https://lifeway.atlassian.net/jira/software/c/projects/DCD/boards/489" },
   { "m", "https://mail.google.com" },
   { "n", "https://keep.google.com" },
+  { "x", "https://x.com" },
+  { "z", "https://lifeway.zoom.us/j/91553605678?pwd=6wNOo8UETFaLahW83mnZSKdVDnw8BF.1" },
 }) do
   local hotkey, link = table.unpack(pair)
   hs.hotkey.bind(meh, hotkey, function()
