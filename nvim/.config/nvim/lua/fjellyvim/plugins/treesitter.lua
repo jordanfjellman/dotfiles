@@ -1,8 +1,5 @@
 -- This config has been copied from LazyVim
 return {
-  -- Treesitter is a new parser generator tool that we can
-  -- use in Neovim to power faster and more accurate
-  -- syntax highlighting.
   {
     "nvim-treesitter/nvim-treesitter",
     version = false, -- last release is way too old and doesn't work on Windows
@@ -49,71 +46,91 @@ return {
       { "<c-space>", desc = "Increment selection" },
       { "<bs>", desc = "Decrement selection", mode = "x" },
     },
-    ---@type TSConfig
-    ---@diagnostic disable-next-line: missing-fields
-    opts = {
-      highlight = { enable = true },
-      indent = { enable = true },
-      ensure_installed = {
-        "bash",
-        "brightscript",
-        "css",
-        "diff",
-        "dockerfile",
-        "gitignore",
-        "go",
-        "graphql",
-        "hocon",
-        "html",
-        "javascript",
-        "jsdoc",
-        "json",
-        "jsonc",
-        "lua",
-        "luadoc",
-        "luap",
-        "markdown",
-        "markdown_inline",
-        "python",
-        "query",
-        "rust",
-        "regex",
-        "scala",
-        "terraform",
-        "toml",
-        "tsx",
-        "typescript",
-        "vim",
-        "vimdoc",
-        "yaml",
-      },
-      incremental_selection = {
-        enable = true,
-        keymaps = {
-          init_selection = "<C-space>",
-          node_incremental = "<C-space>",
-          scope_incremental = false,
-          node_decremental = "<bs>",
+    -- opts = {
+    --   highlight = { enable = true },
+    --   indent = { enable = true },
+    --   folds = { enable = true },
+    --   ensure_installed = {
+    --     "bash",
+    --     -- "brightscript",
+    --     "css",
+    --     "diff",
+    --     "dockerfile",
+    --     "gitignore",
+    --     "go",
+    --     "graphql",
+    --     "hocon",
+    --     "html",
+    --     "javascript",
+    --     "jsdoc",
+    --     "json",
+    --     "jsonc",
+    --     "lua",
+    --     "luadoc",
+    --     "luap",
+    --     "markdown",
+    --     "markdown_inline",
+    --     "python",
+    --     "query",
+    --     "rust",
+    --     "regex",
+    --     "scala",
+    --     "terraform",
+    --     "toml",
+    --     "tsx",
+    --     "typescript",
+    --     "vim",
+    --     "vimdoc",
+    --     "yaml",
+    --   },
+    --   incremental_selection = {
+    --     enable = true,
+    --     keymaps = {
+    --       init_selection = "<C-space>",
+    --       node_incremental = "<C-space>",
+    --       scope_incremental = false,
+    --       node_decremental = "<bs>",
+    --     },
+    --   },
+    --   parsers = {
+    --     brightscript = {
+    --       install_info = {
+    --         url = "/Users/jordan.fjellman/code/oss/tree-sitter/tree-sitter-brightscript",
+    --         files = { "src/parser.c", "src/scanner.c" },
+    --         location = "src",
+    --         generate_requires_npm = true,
+    --       },
+    --     },
+    --   },
+    -- },
+    config = function()
+      require("nvim-treesitter.configs").setup({
+        ensure_installed = {}, -- or your preferred languages
+        highlight = { enable = true },
+        -- Override brightscript parser to use local version
+        parser_install_dir = nil,
+        -- Force local parser by overriding the install info
+        auto_install = false,
+        -- Custom parser configuration
+        parsers = {
+          brightscript = {
+            install_info = {
+              url = "/Users/jordan.fjellman/code/oss/tree-sitter/tree-sitter-brightscript",
+              files = { "src/parser.c", "src/scanner.c" },
+              location = "src",
+              generate_requires_npm = true,
+              branch = "main",
+            },
+          },
         },
-      },
-    },
-    ---@param opts TSConfig
-    config = function(_, opts)
-      if type(opts.ensure_installed) == "table" then
-        ---@type table<string, boolean>
-        local added = {}
-        opts.ensure_installed = vim.tbl_filter(function(lang)
-          if added[lang] then
-            return false
-          end
-          added[lang] = true
-          return true
-          ---@diagnostic disable-next-line: param-type-mismatch
-        end, opts.ensure_installed)
-      end
-      require("nvim-treesitter.configs").setup(opts)
-      vim.treesitter.language.register("brightscript", "bs")
-      vim.treesitter.language.register("brightscript", "brs")
+      })
+
+      -- Manually install your local parser
+      local parsers = require("nvim-treesitter.parsers")
+      local parser_config = parsers.get_parser_configs()
+      parser_config.brightscript.install_info.url =
+        "/Users/jordan.fjellman/code/oss/tree-sitter/tree-sitter-brightscript"
+      parser_config.brightscript.install_info.files = { "src/parser.c", "src/scanner.c" }
     end,
   },
 
