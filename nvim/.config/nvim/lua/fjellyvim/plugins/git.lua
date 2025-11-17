@@ -8,18 +8,17 @@ return {
         group = vim.api.nvim_create_augroup("fjellyvim-fugitive", {}),
         pattern = "*",
         callback = function()
-          if vim.bo.ft ~= "fugitive" then
-            return
-          end
+          if vim.bo.ft ~= "fugitive" then return end
 
-          vim.keymap.set("n", "<leader>p", function()
-            vim.cmd.Git("push")
-          end, { buffer = true, desc = "Git [P]ush" })
+          vim.keymap.set("n", "<leader>p", function() vim.cmd.Git("push") end, { buffer = true, desc = "Git [P]ush" })
 
           -- rebase always
-          vim.keymap.set("n", "<leader>P", function()
-            vim.cmd.Git({ "pull", "--rebase" })
-          end, { buffer = true, desc = "Git [P]ull" })
+          vim.keymap.set(
+            "n",
+            "<leader>P",
+            function() vim.cmd.Git({ "pull", "--rebase" }) end,
+            { buffer = true, desc = "Git [P]ull" }
+          )
 
           -- NOTE: It allows me to easily set the branch i am pushing and any tracking
           -- needed if i did not set the branch up correctly
@@ -79,24 +78,26 @@ return {
           -- Actions
           map("n", "<leader>hs", gs.stage_hunk, { desc = "[H]unk [S]tage" })
           map("n", "<leader>hr", gs.reset_hunk, { desc = "[H]unk [R]eset" })
-          map("v", "<leader>hs", function()
-            gs.stage_hunk({ vim.fn.line("."), vim.fn.line("v") })
-          end, { desc = "[H]unk [S]tage" })
-          map("v", "<leader>hr", function()
-            gs.reset_hunk({ vim.fn.line("."), vim.fn.line("v") })
-          end, { desc = "[H]unk [R]eset" })
+          map(
+            "v",
+            "<leader>hs",
+            function() gs.stage_hunk({ vim.fn.line("."), vim.fn.line("v") }) end,
+            { desc = "[H]unk [S]tage" }
+          )
+          map(
+            "v",
+            "<leader>hr",
+            function() gs.reset_hunk({ vim.fn.line("."), vim.fn.line("v") }) end,
+            { desc = "[H]unk [R]eset" }
+          )
           map("n", "<leader>hS", gs.stage_buffer, { desc = "[H]unk [S]tage Entire Buffer" })
           map("n", "<leader>hu", gs.undo_stage_hunk, { desc = "[H]unk [U]ndo" })
           map("n", "<leader>hR", gs.reset_buffer, { desc = "[H]unk [R]eset Entire Buffer" })
           map("n", "<leader>hp", gs.preview_hunk, { desc = "[H]unk [P]review" })
-          map("n", "<leader>hb", function()
-            gs.blame_line({ full = true })
-          end, { desc = "[H]unk [B]lame" })
+          map("n", "<leader>hb", function() gs.blame_line({ full = true }) end, { desc = "[H]unk [B]lame" })
           map("n", "<leader>tb", gs.toggle_current_line_blame)
           map("n", "<leader>hd", gs.diffthis)
-          map("n", "<leader>hD", function()
-            gs.diffthis("~")
-          end)
+          map("n", "<leader>hD", function() gs.diffthis("~") end)
           map("n", "<leader>td", gs.toggle_deleted, { desc = "[T]oggle [D]eleted" })
 
           -- Text object
