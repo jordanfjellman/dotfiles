@@ -28,29 +28,17 @@ return {
       workspace = {
         checkThirdParty = false,
         library = {
-          -- vim.api.nvim_get_runtime_file("", true),
-          -- Add lazy.nvim path where snacks is installed
           vim.env.VIMRUNTIME,
-          -- "${3rd}/lazy/lazy.nvim",
-          -- "${3rd}/lazy/snacks.nvim",
           "${3rd}/luv/library",
           vim.fn.stdpath("data") .. "/lazy/lazy.nvim",
           vim.fn.stdpath("data") .. "/lazy/quicker.nvim",
           vim.fn.stdpath("data") .. "/lazy/snacks.nvim",
         },
-        -- Or pull in all of 'runtimepath'.
-        -- NOTE: this is a lot slower and will cause issues when working on
-        -- your own configuration.
-        -- See https://github.com/neovim/nvim-lspconfig/issues/3188
-        -- library = {
-        --   vim.api.nvim_get_runtime_file('', true),
-        -- }
       },
     })
   end,
   settings = {
     Lua = {
-      -- Do not send telemetry data containing a randomized but unique identifier
       telemetry = {
         enable = false,
       },
