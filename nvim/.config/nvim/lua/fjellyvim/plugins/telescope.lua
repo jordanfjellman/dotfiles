@@ -11,9 +11,7 @@ return {
 
       -- `cond` is a condition used to determine whether this plugin should be
       -- installed and loaded.
-      cond = function()
-        return vim.fn.executable("make") == 1
-      end,
+      cond = function() return vim.fn.executable("make") == 1 end,
     },
     { "ThePrimeagen/harpoon" },
     { "nvim-treesitter/nvim-treesitter" },
@@ -47,55 +45,19 @@ return {
 
     local builtin = require("telescope.builtin")
 
-    vim.keymap.set("n", "<leader>sf", function()
-      builtin.find_files({ hidden = true })
-    end, { desc = "[S]earch [F]iles" })
+    vim.keymap.set(
+      "n",
+      "<leader>sf",
+      function() builtin.find_files({ hidden = true }) end,
+      { desc = "[S]earch [F]iles" }
+    )
 
-    vim.keymap.set("n", "<leader>sw", function()
-      local word = vim.fn.expand("<cword>")
-      builtin.grep_string({ search = word })
-    end, { desc = "[S]earch [W]ord" })
-
-    vim.keymap.set("n", "<leader>sW", function()
-      local word = vim.fn.expand("<cWORD>")
-      builtin.grep_string({ search = word })
-    end, { desc = "[S]earch Entire [W]ord" })
-
-    vim.keymap.set("n", "<leader>sg", function()
-      builtin.live_grep({
-        additional_args = function()
-          return { "--hidden" }
-        end,
-      })
-    end, { desc = "[S]earch by [G]rep" })
-
-    vim.keymap.set("n", "<leader>sh", function()
-      builtin.help_tags()
-    end, { desc = "[S]earch [H]elp" })
-
-    vim.keymap.set("n", "<leader>sk", function()
-      builtin.keymaps()
-    end, { desc = "[S]earch [K]eymaps" })
-
-    vim.keymap.set("n", "<leader>se", "<CMD>Telescope emoji<CR>", { desc = "[S]earch [E]mojis" })
-
-    vim.keymap.set("n", "<leader>/", builtin.current_buffer_fuzzy_find, { desc = "Search Current Buffer" })
-
-    vim.keymap.set("n", "<leader>sc", function()
-      builtin.git_status()
-    end, { desc = "[S]earch Git [C]hanges" })
-
-    vim.keymap.set("n", "<leader>mc", function()
-      telescope.extensions.metals.commands()
-    end, { desc = "Preview [M]etals [C]ommands" })
-
-    vim.keymap.set("n", "<leader>ed", function()
-      builtin.find_files({ cwd = "~/code/personal/dotfiles", hidden = true })
-    end, { desc = "[E]dit [D]otfiles" })
-
-    vim.keymap.set("n", "<leader>ec", function()
-      builtin.find_files({ cwd = vim.fs.joinpath(vim.fn.stdpath("config")) })
-    end, { desc = "[E]dit Neovim [C]onfig" })
+    vim.keymap.set(
+      "n",
+      "<leader>mc",
+      function() telescope.extensions.metals.commands() end,
+      { desc = "Preview [M]etals [C]ommands" }
+    )
 
     require("fjellyvim.telescope.gh").setup()
     require("fjellyvim.telescope.dirgrep").setup()
