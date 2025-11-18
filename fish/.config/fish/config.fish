@@ -21,9 +21,6 @@ set -gx FZF_DEFAULT_OPS --extended
 set -gx FZF_CTRL_T_COMMAND "fd --type f"
 fzf --fish | source
 
-# Helm
-set -gx HELM_HOME $HOME/.helm
-
 # Jest
 set -gx DEBUG_PRINT_LIMIT 10000
 
@@ -60,9 +57,6 @@ if command -q tmux-session-killer
     bind \cx 'tmux-session-killer; commandline -f repaint'
 end
 
-# Load lazy functions
-source $__fish_config_dir/conf.d/lazy_loading.fish
-
 # Functions
 function pr
     gh pr create $argv
@@ -72,12 +66,12 @@ function prv
     gh pr view --web $argv
 end
 
-function submit_apps
+function submit_mobile
     gh pr workflow run mobile.submit-to-testflight.yml --repo lifewayit/lifeway-discipleship && gh pr workflow run mobile.submit-to-play-store.yml --repo lifewayit/lifeway-discipleship
 end
 
-function g
-    lazygit $argv
+function submit_tv
+    gh pr workflow run tv.submit-to-testflight.yml --repo lifewayit/lifeway-discipleship && gh pr workflow run tv.submit-to-play-store.yml --repo lifewayit/lifeway-discipleship
 end
 
 function buo
