@@ -1,0 +1,6 @@
+[settings]
+idiomatic_version_file_enable_tools = ["java", "node"]
+
+[tools]
+java = ["corretto-11", "corretto-17", "corretto-21"]
+node = "lts"
