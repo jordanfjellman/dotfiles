@@ -31,8 +31,10 @@ return {
           vim.env.VIMRUNTIME,
           "${3rd}/luv/library",
           vim.fn.stdpath("data") .. "/lazy/lazy.nvim",
+          vim.fn.stdpath("data") .. "/lazy/lspconfig.nvim",
           vim.fn.stdpath("data") .. "/lazy/quicker.nvim",
           vim.fn.stdpath("data") .. "/lazy/snacks.nvim",
+          { path = "/Users/jordan.fjellman/code/oss/wezterm-types", module = "wezterm" },
         },
       },
     })
