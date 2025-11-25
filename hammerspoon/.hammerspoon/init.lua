@@ -4,19 +4,6 @@ local hyper = { "shift", "alt", "ctrl", "cmd" }
 -- Pre-downloaded via external script
 hs.loadSpoon("SpoonInstall")
 
--- Pre-downloaded via external script
-hs.spoons.use("WindowManager", {
-  config = {
-    modifiers = meh,
-  },
-  hotkeys = {
-    Right = "right",
-    Left = "left",
-    Up = "fullscreen",
-    Down = "center",
-  },
-})
-
 spoon.SpoonInstall:andUse("AppLauncher", {
   config = {
     modifiers = hyper,
@@ -29,13 +16,11 @@ spoon.SpoonInstall:andUse("AppLauncher", {
     f = "Firefox Developer Edition",
     g = "Google Chrome Canary",
     i = "IntelliJ IDEA",
-    k = "ghostty",
     m = "Microsoft Outlook", -- [m]ail
-    n = "Obsidian", -- [n]otes
-    p = "Postman",
+    o = "Obsidian",
     r = "Reader",
     s = "Slack",
-    t = "Microsoft Teams",
+    t = "ghostty", -- [t]erminal
     v = "zoom.us", -- [v]ideo calls
     x = "Xcode", -- [x]code
     y = "YouTube Music",
@@ -46,9 +31,8 @@ for _, pair in ipairs({
   { "c", "https://grok.com" },
   { "d", "https://discord.com/channels/@me" },
   { "g", "https://github.com/notifications" },
-  { "j", "https://lifeway.atlassian.net/jira/software/c/projects/DCD/boards/489" },
   { "m", "https://mail.google.com" },
-  { "n", "https://keep.google.com" },
+  { "w", "https://lifeway.atlassian.net/jira/software/c/projects/DCD/boards/489" }, -- [w]orkboard
   { "x", "https://x.com" },
   { "z", "https://lifeway.zoom.us/j/91553605678?pwd=6wNOo8UETFaLahW83mnZSKdVDnw8BF.1" },
 }) do
