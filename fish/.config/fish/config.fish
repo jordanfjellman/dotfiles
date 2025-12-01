@@ -1,10 +1,14 @@
 #!/usr/bin/env fish
 
 # Shell Settings
+set -U fish_greeting # no greeting message
 set -gx EDITOR nvim
 set -gx LANG en_US.UTF-8
 set -gx LC_ALL en_US.UTF-8
 set -gx XDG_CONFIG_HOME $HOME/.config
+
+# PATH
+fish_add_path /opt/homebrew/bin
 
 # Homebrew
 set -gx HOMEBREW_PREFIX /opt/homebrew
