@@ -58,8 +58,5 @@ return {
       function() telescope.extensions.metals.commands() end,
       { desc = "Preview [M]etals [C]ommands" }
     )
-
-    require("fjellyvim.telescope.gh").setup()
-    require("fjellyvim.telescope.dirgrep").setup()
   end,
 }
