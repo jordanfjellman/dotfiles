@@ -5,19 +5,27 @@ local act = wezterm.action
 
 local keys = {}
 
-config.default_prog = { "/opt/homebrew/bin/fish", "--login" }
+config.default_prog = { "/opt/homebrew/bin/fish" }
 
-config.font_size = 19
-config.font = wezterm.font("FiraCode Nerd Font Mono", { weight = "Medium" })
+config.font_size = 18
+config.font = wezterm.font("FiraCode Nerd Font Mono", { weight = "Regular" })
+config.line_height = 1.2
 
 -- config.color_scheme = "GitHub Dark"
 config.colors = require("colors.github_dimmed").colors()
 
+config.window_padding = {
+	left = 0,
+	right = 0,
+	top = 0,
+	bottom = 0,
+}
+
 config.window_decorations = "RESIZE"
 
-config.use_fancy_tab_bar = false
-config.tab_bar_at_bottom = false
 config.hide_tab_bar_if_only_one_tab = true
+config.tab_bar_at_bottom = true
+config.use_fancy_tab_bar = false
 
 -- print the workspace name at the upper right
 wezterm.on("update-right-status", function(window, pane)
@@ -63,13 +71,14 @@ table.insert(keys, {
 						if not label then
 							return
 						end
+						local name = label:match("([^/]+)$")
 
 						window:perform_action(
 							act.SwitchToWorkspace({
-								name = label,
+								name = name,
 								spawn = {
-									label = "Workspace: " .. label,
-									cwd = wezterm.cwd,
+									label = name,
+									cwd = label,
 								},
 							}),
 							pane
@@ -81,9 +90,27 @@ table.insert(keys, {
 		end
 	end),
 })
-config.keys = {
-	{ key = "L", mods = "CTRL", action = wezterm.action.ShowDebugOverlay },
-}
+
+table.insert(keys, {
+	key = "U",
+	mods = "CTRL|SHIFT",
+	action = wezterm.action.QuickSelectArgs({
+		label = "open url",
+		patterns = {
+			"https?://\\S+",
+		},
+		action = wezterm.action_callback(function(window, pane)
+			local url = window:get_selection_text_for_pane(pane)
+			wezterm.open_with(url)
+		end),
+	}),
+})
+
+table.insert(keys, {
+	key = "L",
+	mods = "CTRL",
+	action = wezterm.action.ShowDebugOverlay,
+})
 
 config.keys = keys
 
