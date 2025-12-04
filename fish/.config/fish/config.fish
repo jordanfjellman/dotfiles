@@ -1,7 +1,7 @@
 #!/usr/bin/env fish
 
 # Shell Settings
-set -U fish_greeting # no greeting message
+set -gx fish_greeting # no greeting message
 set -gx EDITOR nvim
 set -gx LANG en_US.UTF-8
 set -gx LC_ALL en_US.UTF-8
@@ -9,6 +9,7 @@ set -gx XDG_CONFIG_HOME $HOME/.config
 
 # PATH
 fish_add_path /opt/homebrew/bin
+fish_add_path $HOME/.cargo/bin
 
 # Homebrew
 set -gx HOMEBREW_PREFIX /opt/homebrew
@@ -20,6 +21,10 @@ set -gx HOMEBREW_REPOSITORY /opt/homebrew
 set -gx MANPATH /opt/homebrew/share/man $MANPATH
 set -gx INFOPATH /opt/homebrew/share/info $INFOPATH
 
+# mise
+# set -gx MISE_NODE_COMPILE 0
+mise activate fish | source
+
 # fzf
 set -gx FZF_DEFAULT_OPS --extended
 set -gx FZF_CTRL_T_COMMAND "fd --type f"
@@ -30,9 +35,6 @@ set -gx DEBUG_PRINT_LIMIT 10000
 
 # Java
 set -gx JAVA_HOME /Users/jordan.fjellman/.sdkman/candidates/java/17.0.10-amzn
-
-# Tmux
-set -gx ZSH_TMUX_AUTOSTART true
 
 # Source private keys if they exist
 if test -f $HOME/.private_keys
@@ -51,15 +53,6 @@ end
 # Key bindings
 bind \ca beginning-of-line
 bind \ce end-of-line
-
-# Custom key bindings for tmux tools
-if command -q tmux-sessionizer
-    bind \cf 'tmux-sessionizer; commandline -f repaint'
-end
-
-if command -q tmux-session-killer
-    bind \cx 'tmux-session-killer; commandline -f repaint'
-end
 
 # Functions
 function pr
@@ -84,4 +77,36 @@ end
 
 function bu
     brew upgrade --quiet
+end
+
+function k
+    kubectl $argv
+end
+
+function kl
+    kubectl login
+end
+
+function kns
+    kubens $argv
+end
+
+function kc
+    kubectx $argv
+end
+
+function v
+    nvim $argv
+end
+
+function cat
+    bat --style=plain $argv
+end
+
+function tree
+    exa --tree --all --group-directories-first $argv
+end
+
+function ls
+    exa --all --group-directories-first $argv
 end
