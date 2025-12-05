@@ -149,4 +149,16 @@ for cmd in sdk java mvn sbt scala bloop; do
         command $cmd \"\$@\"
     }"
 done
-export PYTHON=/usr/bin/python3
+
+# export JAVA_HOME="/Users/jordan.fjellman/.sdkman/candidates/java/11.0.18-amzn2"
+# export JAVA_HOME="/Users/jordan.fjellman/.sdkman/candidates/java/17.0.10-amzn"
+# export PYTHON=/usr/bin/python3
+
+# ZScaler
+ZSCALER_ROOT_CA_PATH=$HOME/.config/zscaler/zscaler-root-ca.crt
+export SSL_CERT_FILE=$ZSCALER_ROOT_CA_PATH
+export NODE_EXTRA_CA_CERTS=$ZSCALER_ROOT_CA_PATH
+export GRADLE_OPTS="-Djavax.net.ssl.trustStore=$JAVA_HOME/lib/security/cacerts -Djavax.net.ssl.trustStorePassword=changeit"
+export CARGO_HTTP_CAINFO=$ZSCALER_ROOT_CA_PATH
+
+export XDG_CONFIG_HOME="$HOME/.config"
