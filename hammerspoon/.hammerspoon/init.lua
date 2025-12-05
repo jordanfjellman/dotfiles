@@ -32,6 +32,8 @@ for _, pair in ipairs({
 	{ "d", "https://discord.com/channels/@me" },
 	{ "g", "https://github.com/notifications" },
 	{ "m", "https://mail.google.com" },
+	{ "s", "https://web.telegram.org/a/" }, -- "s" is similar to "slack" (local messaging app)
+	{ "t", "https://teams.microsoft.com/v2/" },
 	{ "w", "https://lifeway.atlassian.net/jira/software/c/projects/DCD/boards/489" }, -- [w]orkboard
 	{ "x", "https://x.com" },
 	{ "z", "https://lifeway.zoom.us/j/91553605678?pwd=6wNOo8UETFaLahW83mnZSKdVDnw8BF.1" },
