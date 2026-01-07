@@ -64,11 +64,11 @@ function prv
 end
 
 function submit_mobile
-    gh pr workflow run mobile.submit-to-testflight.yml --repo lifewayit/lifeway-discipleship && gh pr workflow run mobile.submit-to-play-store.yml --repo lifewayit/lifeway-discipleship
+    gh workflow run mobile.submit-to-testflight.yml --repo lifewayit/lifeway-discipleship && gh workflow run mobile.submit-to-play-store.yml --repo lifewayit/lifeway-discipleship
 end
 
 function submit_tv
-    gh pr workflow run tv.submit-to-testflight.yml --repo lifewayit/lifeway-discipleship && gh pr workflow run tv.submit-to-play-store.yml --repo lifewayit/lifeway-discipleship
+    gh workflow run tv.submit-to-testflight.yml --repo lifewayit/lifeway-discipleship && gh workflow run tv.submit-to-play-store.yml --repo lifewayit/lifeway-discipleship
 end
 
 function buo
@@ -109,4 +109,8 @@ end
 
 function ls
     exa --all --group-directories-first $argv
+end
+
+function devctl
+    /usr/local/lib/devctl/bin/run.js $argv
 end
