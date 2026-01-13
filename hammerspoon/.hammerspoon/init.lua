@@ -100,7 +100,7 @@ for _, pair in ipairs({
 	{ "m", "https://mail.google.com" },
 	{ "r", "https://read.readwise.io" },
 	{ "s", "https://web.telegram.org/a/" }, -- "s" is similar to "slack" (local messaging app)
-	{ "t", "https://teams.microsoft.com/v2/" },
+	{ "t", "https://teams.cloud.microsoft/" },
 	{ "w", "https://lifeway.atlassian.net/jira/software/c/projects/DCD/boards/489" }, -- [w]orkboard
 	{ "x", "https://x.com" },
 	{ "y", "https://music.youtube.com" },
@@ -113,6 +113,6 @@ for _, pair in ipairs({
 end
 
 spoon.SpoonInstall:andUse("ReloadConfiguration", {
-	hotkeys = { reloadConfiguration = { meh, "R" } },
+	hotkeys = { reloadConfiguration = { meh, "H" } },
 	start = true,
 })
