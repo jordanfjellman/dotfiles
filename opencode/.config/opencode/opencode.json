@@ -1,0 +1,88 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "instructions": ["~/.config/opencode/rules/coding-philosophy.md"],
+  "permission": {
+    "bash": {
+      "date *": "allow",
+      "mkdir -p .opencode/sessions": "allow"
+    }
+  },
+  "plugin": ["opencode-anthropic-auth@0.0.9"],
+  "mcp": {
+    "bright": {
+      "enabled": false,
+      "type": "local",
+      "command": [
+        "/Users/jordan.fjellman/code/oss/bright/target/debug/bright",
+        "mcp"
+      ],
+      "environment": {
+        "ROKU_IP": "{file:~/.secrets/roku-ip}",
+        "ROKU_PASSWORD": "{file:~/.secrets/roku-password}"
+      }
+    },
+    "aws-core-mcp-server": {
+      "enabled": false,
+      "type": "local",
+      "command": [
+        "docker",
+        "run",
+        "--rm",
+        "--interactive",
+        "--env",
+        "AWS_REGION=us-east-1",
+        "--volume",
+        "/Users/jordan.fjellman/.aws:/app/.aws",
+        "public.ecr.aws/awslabs-mcp/awslabs/aws-api-mcp-server:latest"
+      ],
+      "environment": {}
+    },
+    "aws-knowledge-mcp-server": {
+      "enabled": false,
+      "type": "local",
+      "command": ["npx", "mcp-remote", "https://knowledge-mcp.global.api.aws"]
+    },
+    "atlassian-mcp-server": {
+      "enabled": true,
+      "type": "local",
+      "command": [
+        "uvx",
+        "--python",
+        "/opt/homebrew/bin/python3.13",
+        "mcp-atlassian"
+      ],
+      "environment": {
+        "JIRA_URL": "https://lifeway.atlassian.net",
+        "JIRA_USERNAME": "{file:~/.secrets/opencode-atlassian-username}",
+        "JIRA_API_TOKEN": "{file:~/.secrets/opencode-atlassian-api-key}",
+        "CONFLUENCE_URL": "https://your-company.atlassian.net/wiki",
+        "CONFLUENCE_USERNAME": "{file:~/.secrets/opencode-atlassian-username}",
+        "CONFLUENCE_API_TOKEN": "{file:~/.secrets/opencode-atlassian-api-key}"
+      }
+    },
+    "brave-search": {
+      "enabled": true,
+      "type": "local",
+      "command": ["npx", "-y", "@brave/brave-search-mcp-server"],
+      "environment": {
+        "BRAVE_API_KEY": "{file:~/.secrets/opencode-brave-api-key}"
+      }
+    },
+    "github": {
+      "enabled": true,
+      "type": "local",
+      "command": [
+        "docker",
+        "run",
+        "-i",
+        "--rm",
+        "-e",
+        "GITHUB_PERSONAL_ACCESS_TOKEN",
+        "ghcr.io/github/github-mcp-server"
+      ],
+      "environment": {
+        "GITHUB_PERSONAL_ACCESS_TOKEN": "{file:~/.secrets/opencode-github-token}"
+      }
+    }
+  }
+}
