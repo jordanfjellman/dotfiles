@@ -7,19 +7,22 @@ set -gx LANG en_US.UTF-8
 set -gx LC_ALL en_US.UTF-8
 set -gx XDG_CONFIG_HOME $HOME/.config
 
-# PATH
-fish_add_path /opt/homebrew/bin
-fish_add_path $HOME/.cargo/bin
-
 # Homebrew
 set -gx HOMEBREW_PREFIX /opt/homebrew
-set -gx HOMEBREW_CELLAR /opt/homebrew/Cellar
+set -gx HOMEBREW_CELLAR "$HOMEBREW_PREFIX/Cellar"
+set -gx HOMEBREW_REPOSITORY "$HOMEBREW_PREFIX/homebrew"
 set -gx HOMEBREW_NO_ANALYTICS 1
-set -gx HOMEBREW_REPOSITORY /opt/homebrew
+
+# PATH
+fish_add_path -gP "$HOMEBREW_PREFIX/bin" "$HOMEBREW_PREFIX/sbin"
+fish_add_path $HOME/.cargo/bin
 
 # MANPATH and INFOPATH
-set -gx MANPATH /opt/homebrew/share/man $MANPATH
-set -gx INFOPATH /opt/homebrew/share/info $INFOPATH
+! set -q MANPATH; and set MANPATH ''
+set -gx MANPATH "$HOMEBREW_PREFIX/share/man" $MANPATH
+
+! set -q INFOPATH; and set INFOPATH ''
+set -gx INFOPATH "$HOMEBREW_PREFIX/share/info" $INFOPATH
 
 # mise
 # set -gx MISE_NODE_COMPILE 0
@@ -32,9 +35,6 @@ fzf --fish | source
 
 # Jest
 set -gx DEBUG_PRINT_LIMIT 10000
-
-# Java
-set -gx JAVA_HOME /Users/jordan.fjellman/.sdkman/candidates/java/17.0.10-amzn
 
 # Source private keys if they exist
 if test -f $HOME/.private_keys
@@ -68,7 +68,7 @@ function submit_mobile
 end
 
 function submit_tv
-    gh workflow run tv.submit-to-testflight.yml --repo lifewayit/lifeway-discipleship && gh workflow run tv.submit-to-play-store.yml --repo lifewayit/lifeway-discipleship
+    gh workflow run tv.submit-to-testflight.yml --repo lifewayit/lifeway-discipleship && gh workflow run tv.submit-to-play-store.yml --repo lifewayit/lifeway-discipleship && gh workflow run tv.submit-to-amazon-appstore.yml --repo lifewayit/lifeway-discipleship
 end
 
 function buo
@@ -84,7 +84,7 @@ function k
 end
 
 function kl
-    kubectl login
+    devctl k8s login
 end
 
 function kns
@@ -113,4 +113,12 @@ end
 
 function devctl
     /usr/local/lib/devctl/bin/run.js $argv
+end
+
+function sso
+    if test (count $argv) -eq 0
+        echo "Usage: sso <profile>"
+        return 1
+    end
+    eval (aws configure export-credentials --format env --profile $argv[1])
 end
