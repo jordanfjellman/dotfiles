@@ -1,6 +1,8 @@
 {
   "$schema": "https://opencode.ai/config.json",
-  "instructions": ["~/code/personal/notes/LLM Context/AGENTS.md"],
+  "instructions": [
+    "~/code/personal/notes/LLM Context/AGENTS.md"
+  ],
   "permission": {
     "bash": {
       "date *": "allow",
@@ -12,7 +14,9 @@
       "~/code/personal/notes/LLM Context/**/*.md": "allow"
     }
   },
-  "plugin": ["opencode-anthropic-auth@0.0.9"],
+  "plugin": [
+    "opencode-anthropic-auth@0.0.9"
+  ],
   "mcp": {
     "bright": {
       "enabled": false,
@@ -45,7 +49,11 @@
     "aws-knowledge-mcp-server": {
       "enabled": false,
       "type": "local",
-      "command": ["npx", "mcp-remote", "https://knowledge-mcp.global.api.aws"]
+      "command": [
+        "npx",
+        "mcp-remote",
+        "https://knowledge-mcp.global.api.aws"
+      ]
     },
     "atlassian-mcp-server": {
       "enabled": true,
@@ -68,7 +76,11 @@
     "brave-search": {
       "enabled": true,
       "type": "local",
-      "command": ["npx", "-y", "@brave/brave-search-mcp-server"],
+      "command": [
+        "npx",
+        "-y",
+        "@brave/brave-search-mcp-server"
+      ],
       "environment": {
         "BRAVE_API_KEY": "{file:~/.secrets/opencode-brave-api-key}"
       }
@@ -92,7 +104,28 @@
     "youtube-transcript": {
       "enabled": true,
       "type": "local",
-      "command": ["npx", "-y", "@kimtaeyoon83/mcp-server-youtube-transcript"]
+      "command": [
+        "npx",
+        "-y",
+        "@kimtaeyoon83/mcp-server-youtube-transcript"
+      ]
+    },
+    "excalidraw": {
+      "enabled": true,
+      "type": "local",
+      "command": [
+        "docker",
+        "run",
+        "-i",
+        "--rm",
+        "--network",
+        "host",
+        "-e",
+        "EXPRESS_SERVER_URL=http://localhost:3000",
+        "-e",
+        "ENABLE_CANVAS_SYNC=true",
+        "ghcr.io/yctimlin/mcp_excalidraw:latest"
+      ]
     }
   }
 }
