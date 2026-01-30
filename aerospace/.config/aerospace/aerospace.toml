@@ -55,8 +55,8 @@ inner.horizontal = 0
 inner.vertical = 0
 outer.bottom = 0
 outer.top = 0
-outer.left = [{ monitor.main = 0 }, { monitor."x" = 400 }]
-outer.right = [{ monitor.main = 0 }, { monitor."x" = 400 }]
+outer.left = [{ monitor.main = 0 }, { monitor."x" = 400 }, 0]
+outer.right = [{ monitor.main = 0 }, { monitor."x" = 400 }, 0]
 
 
 # 'main' binding mode declaration
