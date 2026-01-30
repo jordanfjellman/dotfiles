@@ -55,8 +55,8 @@ inner.horizontal = 0
 inner.vertical = 0
 outer.bottom = 0
 outer.top = 0
-outer.left = [{ monitor."LG ULTRAWIDE" = 400 }, { monitor.main = 0 }, 0]
-outer.right = [{ monitor."LG ULTRAWIDE" = 400 }, { monitor.main = 0 }, 0]
+outer.left = [{ monitor."LG ULTRAWIDE" = 600 }, { monitor.main = 0 }, 0]
+outer.right = [{ monitor."LG ULTRAWIDE" = 600 }, { monitor.main = 0 }, 0]
 
 
 # 'main' binding mode declaration
