@@ -19,7 +19,7 @@ spoon.SpoonInstall:andUse("AppLauncher", {
 		m = "Microsoft Outlook", -- [m]ail
 		o = "Obsidian",
 		s = "Slack",
-		t = "wezterm", -- [t]erminal
+		t = "ghostty", -- [t]erminal
 		v = "zoom.us", -- [v]ideo calls
 		x = "Xcode", -- [x]code
 	},
