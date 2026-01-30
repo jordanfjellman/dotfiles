@@ -53,10 +53,11 @@ preset = 'qwerty'
 [gaps]
 inner.horizontal = 0
 inner.vertical = 0
-outer.left = 400
 outer.bottom = 0
 outer.top = 0
-outer.right = 400
+outer.left = [{ monitor.main = 0 }, { monitor."x" = 400 }]
+outer.right = [{ monitor.main = 0 }, { monitor."x" = 400 }]
+
 
 # 'main' binding mode declaration
 # See: https://nikitabobko.github.io/AeroSpace/guide#binding-modes
