@@ -1,7 +1,7 @@
 #!/usr/bin/env zsh
 
 if [[ -z $STOW_FOLDERS ]]; then
-  STOW_FOLDERS="aerospace,bin,docker,fish,ghostty,git,hammerspoon,kitty,mise,nushell,nvim,opencode,starship,tmux,vim,vscode,wezterm,zsh"
+  STOW_FOLDERS="aerospace,bin,docker,fish,ghostty,git,hammerspoon,mise,nvim,opencode,starship,tmux,vim,vscode,zsh"
 fi
 
 if [[ -z $DOTFILES ]]; then
@@ -10,8 +10,8 @@ fi
 
 pushd $DOTFILES
 for folder in $(echo $STOW_FOLDERS | sed "s/,/ /g"); do
-  stow --delete $folder
-  stow --target=$HOME $folder
+  /opt/homebrew/bin/stow --delete $folder
+  /opt/homebrew/bin/stow --target=$HOME $folder
 done
 popd
 
