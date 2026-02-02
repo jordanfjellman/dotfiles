@@ -16,6 +16,7 @@ set -gx HOMEBREW_NO_ANALYTICS 1
 # PATH
 fish_add_path -gP "$HOMEBREW_PREFIX/bin" "$HOMEBREW_PREFIX/sbin"
 fish_add_path $HOME/.cargo/bin
+fish_add_path $HOME/.local/bin
 
 # MANPATH and INFOPATH
 ! set -q MANPATH; and set MANPATH ''
