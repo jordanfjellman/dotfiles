@@ -105,11 +105,11 @@ function cat
 end
 
 function tree
-    exa --tree --all --group-directories-first $argv
+    eza --tree --all --group-directories-first $argv
 end
 
 function ls
-    exa --all --group-directories-first $argv
+    eza --all --group-directories-first $argv
 end
 
 function devctl
