@@ -57,9 +57,6 @@ function stern() {
     command stern "$@"
 }
 
-# fnm
-eval "$(fnm env --use-on-cd --shell zsh)"
-
 # fzf
 export FZF_DEFAULT_OPS="--extended"
 export FZF_DEFAULT_COMMAND="fd --type f"
