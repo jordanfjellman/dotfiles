@@ -103,9 +103,7 @@ return {
         ---@type table<string, boolean>
         local added = {}
         opts.ensure_installed = vim.tbl_filter(function(lang)
-          if added[lang] then
-            return false
-          end
+          if added[lang] then return false end
           added[lang] = true
           return true
           ---@diagnostic disable-next-line: param-type-mismatch
