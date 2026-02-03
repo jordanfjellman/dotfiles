@@ -4,8 +4,12 @@
 packer_compiled.lua
 bin/.local/bin/ctpcli*
 bin/.local/bin/maelstrom/
+bin/.local/bin/kiro*
 bin/.local/share/
 bin/.local/state/
+docker/.docker/contexts/
+fish/.config/fish/conf.d/
+fish/.config/fish/fish_variables
 hammerspoon/.hammerspoon/Spoons/
 nushell/.config/nushell/history.txt
 nushell/.config/nushell/plugin.msgpackz
