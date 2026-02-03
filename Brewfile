@@ -1,6 +1,7 @@
 tap "nikitabobko/tap"
 
 brew "ansible"
+brew "cousier"
 brew "docker"
 brew "fish"
 brew "git"
