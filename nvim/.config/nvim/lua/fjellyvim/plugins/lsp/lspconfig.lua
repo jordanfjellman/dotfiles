@@ -2,9 +2,7 @@ return {
   {
     "williamboman/mason.nvim",
     lazy = false,
-    config = function()
-      require("mason").setup()
-    end,
+    config = function() require("mason").setup() end,
   },
   {
     "williamboman/mason-lspconfig.nvim",
@@ -53,9 +51,7 @@ return {
         group = ThePrimeagenGroup,
         callback = function(e)
           local opts = { buffer = e.buf }
-          vim.keymap.set("i", "<C-h>", function()
-            vim.lsp.buf.signature_help()
-          end, opts)
+          vim.keymap.set("i", "<C-h>", function() vim.lsp.buf.signature_help() end, opts)
         end,
       })
 
@@ -148,91 +144,63 @@ return {
     keys = {
       {
         "gD",
-        function()
-          vim.lsp.buf.declaration()
-        end,
+        function() vim.lsp.buf.declaration() end,
         { desc = "[G]o to [D]eclaration" },
       },
       {
         "gd",
-        function()
-          vim.lsp.buf.definition()
-        end,
+        function() vim.lsp.buf.definition() end,
         { desc = "[G]o to [D]efnition" },
       },
       {
         "K",
-        function()
-          vim.lsp.buf.hover()
-        end,
+        function() vim.lsp.buf.hover() end,
       },
       {
         "gi",
-        function()
-          vim.lsp.buf.implementation()
-        end,
+        function() vim.lsp.buf.implementation() end,
         { desc = "List implementations in quickfix" },
       },
       {
         "gr",
-        function()
-          vim.lsp.buf.references()
-        end,
+        function() vim.lsp.buf.references() end,
         { desc = "Find references in quickfix" },
       },
       {
         "gds",
-        function()
-          vim.lsp.buf.document_symbol()
-        end,
+        function() vim.lsp.buf.document_symbol() end,
       },
       {
         "gws",
-        function()
-          vim.lsp.buf.workspace_symbol()
-        end,
+        function() vim.lsp.buf.workspace_symbol() end,
       },
       {
         "<leader>D",
-        function()
-          vim.lsp.buf.type_definition()
-        end,
+        function() vim.lsp.buf.type_definition() end,
       },
       {
         "<leader>rn",
-        function()
-          vim.lsp.buf.rename()
-        end,
+        function() vim.lsp.buf.rename() end,
       },
       {
         "<C-h>",
-        function()
-          vim.lsp.buf.signature_help()
-        end,
+        function() vim.lsp.buf.signature_help() end,
       },
       {
         "<leader>o",
-        function()
-          vim.lsp.buf.format({ async = true })
-        end,
+        function() vim.lsp.buf.format({ async = true }) end,
       },
       {
         "<leader>ca",
-        function()
-          vim.lsp.buf.code_action()
-        end,
+        function() vim.lsp.buf.code_action() end,
       },
       {
         "<leader>cl",
-        function()
-          vim.lsp.codelens.run()
-        end,
+        function() vim.lsp.codelens.run() end,
       },
       {
         "<leader>th",
-        function()
-          vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled({}))
-        end,
+        function() vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled({})) end,
         { desc = "[T]oggle Inlay [H]ints" },
       },
     },
