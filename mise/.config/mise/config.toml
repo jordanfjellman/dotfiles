@@ -1,8 +1,53 @@
 [settings]
 idiomatic_version_file_enable_tools = ["java", "node"]
+experimental = true
 
 [tools]
+# --- Runtimes & Package Managers ---
 java = ["corretto-11", "corretto-17", "corretto-21"]
+neovim = "latest"
 node = "lts"
-ruby = "4"
+ruby = "latest"
+rust = "latest"
+uv = "latest"
+coursier = "latest"
 sbt = "latest"
+yarn = "latest"
+
+# --- Formatters & Linters ---
+stylua = "latest"
+gofumpt = "latest"
+"npm:prettier" = "latest"
+"gem:cocoapods" = "latest"
+"npm:eslint_d" = "latest"
+# --- LSP Servers ---
+"npm:@biomejs/biome" = "latest"
+"npm:bash-language-server" = "latest"
+"npm:diagnostic-languageserver" = "latest"
+"npm:dockerfile-language-server-nodejs" = "latest"
+"npm:graphql-language-service" = "latest"
+"npm:typescript-language-server" = "latest"
+"npm:vscode-css-languageserver-bin" = "latest"
+"npm:vscode-html-languageserver-bin" = "latest"
+"npm:vscode-json-languageserver-bin" = "latest"
+"npm:yaml-language-server" = "latest"
+lua-language-server = "latest"
+marksman = "latest"
+rust-analyzer = "latest"
+taplo = "latest"
+
+# --- Other Tools ---
+"cargo:parqeye" = "latest"
+"npm:aws-cdk" = "latest"
+"npm:opencode-ai" = "latest"
+aws-cli = "latest"
+bat = "latest"
+colima = "latest"
+eza = "latest"
+fzf = "latest"
+github-cli = "latest"
+kubectx = "latest"
+ripgrep = "latest"
+stern = "latest"
+starship = "latest"
+tmux = "latest"
