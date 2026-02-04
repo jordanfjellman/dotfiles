@@ -1,34 +1,28 @@
 return {
   {
     "ThePrimeagen/harpoon",
+    branch = "harpoon2",
     dependencies = { "nvim-lua/plenary.nvim" },
-    opts = {
-      menu = {
-        -- use a dynamic width for the popup menu
-        width = vim.api.nvim_win_get_width(0) - 4,
+    config = function() require("harpoon"):setup({}) end,
+    keys = {
+      {
+        "<leader>a",
+        function() require("harpoon"):list():add() end,
+        desc = "[A]dd File to Harpoon",
       },
+      {
+        "<C-e>",
+        function()
+          local harpoon = require("harpoon")
+          harpoon.ui:toggle_quick_menu(harpoon:list())
+        end,
+        desc = "Toggle Harpoon Menu",
+      },
+      { "<C-f>", function() require("harpoon"):list():select(1) end, desc = "Harpoon File 1" },
+      { "<C-g>", function() require("harpoon"):list():select(2) end, desc = "Harpoon File 2" },
+      { "<leader>f", function() require("harpoon"):list():select(3) end, desc = "Harpoon File 3" },
+      { "<leader>g", function() require("harpoon"):list():select(4) end, desc = "Harpoon File 4" },
     },
-    config = function()
-      local ui = require("harpoon.ui")
-      vim.keymap.set("n", "<leader>a", function()
-        require("harpoon.mark").add_file()
-      end, { desc = "[A]dd File to Harpoon", silent = true })
-      vim.keymap.set("n", "<C-E>", function()
-        ui.toggle_quick_menu()
-      end, { desc = "Toggle Harpoon Menu", silent = true })
-      vim.keymap.set("n", "<C-f>", function()
-        ui.nav_file(1)
-      end, { desc = "View Harpoon File at Position 1", silent = true })
-      vim.keymap.set("n", "<C-g>", function()
-        ui.nav_file(2)
-      end, { desc = "View Harpoon File at Position 2", silent = true })
-      vim.keymap.set("n", "<leader>f", function()
-        ui.nav_file(3)
-      end, { desc = "View Harpoon File at Position 3", silent = true })
-      vim.keymap.set("n", "<leader>g", function()
-        ui.nav_file(4)
-      end, { desc = "View Harpoon File at Position 4", silent = true })
-    end,
   },
   {
     "christoomey/vim-tmux-navigator",
