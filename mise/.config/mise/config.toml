@@ -5,6 +5,7 @@ experimental = true
 [tools]
 # --- Runtimes & Package Managers ---
 java = ["corretto-11", "corretto-17", "corretto-21"]
+go = "latest"
 neovim = "latest"
 node = "lts"
 ruby = "latest"
@@ -44,6 +45,7 @@ aws-cli = "latest"
 bat = "latest"
 colima = "latest"
 eza = "latest"
+fd = "latest"
 fzf = "latest"
 github-cli = "latest"
 kubectx = "latest"
