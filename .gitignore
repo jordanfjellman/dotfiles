@@ -7,6 +7,11 @@ bin/.local/bin/maelstrom/
 bin/.local/bin/kiro*
 bin/.local/share/
 bin/.local/state/
+colima/.colima/_lima
+colima/.colima/_store
+colima/.colima/_templates
+colima/.colima/default/daemon/
+colima/.colima/ssh_config
 docker/.docker/contexts/
 fish/.config/fish/conf.d/
 fish/.config/fish/fish_variables
