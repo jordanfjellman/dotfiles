@@ -4,7 +4,7 @@ experimental = true
 
 [tools]
 # --- Runtimes & Package Managers ---
-java = ["corretto-11", "corretto-17", "corretto-21"]
+java = "corretto-17"
 go = "latest"
 neovim = "latest"
 node = "lts"
