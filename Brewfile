@@ -1,8 +1,10 @@
 tap "nikitabobko/tap"
 
 brew "ansible"
-brew "cousier"
+brew "coursier"
 brew "docker"
+brew "docker-compose"
+brew "docker-credential-helper"
 brew "fish"
 brew "git"
 brew "mise"
