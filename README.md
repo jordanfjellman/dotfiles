@@ -9,3 +9,7 @@
    cs install scalafix
    cs install scalafmt
    ```
+5. Symlink Colima socket to Docker socket: (assumed to exist by tools like `devctl`)
+   ```shell
+   sudo ln -s "$HOME/.colima/default/docker.sock" /var/run/docker.sock
+   ```
