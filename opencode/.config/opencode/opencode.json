@@ -50,12 +50,7 @@
     "atlassian-mcp-server": {
       "enabled": true,
       "type": "local",
-      "command": [
-        "uvx",
-        "--python",
-        "/opt/homebrew/bin/python3.13",
-        "mcp-atlassian"
-      ],
+      "command": ["uvx", "mcp-atlassian"],
       "environment": {
         "JIRA_URL": "https://lifeway.atlassian.net",
         "JIRA_USERNAME": "{file:~/.secrets/opencode-atlassian-username}",
