@@ -66,7 +66,6 @@ AI should:
 - Identify reasoning gaps
 - Suggest alternative perspectives
 - Co-create outlines before writing
-  [Type-specific additions]
 
 AI should NOT:
 
