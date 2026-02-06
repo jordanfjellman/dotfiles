@@ -34,6 +34,7 @@ Use mcp_question to ask (one question at a time, wait for response):
 **d) Always ask:**
 
 - Brief description of what you're trying to accomplish
+- Any additional reference context files
 
 ### 3. Confirm & Create
 
