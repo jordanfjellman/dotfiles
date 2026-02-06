@@ -81,6 +81,10 @@ function bu
     brew upgrade --quiet
 end
 
+function mu
+  mise up && mise prune --yes   
+end
+
 function k
     kubectl $argv
 end
