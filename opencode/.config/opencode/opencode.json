@@ -55,7 +55,7 @@
         "JIRA_URL": "https://lifeway.atlassian.net",
         "JIRA_USERNAME": "{file:~/.secrets/opencode-atlassian-username}",
         "JIRA_API_TOKEN": "{file:~/.secrets/opencode-atlassian-api-key}",
-        "CONFLUENCE_URL": "https://your-company.atlassian.net/wiki",
+        "CONFLUENCE_URL": "https://lifeway.atlassian.net/wiki",
         "CONFLUENCE_USERNAME": "{file:~/.secrets/opencode-atlassian-username}",
         "CONFLUENCE_API_TOKEN": "{file:~/.secrets/opencode-atlassian-api-key}"
       }
