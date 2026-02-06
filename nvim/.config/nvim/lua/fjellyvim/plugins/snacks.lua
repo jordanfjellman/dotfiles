@@ -7,32 +7,7 @@ return {
   opts = {
     bigfile = { enabled = true },
     gh = { enabled = true },
-    picker = {
-      layouts = {
-        custom = {
-          layout = {
-            box = "vertical",
-            backdrop = false,
-            row = -1,
-            width = 0,
-            height = 0.4,
-            border = "none",
-            title = " {title} {live} {flags}",
-            title_pos = "left",
-            {
-              box = "horizontal",
-              { win = "list", border = "rounded" },
-              { win = "preview", title = "{preview}", width = 0.6, border = "rounded" },
-            },
-            { win = "input", height = 1, border = "top" },
-          },
-        },
-      },
-      sources = {
-        grep = { layout = "custom" },
-      },
-    },
-    -- notifier = { enabled = true },
+    picker = { enabled = true },
     quickfile = { enabled = true },
   },
   keys = {
