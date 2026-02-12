@@ -128,3 +128,14 @@ function sso
     end
     eval (aws configure export-credentials --format env --profile $argv[1])
 end
+
+function start-kiro-gateway 
+  set -l container_name kiro-gateway
+  docker rm -f $container_name &>/dev/null
+  docker run -d -p 8000:8000 \
+    -v ~/Library/Application\ Support/kiro-cli:/home/kiro/.local/share/kiro-cli:ro \
+    -e KIRO_CLI_DB_FILE=/home/kiro/.local/share/kiro-cli/data.sqlite3 \
+    -e PROXY_API_KEY="$(cat ~/.secrets/kiro-gateway-password)" \
+    --name $container_name \
+    ghcr.io/jwadow/kiro-gateway:latest
+end
