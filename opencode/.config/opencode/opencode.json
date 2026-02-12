@@ -1,6 +1,28 @@
 {
   "$schema": "https://opencode.ai/config.json",
   "instructions": ["~/code/personal/notes/LLM Context/AGENTS.md"],
+  "provider": {
+    "kiro": {
+      "npm": "@ai-sdk/openai-compatible",
+      "options": {
+        "baseURL": "http://localhost:8000/v1",
+        "headers": {
+          "Authorization": "Bearer {file:~/.secrets/kiro-gateway-password}"
+        }
+      },
+      "models": {
+        "auto": {
+          "name": "Auto"
+        },
+        "claude-opus-4.6": {
+          "name": "Opus"
+        },
+        "claude-sonnet-4.5": {
+          "name": "Sonnet"
+        }
+      }
+    }
+  },
   "permission": {
     "bash": {
       "date *": "allow",
@@ -9,7 +31,8 @@
     "external_directory": {
       "*": "ask",
       "~/.config/opencode/AGENTS.md": "allow",
-      "~/code/personal/notes/LLM Context/**/*.md": "allow"
+      "~/code/personal/notes/LLM Context/**/*.md": "allow",
+      "**/LLM Context/**/*.md": "allow"
     }
   },
   "plugin": ["opencode-anthropic-auth@0.0.13"],
