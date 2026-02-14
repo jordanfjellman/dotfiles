@@ -95,6 +95,7 @@ end
 for _, pair in ipairs({
   { "c", "https://claude.ai" },
   { "d", "https://discord.com/channels/@me" },
+  { "e", "https://esv.org" },
   { "g", "https://github.com/notifications" },
   { "m", "https://mail.google.com" },
   { "r", "https://read.readwise.io" },
