@@ -89,6 +89,9 @@ function up
   upgrade
 end
 
+function kiro-login
+  kiro-cli login --use-device-flow --license=pro --identity-provider=https://lifeway.awsapps.com/start --region=us-east-1
+end
 
 function k
     kubectl $argv
