@@ -73,17 +73,22 @@ function submit_tv
     gh workflow run tv.submit-to-testflight.yml --repo lifewayit/lifeway-discipleship && gh workflow run tv.submit-to-play-store.yml --repo lifewayit/lifeway-discipleship && gh workflow run tv.submit-to-amazon-appstore.yml --repo lifewayit/lifeway-discipleship
 end
 
-function buo
-    brew update --quiet && brew outdated --quiet
+function upgrade
+  # homebrew
+  brew update --quiet
+  brew outdated --quiet
+  brew upgrade --quiet
+  brew cleanup --prune=all
+
+  #mise
+  mise up
+  mise prune --yes
 end
 
-function bu
-    brew upgrade --quiet
+function up
+  upgrade
 end
 
-function mu
-  mise up && mise prune --yes   
-end
 
 function k
     kubectl $argv
@@ -138,4 +143,9 @@ function start-kiro-gateway
     -e PROXY_API_KEY="$(cat ~/.secrets/kiro-gateway-password)" \
     --name $container_name \
     ghcr.io/jwadow/kiro-gateway:latest
+end
+
+function espanso-update
+  espanso install lw-snippets --git git@github.com:LifewayIT/lw-snippets.git --external --force
+  espanso restart
 end
