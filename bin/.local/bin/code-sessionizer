@@ -1,0 +1,7 @@
+#!/bin/bash
+
+find $HOME/code -name .git -o -name worktrees -type d -prune -mindepth 1 -maxdepth 3 \
+  | sed 's/\/.git$//' \
+  | sed 's/\/worktrees$//' \
+  | fzf --select-1 \
+  | tmux-sessionizer

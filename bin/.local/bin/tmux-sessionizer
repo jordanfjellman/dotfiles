@@ -1,14 +1,12 @@
 #!/usr/bin/env bash
 
-# This script is authored by ThePrimeagen
-# https://github.com/ThePrimeagen/.dotfiles/blob/master/bin/.local/bin/tmux-sessionizer
-
 if [[ $# -eq 1 ]]; then
   selected=$1
 elif [[ ! -t 0 ]]; then
   read selected
 else
-  selected=$(find $HOME/code -name .git -o -name worktrees -type d -prune -mindepth 1 -maxdepth 3 | sed 's/\/.git$//' | sed 's/\/worktrees$//' | fzf --select-1)
+  echo "Usage: tmux-sessionizer <session name>"
+  exit 0
 fi
 
 if [[ -z $selected ]]; then
