@@ -2,5 +2,4 @@ brew "zola"
 
 cask "blender"
 cask "google-chrome"
-cask "superkey"
 cask "ultimaker-cura"
