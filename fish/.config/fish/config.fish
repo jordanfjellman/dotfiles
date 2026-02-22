@@ -73,20 +73,33 @@ function submit_tv
     gh workflow run tv.submit-to-testflight.yml --repo lifewayit/lifeway-discipleship && gh workflow run tv.submit-to-play-store.yml --repo lifewayit/lifeway-discipleship && gh workflow run tv.submit-to-amazon-appstore.yml --repo lifewayit/lifeway-discipleship
 end
 
-function upgrade
-  # homebrew
+function up_homebrew
+  set brewfile_dir ~/code/personal/dotfiles
+  set tmp_brewfile (mktemp)
+  cat $brewfile_dir/Brewfile.common > $tmp_brewfile
+  if test (hostname) = "MacBookPro"
+    cat $brewfile_dir/Brewfile.home >> $tmp_brewfile
+  else
+    cat $brewfile_dir/Brewfile.work >> $tmp_brewfile
+  end
+  brew bundle --file=$tmp_brewfile
+  brew bundle cleanup --file=$tmp_brewfile --cleanup --force
+  rm $tmp_brewfile
+
   brew update --quiet
   brew outdated --quiet
   brew upgrade --quiet
   brew cleanup --prune=all
+end
 
-  #mise
+function up_mise
   mise up
   mise prune --yes
 end
 
 function up
-  upgrade
+  up_homebrew
+  up_mise
 end
 
 function kiro-login

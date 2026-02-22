@@ -13,3 +13,14 @@
    ```shell
    sudo ln -s "$HOME/.colima/default/docker.sock" /var/run/docker.sock
    ```
+
+## ToDo's
+
+- [ ] Decide if the following packages are needed:
+  - black
+  - dockutil
+  - ffmpeg
+  - imagemagick
+  - lua-language-server
+  - luv
+  - utf8proc

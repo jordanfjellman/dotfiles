@@ -1,0 +1,10 @@
+brew "coursier"
+
+cask "android-studio"
+cask "dbvisualizer"
+cask "kiro-cli"
+cask "postman"
+cask "microsoft-excel"
+cask "microsoft-word"
+cask "slack"
+cask "studio-3t"
