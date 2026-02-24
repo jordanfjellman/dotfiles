@@ -1,9 +1,9 @@
 ---
-description: Create context-aware AGENTS.md for coding tasks
+description: Create context-aware AGENTS.md for tasks
 agent: build
 ---
 
-Initialize a coding task by creating a tailored AGENTS.md file with optional subtask breakdown.
+Initialize a task by creating a tailored AGENTS.md file with optional subtask breakdown.
 
 ## Process
 
@@ -24,22 +24,42 @@ Use mcp_question to ask (one question at a time, wait for response):
 **a) Task type:**
 
 - Work (Lifeway) - Professional tasks, may have Jira tickets
-- Personal project - Side projects and personal coding
+- Personal project - Side projects and personal work
 - Learning - Experimentation and learning new concepts
 
-**b) Task description:**
+**b) Activity:**
+
+- Coding - Planning, architecting, and designing code projects
+- Writing - Documents, blog posts, narratives, sermons
+
+**c) If Writing, ask document type based on task type:**
+
+_Work documents:_
+
+- ADR
+- Product Strategy
+- Narrative
+- Other
+
+_Personal documents:_
+
+- Blog Post
+- Sermon
+- Other
+
+**d) Task description:**
 
 - If frontmatter exists, show it and ask: use this, modify, or start fresh?
 - Otherwise, ask for description
 - The alias can be derived from the description
 
-**c) If Work task:**
+**e) If Work task (any activity):**
 
 - Related Jira tickets (comma-separated like "PROJ-123, PROJ-456" or "none")
   - Fetch details with `jira_get_issue` for each ticket
   - On fetch failure, note ticket with status "Failed to fetch"
 
-**d) Subtasks:**
+**f) Subtasks:**
 
 - Ask: "Do you want to break this into subtasks? (Enter comma-separated list or 'none')"
 - If provided:
@@ -48,7 +68,7 @@ Use mcp_question to ask (one question at a time, wait for response):
   - Each gets minimal frontmatter: `aliases: [subtask name as action]`, `description: [subtask name with descriptors]`, and `tags: [subtask]`
   - Update parent task file with `## Subtasks` section containing Obsidian links as a checklist item
 
-**e) Always ask:**
+**g) Always ask:**
 
 - Any additional reference context files
 
@@ -76,8 +96,29 @@ Show summary and ask for confirmation before creating files.
 
 ## Reference Context
 
-[Type-specific context files]
+[Context files determined by task type + activity combination]
+```
 
+**Context Loading Matrix:**
+
+| Task Type | Activity | Context Files |
+| --- | --- | --- |
+| Work | Coding | `coding/AGENTS.md`, `lifeway/AGENTS.md` |
+| Work | Writing (ADR) | `writing/AGENTS.md`, `writing/engineering/AGENTS.md`, `lifeway/AGENTS.md` + `writing/engineering/adrs.md` |
+| Work | Writing (Product Strategy) | `writing/AGENTS.md`, `writing/engineering/AGENTS.md`, `lifeway/AGENTS.md` + `writing/engineering/product_engineering_strategies.md` |
+| Work | Writing (Narrative) | `writing/AGENTS.md`, `writing/engineering/AGENTS.md`, `lifeway/AGENTS.md` + `writing/engineering/narratives.md` |
+| Work | Writing (Other) | `writing/AGENTS.md`, `writing/engineering/AGENTS.md`, `lifeway/AGENTS.md` |
+| Personal | Coding | `coding/AGENTS.md` |
+| Personal | Writing (Blog Post) | `writing/AGENTS.md`, `writing/blog/AGENTS.md` |
+| Personal | Writing (Sermon) | `writing/AGENTS.md` |
+| Personal | Writing (Other) | `writing/AGENTS.md` |
+| Learning | Coding | `coding/AGENTS.md`, `learning/AGENTS.md` |
+
+All context file paths are relative to `@~/code/personal/notes/LLM Context/`.
+
+**AI Collaboration Notes — Coding Activity:**
+
+```markdown
 ## AI Collaboration Notes
 
 **Core Principle: Plan first, build second.**
@@ -97,27 +138,44 @@ AI should NOT:
 - Ignore the personal philosophy in referenced context
 ```
 
-**Coding Task Additions:**
+**AI Collaboration Notes — Writing Activity:**
 
-- Context: `@~/code/personal/notes/LLM Context/coding/AGENTS.md`
+```markdown
+## AI Collaboration Notes
 
-**Coding Task Additions:**
+**Core Principle: You write, AI assists.**
 
-- Context: `@~/code/personal/notes/LLM Context/writing/AGENTS.md`
+AI should:
 
-**Work Task Additions:**
+- Structure thinking and improve clarity
+- Challenge assumptions actively
+- Identify reasoning gaps
+- Suggest alternative perspectives
+- Co-create outlines before writing
 
-- Context: `@~/code/personal/notes/LLM Context/lifeway/AGENTS.md`
+AI should NOT:
+
+- Write complete documents for you
+- Make decisions on your behalf
+- Override your judgment
+```
+
+**Work Task Additions (any activity):**
+
 - Related Work Items section with Jira table (if tickets provided)
 
-**Learning Task Additions:**
+**Writing + Work (Strategy docs) Additions:**
 
-- Context: `@~/code/personal/notes/LLM Context/learning/AGENTS.md`
+- AI should: Generate visual diagrams (Mermaid) during refinement
+
+**Writing + Personal (Blog Post) Additions:**
+
+- Topic section
+- Writing Reminders section (linking, citations, purpose)
+
+**Learning Task Additions (any activity):**
+
 - Learning Goals section placeholder
-
-**Personal Task:**
-
-- No additional context beyond base coding context
 
 ### 6. Update Parent Task File (if subtasks created)
 
@@ -134,12 +192,14 @@ Add `## Subtasks` section after frontmatter with Obsidian links to each subtask 
 
 Tell user:
 
-- ✓ AGENTS.md created
+- AGENTS.md created
 - Task type: [type]
+- Activity: [activity]
+- Document type: [type] (if writing)
 - Context files loaded: [count]
 - Subtask files created: [count or "none"]
 - Jira tickets: [count or "none"] (if work task)
-- Ready to start coding
+- Ready to start
 
 ## File Naming Convention
 
