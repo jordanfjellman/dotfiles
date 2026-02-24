@@ -161,6 +161,14 @@ function start-kiro-gateway
     ghcr.io/jwadow/kiro-gateway:latest
 end
 
+function docker-rm-all-by-image
+    if test (count $argv) -eq 0
+        echo "Usage: docker-rm-all-by-image <image>"
+        return 1
+    end
+  docker rm -f $(docker ps -q --filter "$argv[1]")
+end
+
 function espanso-update
   espanso install lw-snippets --git git@github.com:LifewayIT/lw-snippets.git --external --force
   espanso restart
