@@ -108,12 +108,12 @@
       }
     },
     "youtube-transcript": {
-      "enabled": true,
+      "enabled": false,
       "type": "local",
       "command": ["npx", "-y", "@kimtaeyoon83/mcp-server-youtube-transcript"]
     },
     "excalidraw": {
-      "enabled": true,
+      "enabled": false,
       "type": "local",
       "command": [
         "docker",
