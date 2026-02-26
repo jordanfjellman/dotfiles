@@ -1,10 +1,10 @@
+brew "bruno-cli"
 brew "coursier"
 
 cask "android-studio"
+cask "bruno"
 cask "dbvisualizer"
 cask "kiro-cli"
-cask "postman"
 cask "microsoft-excel"
-cask "microsoft-word"
 cask "slack"
 cask "studio-3t"
