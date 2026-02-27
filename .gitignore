@@ -2,6 +2,7 @@
 .lazy-lock.json
 .luarc.json
 .private_keys
+.opencode/
 packer_compiled.lua
 bin/.local/bin/ctpcli*
 bin/.local/bin/maelstrom/
