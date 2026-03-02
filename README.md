@@ -14,6 +14,18 @@
    sudo ln -s "$HOME/.colima/default/docker.sock" /var/run/docker.sock
    ```
 
+## Default Shell
+
+I prefer to use `fish` as my default shell. To do this, I first need to add Fish an acceptable shell, then set it for my user:
+
+```shell
+echo $(brew --prefix)/bin/fish | sudo tee -a /etc/shells
+```
+
+```shell
+chsh -s $(brew --prefix)/bin/fish
+```
+
 ## ToDo's
 
 - [ ] Decide if the following packages are needed:
