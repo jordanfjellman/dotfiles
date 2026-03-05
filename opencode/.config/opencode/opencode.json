@@ -17,10 +17,17 @@
         "claude-opus-4.6": {
           "name": "Opus"
         },
-        "claude-sonnet-4.5": {
+        "claude-sonnet-4.6": {
           "name": "Sonnet"
         }
       }
+    }
+  },
+  "command": {
+    "touch-stacks": {
+      "description": "Update CloudFormation stack files to trigger redeployment",
+      "template": "You are a basic file editor to help deploy cloudformation changes. Look at the current git status to see which files have changed in the repo's templates/ directory. Find corresponding files in the stacks/ directory that reference that template. Remove any existing comment at the top of the stack file (e.g., '# Updated for...'), then add a new single-line comment at the top that is super concise (less than 10 words if possible) reflecting the most recent changes to trigger a redeploy.",
+      "model": "github-copilot/gpt-5-mini"
     }
   },
   "permission": {
