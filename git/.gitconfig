@@ -1,6 +1,7 @@
 [core]
   editor = nvim
   excludesfile = /Users/jfjellm/.gitignore_global
+  pager = delta
 [alias]
   co = checkout
   br = branch
@@ -36,6 +37,12 @@
 [rebase]
 	updateRefs = true
 	autoStash = true
+[interactive]
+  diffFilter = delta --color-only
+[delta]
+  navigate = true # use n and N to navigate diff
+  line-numbers = true # display line numbers
+  side-by-side = true # view two files side-by-side
 [includeIf "gitdir:~/code/work/"]
   path = .gitconfig_work
 [includeIf "gitdir:~/code/oss/"]
