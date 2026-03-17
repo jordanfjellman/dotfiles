@@ -53,7 +53,8 @@ to `@~/code/personal/notes/LLM Context/`.
 | Work | Writing | Engineering Resource | `writing/AGENTS.md`, `writing/engineering/AGENTS.md`, `lifeway/AGENTS.md`, `writing/engineering/engineering_resource.md` |
 | Work | Writing | Other | `writing/AGENTS.md`, `writing/engineering/AGENTS.md`, `lifeway/AGENTS.md` |
 | Personal | Coding | — | `coding/AGENTS.md` |
-| Personal | Writing | Blog Post | `writing/AGENTS.md`, `writing/blog/AGENTS.md` |
+| Work | Writing | Blog Post | `writing/AGENTS.md`, `writing/blog/AGENTS.md`, `writing/blog/internal_blog_post.md`, `lifeway/AGENTS.md` |
+| Personal | Writing | Blog Post | `writing/AGENTS.md`, `writing/blog/AGENTS.md`, `writing/blog/external_blog_post.md` |
 | Personal | Writing | Sermon | `writing/AGENTS.md` |
 | Personal | Writing | Other | `writing/AGENTS.md` |
 | Learning | Coding | — | `coding/AGENTS.md`, `learning/AGENTS.md` |

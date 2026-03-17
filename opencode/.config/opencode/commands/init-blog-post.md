@@ -1,10 +1,11 @@
 ---
-description: Initialize a blog post task with AGENTS.md
+description: Initialize a blog post writing task with AGENTS.md
 agent: build
 ---
 
-Initialize a personal blog post writing task. Pre-fills `activity=writing`,
-`doc_type=blog_post`, and `task_type=personal`, skipping three questions.
+Initialize a blog post writing task. Pre-fills `activity=writing` and
+`doc_type=blog_post`. Asks whether the post is internal (work) or external
+(personal) to load the right context.
 
 ## Process
 
@@ -17,21 +18,31 @@ Load the `init-task` skill for shared generation logic.
 Pre-filled:
 - `activity` = writing
 - `doc_type` = blog_post
-- `task_type` = personal
 
 Use mcp_question to ask (one question at a time, wait for response):
 
-**a) Task description:**
+**a) Internal or External?**
+
+- Internal (work) — Published to Confluence Engineering Hub for the team
+- External (personal) — Published to jordanfjellman.com for the public
+
+Maps: Internal → `task_type=work`, External → `task_type=personal`
+
+**b) Task description:**
 
 - Check for markdown files in current working directory
 - If found, read frontmatter and ask: use this, modify, or start fresh?
 - Otherwise, ask for description
 
-**b) Subtasks:**
+**c) If Internal (work):**
+
+- Related Jira tickets (comma-separated like "PROJ-123, PROJ-456" or "none")
+
+**d) Subtasks:**
 
 - Ask: "Do you want to break this into subtasks? (Enter comma-separated list or 'none')"
 
-**c) Always ask:**
+**e) Always ask:**
 
 - Any additional reference context files
 
