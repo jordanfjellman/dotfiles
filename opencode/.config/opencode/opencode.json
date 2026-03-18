@@ -5,7 +5,7 @@
     "kiro": {
       "npm": "@ai-sdk/openai-compatible",
       "options": {
-        "baseURL": "http://localhost:8000/v1",
+        "baseURL": "http://localhost:9111/v1",
         "headers": {
           "Authorization": "Bearer {file:~/.secrets/kiro-gateway-password}"
         }
@@ -37,9 +37,10 @@
     },
     "external_directory": {
       "*": "ask",
-      "~/.config/opencode/AGENTS.md": "allow",
-      "~/code/personal/notes/LLM Context/**/*.md": "allow",
-      "**/LLM Context/**/*.md": "allow"
+      "/Users/jordan.fjellman/.config/opencode/**/*": "allow",
+      "/Users/jordan/.config/opencode/**/*": "allow",
+      "/Users/jordan.fjellman/code/personal/notes/**/*.md": "allow",
+      "/Users/jordan/code/personal/notes/**/*.md": "allow"
     }
   },
   "plugin": ["opencode-anthropic-auth@0.0.13"],
@@ -147,6 +148,12 @@
       "type": "local",
       "command": ["uvx", "excel-mcp-server", "stdio"],
       "environment": {}
+    },
+    "expo-mcp": {
+      "enabled": true,
+      "type": "remote",
+      "url": "https://mcp.expo.dev/mcp",
+      "oauth": {}
     }
   }
 }

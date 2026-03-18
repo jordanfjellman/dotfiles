@@ -154,7 +154,7 @@ end
 function start-kiro-gateway 
   set -l container_name kiro-gateway
   docker rm -f $container_name &>/dev/null
-  docker run -d -p 8000:8000 \
+  docker run -d -p 9111:8000 \
     -v ~/Library/Application\ Support/kiro-cli:/home/kiro/.local/share/kiro-cli:ro \
     -e KIRO_CLI_DB_FILE=/home/kiro/.local/share/kiro-cli/data.sqlite3 \
     -e PROXY_API_KEY="$(cat ~/.secrets/kiro-gateway-password)" \
