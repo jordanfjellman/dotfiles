@@ -154,6 +154,14 @@
       "type": "remote",
       "url": "https://mcp.expo.dev/mcp",
       "oauth": {}
+    },
+    "figma": {
+      "enabled": true,
+      "type": "local",
+      "command": ["npx", "-y", "figma-developer-mcp", "--stdio"],
+      "environment": {
+        "FIGMA_API_KEY": "{file:~/.secrets/opencode-figma}"
+      }
     }
   }
 }
