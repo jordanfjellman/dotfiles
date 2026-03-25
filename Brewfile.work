@@ -1,5 +1,6 @@
 brew "bruno-cli"
 brew "coursier"
+brew "telnet"
 
 cask "android-platform-tools"
 cask "android-studio"
