@@ -1,0 +1,6 @@
+{
+  "apiKeyHelper": "cat ~/.secrets/kiro-gateway-password",
+  "env": {
+    "ANTHROPIC_BASE_URL": "http://localhost:9111"
+  }
+}
