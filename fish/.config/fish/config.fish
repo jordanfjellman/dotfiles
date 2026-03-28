@@ -179,3 +179,11 @@ function espanso-update
   espanso install lw-snippets --git git@github.com:LifewayIT/lw-snippets.git --external --force
   espanso restart
 end
+
+# fjellyspaces — ephemeral agent workspaces
+# fj is the binary name; this ensures the alias works when installed to ~/.local/bin
+if not type -q fj
+    if test -f "$HOME/.cargo/bin/fj"
+        fish_add_path "$HOME/.cargo/bin"
+    end
+end
