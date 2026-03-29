@@ -40,6 +40,7 @@ taplo = "latest"
 
 # --- Other Tools ---
 "cargo:parqeye" = "latest"
+"github:jordanfjellman/fjellyspaces" = "latest"
 "npm:aws-cdk" = "latest"
 "npm:opencode-ai" = "latest"
 aws-cli = "latest"

@@ -61,6 +61,7 @@ end
 # Key bindings
 bind \ca beginning-of-line
 bind \ce end-of-line
+bind \ew 'fj pick; commandline -f repaint'
 
 # Functions
 function pr

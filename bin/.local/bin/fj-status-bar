@@ -1,0 +1,90 @@
+#!/usr/bin/env bash
+# Display fj workspace status as colored dots for tmux status bar
+# Usage: fj-status-bar
+# Output: colored dots (● ● ●) representing workspace states
+#   Red (●)    - needs attention (error, permission, waiting)
+#   Yellow (●) - busy (agent actively working)
+#   Green (●)  - idle (ready/available)
+
+set -euo pipefail
+
+# ANSI color codes for tmux status bar
+RED='\033[31m'
+YELLOW='\033[33m'
+GREEN='\033[32m'
+RESET='\033[0m'
+
+# Try to get workspace status from daemon via socket
+SOCKET="$HOME/.local/share/fjellyspaces/fj.sock"
+
+if [[ ! -S "$SOCKET" ]]; then
+  # Daemon not running, try fj list as fallback
+  if ! command -v fj &> /dev/null; then
+    exit 0
+  fi
+  
+  # Parse fj list output if available
+  # This is a fallback - the daemon API would be better
+  if ! output=$(fj list 2>/dev/null); then
+    exit 0
+  fi
+  
+  # If no workspaces, show nothing
+  if [[ -z "$output" ]] || [[ "$output" == "No workspaces"* ]]; then
+    exit 0
+  fi
+  
+  # For now, just count workspaces and show them as idle (green)
+  # This is a simple implementation - can be enhanced when daemon provides state
+  count=$(echo "$output" | grep -c "^" || echo "0")
+  
+  if [[ "$count" -gt 0 ]]; then
+    for ((i=0; i<count; i++)); do
+      echo -ne "${GREEN}●${RESET} "
+    done
+  fi
+  
+  exit 0
+fi
+
+# Query daemon for workspace states
+response=$(curl -sf --unix-socket "$SOCKET" http://localhost/workspaces 2>/dev/null || echo "")
+
+if [[ -z "$response" ]]; then
+  exit 0
+fi
+
+# Parse JSON response to get workspace states
+# Expected format: [{"name": "...", "state": "idle|busy|needs_attention", ...}, ...]
+# Using jq if available, otherwise grep/awk fallback
+
+if command -v jq &> /dev/null; then
+  # Use jq for proper JSON parsing
+  states=$(echo "$response" | jq -r '.[] | .state // "idle"' 2>/dev/null || echo "")
+  
+  if [[ -z "$states" ]]; then
+    exit 0
+  fi
+  
+  while IFS= read -r state; do
+    case "$state" in
+      busy|working)
+        echo -ne "${YELLOW}●${RESET} "
+        ;;
+      needs_attention|error|permission|waiting)
+        echo -ne "${RED}●${RESET} "
+        ;;
+      idle|ready|*)
+        echo -ne "${GREEN}●${RESET} "
+        ;;
+    esac
+  done <<< "$states"
+else
+  # Fallback: just show green dots for each workspace
+  # This is a safe default when we can't parse the state
+  count=$(echo "$response" | grep -o '"name"' | wc -l | tr -d ' ')
+  
+  for ((i=0; i<count; i++)); do
+    echo -ne "${GREEN}●${RESET} "
+  done
+fi

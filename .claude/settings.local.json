@@ -1,0 +1,26 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(wc:*)",
+      "Bash(find /Users/jordan/code/personal/dotfiles/colima -name *.yaml -o -name *.yml)",
+      "Bash(xargs -I{} cat {})",
+      "Bash(cargo new:*)",
+      "Bash(cargo build:*)",
+      "Bash(cargo run:*)",
+      "Bash(./target/debug/fj --help 2>&1)",
+      "Bash(./target/debug/fj new:*)",
+      "Bash(./target/debug/fj daemon:*)",
+      "Bash(./target/debug/fj list:*)",
+      "Bash(./target/debug/fj status:*)",
+      "Bash(git init:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(curl -sf --unix-socket ~/.local/share/fjellyspaces/fj.sock -X POST http://localhost/status -H 'Content-Type: application/json' -d '{\"\"workspace\"\":\"\"test-ws\"\",\"\"state\"\":\"\"busy\"\"}')",
+      "Bash(curl -sf --unix-socket ~/.local/share/fjellyspaces/fj.sock http://localhost/list)",
+      "Bash(cargo fix:*)",
+      "Bash(grep -v \"^$\")",
+      "Bash(cargo test:*)",
+      "Skill(update-config)"
+    ]
+  }
+}
