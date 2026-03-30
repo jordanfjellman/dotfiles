@@ -7,11 +7,6 @@ set -gx LANG en_US.UTF-8
 set -gx LC_ALL en_US.UTF-8
 set -gx XDG_CONFIG_HOME $HOME/.config
 
-# Fix for tmux
-if set -q TMUX
-    set -gx TERM tmux-256color
-end
-
 # Homebrew
 set -gx HOMEBREW_PREFIX /opt/homebrew
 set -gx HOMEBREW_CELLAR "$HOMEBREW_PREFIX/Cellar"

@@ -39,21 +39,31 @@ return {
       vim.opt_local.omnifunc = "v:lua.vim.lsp.omnifunc"
 
       local disable_builtin_lsp_formatter = function(client)
-        client.server_capabilities.document_formatting = false
-        client.server_capabilities.document_range_formatting = false
+        client.server_capabilities.documentFormattingProvider = false
+        client.server_capabilities.documentRangeFormattingProvider = false
       end
 
       local capabilities = require("cmp_nvim_lsp").default_capabilities()
 
-      local ThePrimeagenGroup = vim.api.nvim_create_augroup("ThePrimeagen", {})
-
-      vim.api.nvim_create_autocmd("LspAttach", {
-        group = ThePrimeagenGroup,
-        callback = function(e)
-          local opts = { buffer = e.buf }
-          vim.keymap.set("i", "<C-h>", function() vim.lsp.buf.signature_help() end, opts)
-        end,
-      })
+      -- LSP keymaps covered by Neovim 0.12 defaults:
+      --   K       -> hover
+      --   grn     -> rename          (was <leader>rn)
+      --   gra     -> code_action     (was <leader>ca)
+      --   grr     -> references      (was gr)
+      --   gri     -> implementation  (was gi)
+      --   grt     -> type_definition (was <leader>D)
+      --   grx     -> codelens.run    (was <leader>cl)
+      --   gO      -> document_symbol (was gds)
+      --   <C-s>   -> signature_help  (insert mode, was <C-h>)
+      --
+      -- LSP keymaps covered by Snacks pickers (snacks.lua):
+      --   gd      -> lsp_definitions
+      --   gD      -> lsp_declarations
+      --   gr      -> lsp_references
+      --   gI      -> lsp_implementations
+      --   gy      -> lsp_type_definitions
+      --   <leader>ss  -> lsp_symbols
+      --   <leader>sS  -> lsp_workspace_symbols
 
       vim.lsp.config("dockerls", {})
 
@@ -65,7 +75,7 @@ return {
       })
 
       vim.lsp.config("gopls", {
-        capabilties = capabilities,
+        capabilities = capabilities,
         on_attach = disable_builtin_lsp_formatter,
         cmd = { "gopls" },
         filetypes = { "go", "gomod", "gowork", "gotmpl" },
@@ -103,7 +113,7 @@ return {
       -- local swift_capabilities = require("cmp_nvim_lsp").default_capabilities()
       -- swift_capabilities.workspace.didChangeWatchedFiles = { dynamicRegistration = true }
       vim.lsp.config("sourcekit", {
-        capabilties = capabilities,
+        capabilities = capabilities,
       })
 
       vim.lsp.config("yamlls", {
@@ -143,65 +153,14 @@ return {
     end,
     keys = {
       {
-        "gD",
-        function() vim.lsp.buf.declaration() end,
-        { desc = "[G]o to [D]eclaration" },
-      },
-      {
-        "gd",
-        function() vim.lsp.buf.definition() end,
-        { desc = "[G]o to [D]efnition" },
-      },
-      {
-        "K",
-        function() vim.lsp.buf.hover() end,
-      },
-      {
-        "gi",
-        function() vim.lsp.buf.implementation() end,
-        { desc = "List implementations in quickfix" },
-      },
-      {
-        "gr",
-        function() vim.lsp.buf.references() end,
-        { desc = "Find references in quickfix" },
-      },
-      {
-        "gds",
-        function() vim.lsp.buf.document_symbol() end,
-      },
-      {
-        "gws",
-        function() vim.lsp.buf.workspace_symbol() end,
-      },
-      {
-        "<leader>D",
-        function() vim.lsp.buf.type_definition() end,
-      },
-      {
-        "<leader>rn",
-        function() vim.lsp.buf.rename() end,
-      },
-      {
-        "<C-h>",
-        function() vim.lsp.buf.signature_help() end,
-      },
-      {
         "<leader>o",
         function() vim.lsp.buf.format({ async = true }) end,
-      },
-      {
-        "<leader>ca",
-        function() vim.lsp.buf.code_action() end,
-      },
-      {
-        "<leader>cl",
-        function() vim.lsp.codelens.run() end,
+        desc = "F[o]rmat buffer",
       },
       {
         "<leader>th",
         function() vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled({})) end,
-        { desc = "[T]oggle Inlay [H]ints" },
+        desc = "[T]oggle Inlay [H]ints",
       },
     },
   },

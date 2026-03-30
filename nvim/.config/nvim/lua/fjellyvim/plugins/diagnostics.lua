@@ -80,7 +80,7 @@ return {
       {
         "<leader>od",
         function()
-          require("trouble").toggle("document_diagnostics")
+          require("trouble").toggle({ mode = "diagnostics", filter = { buf = 0 } })
         end,
         { desc = "[O]pen [D]ocument Diagnostics" },
       },
@@ -88,14 +88,14 @@ return {
       {
         "<leader>ow",
         function()
-          require("trouble").toggle("workspace_diagnostics")
+          require("trouble").toggle({ mode = "diagnostics" })
         end,
         { desc = "[O]pen [W]orkspace Diagnostics" },
       },
       {
         "gR",
         function()
-          require("trouble").toggle("lsp_references")
+          require("trouble").toggle({ mode = "lsp_references" })
         end,
       },
     },

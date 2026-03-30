@@ -21,8 +21,6 @@ M.setup = function()
   vim.keymap.set("n", "<leader>y", '"+y')
   vim.keymap.set("n", "<leader>yy", '"+yy')
   vim.keymap.set("n", "<leader>p", '"+p')
-  vim.keymap.set("n", "<leader>p", '"+p')
-  vim.keymap.set("v", "<leader>p", '"+p')
   vim.keymap.set("v", "<leader>p", '"+p')
 
   -- quickfix lists
