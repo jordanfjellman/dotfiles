@@ -1,6 +1,6 @@
 [core]
   editor = nvim
-  excludesfile = /Users/jfjellm/.gitignore_global
+  excludesfile = ~/.gitignore_global
   pager = delta
 [alias]
   co = checkout
@@ -51,3 +51,11 @@
   path = .gitconfig_personal
 [includeIf "gitdir:~/code/poc/"]
   path = .gitconfig_work
+[includeIf "hasconfig:remote.*.url:git@github.com:LifewayIT/**"]
+  path = .gitconfig_work
+[includeIf "hasconfig:remote.*.url:https://github.com/LifewayIT/**"]
+  path = .gitconfig_work
+[includeIf "hasconfig:remote.*.url:git@github.com:jordanfjellman/**"]
+  path = .gitconfig_personal
+[includeIf "hasconfig:remote.*.url:https://github.com/jordanfjellman/**"]
+  path = .gitconfig_personal

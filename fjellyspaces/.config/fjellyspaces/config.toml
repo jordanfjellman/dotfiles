@@ -46,3 +46,11 @@ ports = [
 ]
 auth_ports = []
 env = {}
+
+[templates.dotfiles]
+description = "Dotfiles workspace"
+profile = "default"
+repos = [
+  { url = "git@github.com:jordanfjellman/dotfiles.git" },
+  { url = "git@github.com:jordanfjellman/ansible.git" },
+]
