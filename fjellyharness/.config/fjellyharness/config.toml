@@ -9,10 +9,16 @@ mode = "independent"
 
 [llm]
 provider = "fireworks"
-# API key is stored in environment variable: FIREWORKS_API_KEY
+# API key can be provided via:
+# 1. Environment variable: FIREWORKS_API_KEY
+# 2. File reference: api_key_file = "~/.secrets/fireworks-api-key"
 # Get your key from: https://fireworks.ai/api-keys
-default_model = "accounts/fireworks/models/llama-v3p1-405b-instruct"
-fallback_model = "accounts/fireworks/models/llama-v3p1-70b-instruct"
+
+# Using Kimi K2.5 Turbo via Fireworks AI Router
+# This is the same model powering this OpenCode session
+# Model ID format: accounts/fireworks/models/{model-name}
+default_model = "accounts/fireworks/models/kimi-k2p5-turbo"
+fallback_model = "accounts/fireworks/models/kimi-k2p5-turbo"
 
 [database]
 # Uses XDG_DATA_HOME by default: ~/.local/share/fjellyharness/db.sqlite
