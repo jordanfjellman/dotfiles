@@ -1,0 +1,53 @@
+# FjellyHarness Configuration
+# Location: ~/.config/fjellyharness/config.toml
+# Stow target: stow fjellyharness
+
+[workspace]
+id = "personal"
+name = "Personal Projects"
+mode = "independent"
+
+[llm]
+provider = "fireworks"
+# API key is stored in environment variable: FIREWORKS_API_KEY
+# Get your key from: https://fireworks.ai/api-keys
+default_model = "accounts/fireworks/models/llama-v3p1-405b-instruct"
+fallback_model = "accounts/fireworks/models/llama-v3p1-70b-instruct"
+
+[database]
+# Uses XDG_DATA_HOME by default: ~/.local/share/fjellyharness/db.sqlite
+
+[budget]
+total_daily = 25.00
+per_repo_min = 5.00
+shared_pool = 5.00
+allocation_strategy = "even"
+
+[eod]
+strict = true
+max_retries = 3
+require_manual_signoff = false
+
+[eod.criteria]
+feature = ["Compiles", "TestsPass", "NoLintErrors"]
+bugfix = ["Compiles", "TestsPass", "RegressionTestPasses"]
+refactor = ["Compiles", "TestsPass", "NoLintErrors", "NoBehaviorChange"]
+documentation = ["NoBrokenLinks", "ValidMarkdown"]
+test = ["Compiles", "TestsPass"]
+research = ["NotesDocumented"]
+maintenance = ["Compiles", "NoLintErrors"]
+
+[logging]
+level = "info"
+
+[features]
+workspace = true
+context_switching = true
+crash_recovery = true
+task_queue = true
+real_ai = true
+determinism = true
+multi_repo_coordination = true
+fair_rate_limiting = true
+cross_repo_refactoring = true
+smart_context_pruning = true
