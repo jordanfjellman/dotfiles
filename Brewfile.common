@@ -1,4 +1,5 @@
 tap "nikitabobko/tap"
+# tap "jordanfjellman/tap"  # Uncomment to install fjelly via Homebrew
 
 brew "ansible"
 brew "docker"
@@ -12,6 +13,7 @@ brew "stow"
 brew "tpm"
 brew "zsh"
 brew "zsh-autosuggestions"
+# brew "fjelly"  # Uncomment to install via Homebrew (alternative to mise)
 
 cask "nikitabobko/tap/aerospace"
 cask "brave-browser"

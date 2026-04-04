@@ -53,9 +53,9 @@ stow --target=$HOME fjelly   # Create new symlinks
 
 ```bash
 # Trust and install
-mise trust cargo:https://github.com/jordanfjellman/fjelly
-mise install cargo:https://github.com/jordanfjellman/fjelly
-mise use -g cargo:https://github.com/jordanfjellman/fjelly
+mise trust github:jordanfjellman/fjelly
+mise install github:jordanfjellman/fjelly
+mise use -g github:jordanfjellman/fjelly
 
 # Verify
 which fjelly
@@ -76,7 +76,12 @@ chmod +x verify-fjelly.sh
 
 1. **mise/.config/mise/config.toml**
    - Changed: `"github:jordanfjellman/fjellyspaces" = "v0.3.5"`
-   - To: `"cargo:https://github.com/jordanfjellman/fjelly" = "latest"`
+   - To: `"github:jordanfjellman/fjelly" = "latest"`
+
+2. **Brewfile.common** (fallback option)
+   - Added tap: `jordanfjellman/tap` (commented out)
+   - Added: `brew "fjelly"` (commented out)
+   - Uncomment to use Homebrew instead of mise
 
 2. **install**
    - Changed: `STOW_FOLDERS="...,fjellyharness,..."`
@@ -198,12 +203,66 @@ stow --delete fjelly
 stow --target=$HOME fjellyspaces
 
 # Reinstall via mise
-mise uninstall cargo:https://github.com/jordanfjellman/fjelly
+mise uninstall github:jordanfjellman/fjelly
 mise install github:jordanfjellman/fjellyspaces
 mise use -g github:jordanfjellman/fjellyspaces
 ```
 
-## Additional Resources
+## Homebrew Fallback (Alternative to Mise)
+
+If mise doesn't work with the private repo, you can use Homebrew instead:
+
+### Option A: Use Homebrew instead of Mise
+
+1. **Uncomment the brew lines in Brewfile.common:**
+   ```ruby
+   tap "jordanfjellman/tap"
+   brew "fjelly"
+   ```
+
+2. **Install via Homebrew:**
+   ```bash
+   brew tap jordanfjellman/tap
+   brew install fjelly
+   ```
+
+3. **Update via Homebrew:**
+   ```bash
+   brew update
+   brew upgrade fjelly
+   ```
+
+### Option B: Manual Source Build (Last Resort)
+
+If both mise and Homebrew fail:
+
+```bash
+# Clone and build manually
+git clone git@github.com:jordanfjellman/fjelly.git ~/code/personal/fjelly
+cd ~/code/personal/fjelly
+cargo build --release
+cp target/release/fjelly ~/.local/bin/
+```
+
+## How Updates Work
+
+### With Mise (Primary Method):
+```bash
+mise upgrade github:jordanfjellman/fjelly
+# or
+mise upgrade  # Upgrades all tools
+```
+
+### With Homebrew (Fallback Method):
+```bash
+brew update
+brew upgrade fjelly
+```
+
+### Automatic Updates:
+Both mise and Homebrew can be configured for automatic updates:
+- **mise**: Add to your shell startup or use a cron job
+- **Homebrew**: `brew upgrade` can be run periodically
 
 - **fjelly repo**: https://github.com/jordan/fjelly
 - **fjelly README**: Run `fjelly --help` after installation

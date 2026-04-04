@@ -50,33 +50,25 @@ echo -e "${GREEN}✓ fjelly stowed${NC}"
 
 echo ""
 
-# Step 3: Build fjelly from source (mise has auth issues with private repos)
-echo -e "${YELLOW}Step 3: Building fjelly from source...${NC}"
+# Step 3: Install fjelly via mise (using github backend like fjellyspaces)
+echo -e "${YELLOW}Step 3: Installing fjelly via mise...${NC}"
 
-FJELLY_DIR="$HOME/code/personal/fjelly"
-INSTALL_DIR="$HOME/.local/bin"
+echo "  → Trusting fjelly tool..."
+mise trust github:jordanfjellman/fjelly 2>/dev/null || true
 
-if [ ! -d "$FJELLY_DIR" ]; then
-    echo "  → Cloning fjelly repository..."
-    git clone git@github.com:jordanfjellman/fjelly.git "$FJELLY_DIR"
-fi
+echo "  → Installing fjelly..."
+mise install github:jordanfjellman/fjelly
 
-cd "$FJELLY_DIR"
-echo "  → Building release binary (this may take a few minutes)..."
-cargo build --release 2>&1 | tail -5
-
-echo "  → Installing to $INSTALL_DIR..."
-mkdir -p "$INSTALL_DIR"
-cp "$FJELLY_DIR/target/release/fjelly" "$INSTALL_DIR/"
-chmod +x "$INSTALL_DIR/fjelly"
+echo "  → Setting as global tool..."
+mise use -g github:jordanfjellman/fjelly
 
 echo "  → Generating completions..."
 # Fish completions
 if [ -d "$HOME/.config/fish/completions" ]; then
-    "$INSTALL_DIR/fjelly" completions fish > "$HOME/.config/fish/completions/fjelly.fish" 2>/dev/null || true
+    mise exec github:jordanfjellman/fjelly -- fjelly completions fish > "$HOME/.config/fish/completions/fjelly.fish" 2>/dev/null || true
 fi
 
-echo -e "${GREEN}✓ fjelly built and installed${NC}"
+echo -e "${GREEN}✓ fjelly installed via mise${NC}"
 echo ""
 
 # Step 4: Verify installation

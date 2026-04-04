@@ -160,8 +160,5 @@ export CARGO_HTTP_CAINFO=$ZSCALER_ROOT_CA_PATH
 
 export XDG_CONFIG_HOME="$HOME/.config"
 
-# fjelly integration
+# fjelly integration (PATH setup only)
 [ -f "$XDG_CONFIG_HOME/zsh/fjelly.zsh" ] && source "$XDG_CONFIG_HOME/zsh/fjelly.zsh"
-
-# fjelly update alias
-alias fjelly-update="$HOME/.local/bin/update-fjelly"
