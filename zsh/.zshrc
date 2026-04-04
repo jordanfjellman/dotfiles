@@ -162,3 +162,6 @@ export XDG_CONFIG_HOME="$HOME/.config"
 
 # fjelly integration
 [ -f "$XDG_CONFIG_HOME/zsh/fjelly.zsh" ] && source "$XDG_CONFIG_HOME/zsh/fjelly.zsh"
+
+# fjelly update alias
+alias fjelly-update="$HOME/.local/bin/update-fjelly"
