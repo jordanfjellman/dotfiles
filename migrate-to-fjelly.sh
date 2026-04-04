@@ -54,11 +54,11 @@ echo ""
 echo -e "${YELLOW}Step 3: Installing fjelly via mise...${NC}"
 
 echo "  → Trusting fjelly tool..."
-mise trust ssh://git@github.com/jordanfjellman/fjelly
+mise trust cargo:ssh://git@github.com/jordanfjellman/fjelly
 
 echo "  → Installing fjelly..."
-mise install ssh://git@github.com/jordanfjellman/fjelly
-mise use -g ssh://git@github.com/jordanfjellman/fjelly
+mise install cargo:ssh://git@github.com/jordanfjellman/fjelly
+mise use -g cargo:ssh://git@github.com/jordanfjellman/fjelly
 
 echo -e "${GREEN}✓ fjelly installed via mise${NC}"
 echo ""
