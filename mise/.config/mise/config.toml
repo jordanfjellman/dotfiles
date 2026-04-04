@@ -42,8 +42,10 @@ rust-analyzer = "latest"
 taplo = "latest"
 
 # --- Other Tools ---
+# NOTE: fjelly is installed from source instead of mise due to private repo auth issues
+# Run: ~/code/personal/dotfiles/setup-fjelly.sh
 "cargo:parqeye" = "latest"
-"cargo:ssh://git@github.com/jordanfjellman/fjelly" = "latest"
+# "cargo:https://github.com/jordanfjellman/fjelly" = "latest"  # Disabled - use setup-fjelly.sh instead
 "npm:aws-cdk" = "latest"
 "npm:opencode-ai" = "latest"
 aws-cli = "latest"

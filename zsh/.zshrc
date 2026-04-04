@@ -159,3 +159,6 @@ export GRADLE_OPTS="-Djavax.net.ssl.trustStore=$JAVA_HOME/lib/security/cacerts -
 export CARGO_HTTP_CAINFO=$ZSCALER_ROOT_CA_PATH
 
 export XDG_CONFIG_HOME="$HOME/.config"
+
+# fjelly integration
+[ -f "$XDG_CONFIG_HOME/zsh/fjelly.zsh" ] && source "$XDG_CONFIG_HOME/zsh/fjelly.zsh"

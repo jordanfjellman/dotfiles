@@ -1,6 +1,9 @@
 [build]
 rustc-wrapper = ".cargo/bin/sccache"
 
+[net]
+git-fetch-with-cli = true
+
 [target.x86_64-apple-darwin]
 rustflags = [
   "-C", "link-arg=-undefined",

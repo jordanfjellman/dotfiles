@@ -53,9 +53,9 @@ stow --target=$HOME fjelly   # Create new symlinks
 
 ```bash
 # Trust and install
-mise trust cargo:ssh://git@github.com/jordanfjellman/fjelly
-mise install cargo:ssh://git@github.com/jordanfjellman/fjelly
-mise use -g cargo:ssh://git@github.com/jordanfjellman/fjelly
+mise trust cargo:https://github.com/jordanfjellman/fjelly
+mise install cargo:https://github.com/jordanfjellman/fjelly
+mise use -g cargo:https://github.com/jordanfjellman/fjelly
 
 # Verify
 which fjelly
@@ -76,7 +76,7 @@ chmod +x verify-fjelly.sh
 
 1. **mise/.config/mise/config.toml**
    - Changed: `"github:jordanfjellman/fjellyspaces" = "v0.3.5"`
-   - To: `"cargo:ssh://git@github.com/jordanfjellman/fjelly" = "latest"`
+   - To: `"cargo:https://github.com/jordanfjellman/fjelly" = "latest"`
 
 2. **install**
    - Changed: `STOW_FOLDERS="...,fjellyharness,..."`
@@ -198,7 +198,7 @@ stow --delete fjelly
 stow --target=$HOME fjellyspaces
 
 # Reinstall via mise
-mise uninstall cargo:ssh://git@github.com/jordanfjellman/fjelly
+mise uninstall cargo:https://github.com/jordanfjellman/fjelly
 mise install github:jordanfjellman/fjellyspaces
 mise use -g github:jordanfjellman/fjellyspaces
 ```
