@@ -43,7 +43,6 @@ taplo = "latest"
 
 # --- Other Tools ---
 "cargo:parqeye" = "latest"
-# NOTE: Using github backend for private repos (like fjellyspaces)
 "github:jordanfjellman/fjelly" = "latest"
 "npm:aws-cdk" = "latest"
 "npm:opencode-ai" = "latest"
