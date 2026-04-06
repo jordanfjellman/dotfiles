@@ -99,7 +99,28 @@ function up_mise
   mise prune --yes
 end
 
+function up_repos
+  set -l repos ~/code/personal/dotfiles ~/code/personal/skills
+
+  for repo in $repos
+    if not test -d $repo/.git
+      echo "⚠️  Warning: $repo is not a git repository, skipping..."
+      continue
+    end
+
+    set -l git_status (git -C $repo status --porcelain 2>/dev/null)
+    if test -n "$git_status"
+      echo "⚠️  Warning: $repo has uncommitted changes, skipping..."
+      continue
+    end
+
+    echo "📥 Updating $repo..."
+    git -C $repo pull --ff-only 2>/dev/null || git -C $repo pull
+  end
+end
+
 function up
+  up_repos
   up_homebrew
   up_mise
 end
