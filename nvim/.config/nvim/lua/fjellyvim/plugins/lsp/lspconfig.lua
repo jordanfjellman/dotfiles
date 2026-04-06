@@ -150,6 +150,47 @@ return {
           },
         },
       })
+
+      -- Enable all configured LSP servers
+      vim.lsp.enable({
+        "dockerls",
+        "cssls",
+        "ansiblels",
+        "gopls",
+        "graphql",
+        "jsonls",
+        "marksman",
+        "bright_script",
+        "sourcekit",
+        "yamlls",
+        "lua_ls",
+        "rust_analyzer",
+      })
+
+      -- Define and enable remaining mason-lspconfig servers
+      vim.lsp.config("bashls", { capabilities = capabilities })
+      vim.lsp.enable("bashls")
+
+      vim.lsp.config("biome", { capabilities = capabilities })
+      vim.lsp.enable("biome")
+
+      vim.lsp.config("cmake", { capabilities = capabilities })
+      vim.lsp.enable("cmake")
+
+      vim.lsp.config("diagnosticls", { capabilities = capabilities })
+      vim.lsp.enable("diagnosticls")
+
+      vim.lsp.config("eslint", { capabilities = capabilities })
+      vim.lsp.enable("eslint")
+
+      vim.lsp.config("html", { capabilities = capabilities })
+      vim.lsp.enable("html")
+
+      vim.lsp.config("taplo", { capabilities = capabilities })
+      vim.lsp.enable("taplo")
+
+      vim.lsp.config("ts_ls", { capabilities = capabilities })
+      vim.lsp.enable("ts_ls")
     end,
     keys = {
       {

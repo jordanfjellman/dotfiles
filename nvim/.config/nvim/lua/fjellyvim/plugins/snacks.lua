@@ -10,6 +10,11 @@ return {
     picker = { enabled = true },
     quickfile = { enabled = true },
   },
+  config = function(_, opts)
+    require("snacks").setup(opts)
+    -- Set Snacks picker for vim.ui.select
+    vim.ui.select = Snacks.picker.select
+  end,
   keys = {
     -- Top Pickers & Explorer
     { "<leader>sf", function() Snacks.picker.smart() end, desc = "[S]mart [F]ind Files" },
