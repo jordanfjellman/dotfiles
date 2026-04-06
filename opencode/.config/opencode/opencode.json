@@ -100,7 +100,7 @@
       }
     },
     "github": {
-      "enabled": true,
+      "enabled": false,
       "type": "local",
       "command": [
         "docker",
@@ -150,13 +150,13 @@
       "environment": {}
     },
     "expo-mcp": {
-      "enabled": true,
+      "enabled": false,
       "type": "remote",
       "url": "https://mcp.expo.dev/mcp",
       "oauth": {}
     },
     "figma": {
-      "enabled": true,
+      "enabled": false,
       "type": "remote",
       "url": "https://mcp.figma.com/mcp",
       "oauth": {
