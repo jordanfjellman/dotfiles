@@ -1,56 +1,71 @@
-[daemon]
-socket_path = "~/.local/share/fjelly/fj.sock"
-auto_start = true
+[workspace]
+id = "fk-test"
+name = "fk-test"
+mode = "independent"
+repositories = []
 
-[defaults]
-image = "fjelly:latest"
-shell = "fish"
-dotfiles_host_path = "~/code/personal/dotfiles"
-notes_host_path = "~/code/personal/notes"
-workspace_root = "~/.local/share/fjelly/volumes"
-dotfiles_exclude_packages = ["opencode"]
+[llm]
+provider = "anthropic"
+api_key = ""
+default_model = "claude-sonnet-4-20250514"
+fallback_model = "claude-haiku-4-20250514"
 
-# Secrets: map of env var name → source
-# Sources: "file:/path/to/file" or "env:VAR_NAME"
-[secrets]
-ANTHROPIC_API_KEY = "file:~/.secrets/kiro-gateway-password"
-GITHUB_TOKEN = "file:~/.secrets/github-token"
+[database]
+path = "~/.local/share/fjelly/db.sqlite"
 
-[skills]
-opencode_skills_path = "~/code/personal/dotfiles/opencode/.config/opencode/skills"
-claude_skills_path = ""
-additional_skills_paths = [
-  "~/code/personal/skills/.agents/skills",
-  "~/code/personal/skills/skills",
-  "~/code/personal/skills/.claude/skills",
-  "~/code/personal/dotfiles/claude/.claude/hooks"
+[budget]
+total_daily = 50.0
+per_repo_min = 5.0
+shared_pool = 15.0
+allocation_strategy = "even"
+
+[eod]
+strict = true
+max_retries = 3
+require_manual_signoff = false
+
+[eod.criteria]
+test = [
+    "Compiles",
+    "TestsPass",
+]
+feature = [
+    "Compiles",
+    "TestsPass",
+    "NoLintErrors",
+]
+documentation = [
+    "NoBrokenLinks",
+    "ValidMarkdown",
+]
+research = ["NotesDocumented"]
+bugfix = [
+    "Compiles",
+    "TestsPass",
+    "RegressionTestPasses",
+]
+refactor = [
+    "Compiles",
+    "TestsPass",
+    "NoLintErrors",
+    "NoBehaviorChange",
+]
+maintenance = [
+    "Compiles",
+    "NoLintErrors",
 ]
 
-[profiles.default]
-ports = []
-auth_ports = []
-env = {}
+[logging]
+level = "info"
 
-[profiles.web]
-ports = [
-  { host = 3000, container = 3000 },
-  { host = 5173, container = 5173 },
-]
-auth_ports = [9876]
-env = {}
-
-[profiles.api]
-ports = [
-  { host = 8080, container = 8080 },
-  { host = 5432, container = 5432 },
-]
-auth_ports = []
-env = {}
-
-[templates.dotfiles]
-description = "Dotfiles workspace"
-profile = "default"
-repos = [
-  { url = "git@github.com:jordanfjellman/dotfiles.git" },
-  { url = "git@github.com:jordanfjellman/ansible.git" },
-]
+[features]
+workspace = true
+context_switching = false
+crash_recovery = false
+task_queue = false
+real_ai = false
+determinism = false
+multi_repo_coordination = false
+fair_rate_limiting = false
+cross_repo_refactoring = false
+smart_context_pruning = false
