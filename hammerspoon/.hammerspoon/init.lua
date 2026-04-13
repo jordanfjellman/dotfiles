@@ -5,27 +5,27 @@ local hyper = { "shift", "alt", "ctrl", "cmd" }
 hs.loadSpoon("SpoonInstall")
 
 spoon.SpoonInstall:andUse("AppLauncher", {
-  config = {
-    modifiers = hyper,
-  },
-  hotkeys = {
-    a = "Android Studio",
-    b = "Brave Browser",
-    e = "Visual Studio Code", -- code [e]ditor
-    f = "Firefox Developer Edition",
-    g = "Google Chrome Canary",
-    i = "IntelliJ IDEA",
-    m = "Microsoft Outlook", -- [m]ail
-    o = "Obsidian",
-    s = "Slack",
-    t = "ghostty", -- [t]erminal
-    v = "zoom.us", -- [v]ideo calls
-    x = "Xcode", -- [x]code
-  },
+	config = {
+		modifiers = hyper,
+	},
+	hotkeys = {
+		a = "Android Studio",
+		b = "Brave Browser",
+		e = "Visual Studio Code", -- code [e]ditor
+		f = "Firefox Developer Edition",
+		g = "Google Chrome Canary",
+		i = "IntelliJ IDEA",
+		m = "Microsoft Outlook", -- [m]ail
+		o = "Obsidian",
+		s = "Slack",
+		t = "Wezterm", -- [t]erminal
+		v = "zoom.us", -- [v]ideo calls
+		x = "Xcode", -- [x]code
+	},
 })
 
 function openURLReuseDomain(theURL)
-  local asa = [[
+	local asa = [[
       on run argv
           set theURL to "%URL%"
 
@@ -80,39 +80,39 @@ function openURLReuseDomain(theURL)
       end run
     ]]
 
-  asa = asa:gsub("%%BROWSER%%", "Brave Browser")
-  asa = asa:gsub("%%URL%%", theURL)
+	asa = asa:gsub("%%BROWSER%%", "Brave Browser")
+	asa = asa:gsub("%%URL%%", theURL)
 
-  local ok, result = hs.osascript.applescript(asa, theURL)
+	local ok, result = hs.osascript.applescript(asa, theURL)
 
-  if ok then
-    hs.alert.show("Success: " .. result, 4)
-  else
-    hs.alert.show("AppleScript ERROR: " .. tostring(result), 8)
-  end
+	if ok then
+		hs.alert.show("Success: " .. result, 4)
+	else
+		hs.alert.show("AppleScript ERROR: " .. tostring(result), 8)
+	end
 end
 
 for _, pair in ipairs({
-  { "c", "https://claude.ai" },
-  { "d", "https://discord.com/channels/@me" },
-  { "e", "https://esv.org" },
-  { "g", "https://github.com/notifications" },
-  { "m", "https://mail.google.com" },
-  { "r", "https://read.readwise.io" },
-  { "s", "https://web.telegram.org/a/" },               -- "s" is similar to "slack" (local messaging app)
-  { "t", "https://teams.cloud.microsoft/" },
-  { "w", "https://lifeway.atlassian.net/jira/for-you" }, -- [w]orkboard
-  { "x", "https://x.com" },
-  { "y", "https://music.youtube.com" },
-  { "z", "https://lifeway.zoom.us/j/91553605678?pwd=6wNOo8UETFaLahW83mnZSKdVDnw8BF.1" }, -- zoom room
+	{ "c", "https://claude.ai" },
+	{ "d", "https://discord.com/channels/@me" },
+	{ "e", "https://esv.org" },
+	{ "g", "https://github.com/notifications" },
+	{ "m", "https://mail.google.com" },
+	{ "r", "https://read.readwise.io" },
+	{ "s", "https://web.telegram.org/a/" }, -- "s" is similar to "slack" (local messaging app)
+	{ "t", "https://teams.cloud.microsoft/" },
+	{ "w", "https://lifeway.atlassian.net/jira/for-you" }, -- [w]orkboard
+	{ "x", "https://x.com" },
+	{ "y", "https://music.youtube.com" },
+	{ "z", "https://lifeway.zoom.us/j/91553605678?pwd=6wNOo8UETFaLahW83mnZSKdVDnw8BF.1" }, -- zoom room
 }) do
-  local hotkey, link = table.unpack(pair)
-  hs.hotkey.bind(meh, hotkey, function()
-    openURLReuseDomain(link)
-  end)
+	local hotkey, link = table.unpack(pair)
+	hs.hotkey.bind(meh, hotkey, function()
+		openURLReuseDomain(link)
+	end)
 end
 
 spoon.SpoonInstall:andUse("ReloadConfiguration", {
-  hotkeys = { reloadConfiguration = { meh, "H" } },
-  start = true,
+	hotkeys = { reloadConfiguration = { meh, "H" } },
+	start = true,
 })

@@ -79,7 +79,7 @@ function up_homebrew
   set brewfile_dir ~/code/personal/dotfiles
   set tmp_brewfile (mktemp)
   cat $brewfile_dir/Brewfile.common > $tmp_brewfile
-  if test (hostname) = "MacBookPro"
+  if test (hostname) = "MacBookPro" || test (hostname) = "fjellymac.local"
     cat $brewfile_dir/Brewfile.home >> $tmp_brewfile
   else
     cat $brewfile_dir/Brewfile.work >> $tmp_brewfile
@@ -119,8 +119,33 @@ function up_repos
   end
 end
 
+function up_skills
+  set -l skills_repo ~/code/personal/skills
+
+  # Check for uncommitted changes
+  set -l git_status (git -C $skills_repo status --porcelain 2>/dev/null)
+  if test -n "$git_status"
+    echo "⚠️  Warning: $skills_repo has uncommitted changes."
+    echo "Please commit and push your changes first, then re-run 'up'."
+    return 1
+  end
+
+  echo "📦 Installing/Updating skills from jordanfjellman/skills..."
+
+  # Install all skills globally to specific agents
+  npx skills add git@github.com:jordanfjellman/skills.git \
+    --global --yes --all \
+    --agent "OpenCode,Claude,Kiro"
+
+  # Update to latest versions
+  npx skills update --global --agent "OpenCode,Claude,Kiro"
+
+  echo "✅ Skills updated successfully"
+end
+
 function up
   up_repos
+  up_skills
   up_homebrew
   up_mise
 end
@@ -147,6 +172,10 @@ end
 
 function v
     nvim $argv
+end
+
+function fj
+    fjelly $argv
 end
 
 function cat

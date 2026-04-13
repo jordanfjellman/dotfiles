@@ -5,10 +5,10 @@ mode = "independent"
 repositories = []
 
 [llm]
-provider = "anthropic"
-api_key = ""
-default_model = "claude-sonnet-4-20250514"
-fallback_model = "claude-haiku-4-20250514"
+provider = "fireworks-ai"
+api_key = "{file:~/.secrets/fireworks-ai-api-key}"
+default_model = "fireworks-ai/accounts/fireworks/routers/kimi-k2p5-turbo"
+fallback_model = "fireworks-ai/accounts/fireworks/routers/kimi-k2p5-turbo"
 
 [database]
 path = "~/.local/share/fjelly/db.sqlite"
@@ -25,35 +25,10 @@ max_retries = 3
 require_manual_signoff = false
 
 [eod.criteria]
-test = [
-    "Compiles",
-    "TestsPass",
-]
-feature = [
-    "Compiles",
-    "TestsPass",
-    "NoLintErrors",
-]
-documentation = [
-    "NoBrokenLinks",
-    "ValidMarkdown",
-]
+test = ["Compiles", "TestsPass"]
+feature = ["Compiles", "TestsPass", "NoLintErrors"]
+documentation = ["NoBrokenLinks", "ValidMarkdown"]
 research = ["NotesDocumented"]
-bugfix = [
-    "Compiles",
-    "TestsPass",
-    "RegressionTestPasses",
-]
-refactor = [
-    "Compiles",
-    "TestsPass",
-    "NoLintErrors",
-    "NoBehaviorChange",
-]
-maintenance = [
-    "Compiles",
-    "NoLintErrors",
-]
 
 [logging]
 level = "info"
@@ -63,7 +38,7 @@ workspace = true
 context_switching = false
 crash_recovery = false
 task_queue = false
-real_ai = false
+real_ai = true
 determinism = false
 multi_repo_coordination = false
 fair_rate_limiting = false
