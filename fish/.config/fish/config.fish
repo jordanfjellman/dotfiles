@@ -79,7 +79,7 @@ function up_homebrew
   set brewfile_dir ~/code/personal/dotfiles
   set tmp_brewfile (mktemp)
   cat $brewfile_dir/Brewfile.common > $tmp_brewfile
-  if test (hostname) = "MacBookPro" || test (hostname) = "fjellymac.local"
+  if is_home_machine
     cat $brewfile_dir/Brewfile.home >> $tmp_brewfile
   else
     cat $brewfile_dir/Brewfile.work >> $tmp_brewfile
@@ -119,6 +119,14 @@ function up_repos
   end
 end
 
+function is_home_machine
+    set -l home_hosts "MacBookPro" "fjellymac.local"
+    if contains (hostname) $home_hosts
+        return 0
+    end
+    return 1
+end
+
 function up_skills
   set -l skills_repo ~/code/personal/skills
 
@@ -130,15 +138,16 @@ function up_skills
     return 1
   end
 
-  echo "📦 Installing/Updating skills from jordanfjellman/skills..."
+  echo "🧹 Cleaning up previous installations..."
+  npx skills remove --global --all --yes
 
-  # Install all skills globally to specific agents
+  echo "📦 Installing skills from jordanfjellman/skills..."
   npx skills add git@github.com:jordanfjellman/skills.git \
-    --global --yes --all \
-    --agent "OpenCode,Claude,Kiro"
+    --global --yes --skill '*' \
+    --agent '*'
 
-  # Update to latest versions
-  npx skills update --global --agent "OpenCode,Claude,Kiro"
+  echo "📦 Updating skills to latest versions..."
+  npx skills update --global
 
   echo "✅ Skills updated successfully"
 end
