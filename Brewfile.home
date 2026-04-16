@@ -1,5 +1,5 @@
 brew "zola"
 
-cask "blender"
+# cask "blender"
 cask "google-chrome"
-cask "ultimaker-cura"
+# cask "ultimaker-cura"
