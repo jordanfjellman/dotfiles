@@ -2,6 +2,7 @@ local wezterm = require("wezterm")
 ---@types wezterm.Config
 local config = wezterm.config_builder()
 local act = wezterm.action
+local workspacer = require("utils.workspacer")
 
 local keys = {}
 
@@ -15,12 +16,12 @@ config.leader = { key = "b", mods = "CTRL", timeout_milliseconds = 1000 }
 table.insert(keys, {
 	key = "n",
 	mods = "LEADER",
-	action = act.ActivateTabRelative(1),
+	action = act.SwitchWorkspaceRelative(1),
 })
 table.insert(keys, {
 	key = "p",
 	mods = "LEADER",
-	action = act.ActivateTabRelative(-1),
+	action = act.SwitchWorkspaceRelative(-1),
 })
 
 -- config.color_scheme = "GitHub Dark"
@@ -49,7 +50,13 @@ table.insert(keys, { key = "]", mods = "CTRL|SHIFT", action = act.SwitchWorkspac
 
 table.insert(keys, {
 	key = "t",
-	mods = "CTRL",
+	mods = "LEADER",
+	action = wezterm.action_callback(function(window, pane) end),
+})
+
+table.insert(keys, {
+	key = "t",
+	mods = "LEADER",
 	action = wezterm.action_callback(function(window, pane)
 		local code_dir = os.getenv("HOME") .. "/code"
 		wezterm.log_info("code_dir:", code_dir)
