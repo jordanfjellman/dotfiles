@@ -346,6 +346,13 @@ function kiro-login
   kiro-cli login --use-device-flow --license=pro --identity-provider=https://lifeway.awsapps.com/start --region=us-east-1
 end
 
+function opencode
+    if not is_home_machine
+        set -x OPENCODE_CONFIG ~/.config/opencode/opencode.work.jsonc
+    end
+    command opencode $argv
+end
+
 function k
     kubectl $argv
 end

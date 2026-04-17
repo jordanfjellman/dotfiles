@@ -12,7 +12,7 @@ export const NotificationPlugin = async ({ client, $ }) => {
   // Queries the fjellyspaces daemon for workspace description and state.
   // Tries the container socket first, then the host socket.
 
-  const getWorkspaceContext = async (): Promise<string | null> => {
+  const getWorkspaceContext = async () => {
     if (!isFjellyspaces) return null;
 
     const sockets = [
@@ -48,7 +48,7 @@ export const NotificationPlugin = async ({ client, $ }) => {
   // transcript and produce a concise summary. The --fork flag creates a
   // branch so we don't pollute the running session.
 
-  const summarizeWithAI = async (prompt: string): Promise<string | null> => {
+  const summarizeWithAI = async (prompt) => {
     try {
       const result = await $`opencode run -m ${AI_MODEL} --continue --fork --format json ${prompt}`
         .quiet()
@@ -80,7 +80,7 @@ export const NotificationPlugin = async ({ client, $ }) => {
 
   // ─── Detect terminal app ────────────────────────────────────────────────
 
-  const detectTerminal = async (): Promise<string> => {
+  const detectTerminal = async () => {
     const terminals = [
       "Ghostty",
       "iTerm2",
@@ -100,7 +100,7 @@ export const NotificationPlugin = async ({ client, $ }) => {
 
   // ─── Check if terminal is focused ───────────────────────────────────────
 
-  const isTerminalFocused = async (): Promise<boolean> => {
+  const isTerminalFocused = async () => {
     try {
       const result =
         await $`osascript -e ${'tell application "System Events" to get name of first application process whose frontmost is true'}`
@@ -129,7 +129,7 @@ export const NotificationPlugin = async ({ client, $ }) => {
 
   // ─── Get tmux session name ──────────────────────────────────────────────
 
-  const getTmuxSession = async (): Promise<string | null> => {
+  const getTmuxSession = async () => {
     // Check if we're running inside tmux
     if (!process.env.TMUX) return null;
 
@@ -149,13 +149,7 @@ export const NotificationPlugin = async ({ client, $ }) => {
   // Presents a macOS display dialog with buttons and returns the user's choice.
   // Falls back to a plain display notification if the dialog fails.
 
-  const showDialog = async (
-    title: string,
-    body: string,
-    buttons: string[],
-    defaultButton: string,
-    sound?: string,
-  ): Promise<string | null> => {
+  const showDialog = async (title, body, buttons, defaultButton, sound) => {
     const escapedBody = body.replace(/"/g, '\\"').replace(/\n/g, "\\n");
     const buttonList = buttons.map((b) => `"${b}"`).join(", ");
     const soundClause = sound ? ` ${sound}` : "";
@@ -188,7 +182,7 @@ end if`;
 
   // ─── Handle dialog choice ──────────────────────────────────────────────
 
-  const handleDialogChoice = async (choice: string | null) => {
+  const handleDialogChoice = async (choice) => {
     if (choice === "Focus Terminal") {
       const terminal = await detectTerminal();
       await $`osascript -e ${`tell application "${terminal}" to activate`}`
@@ -200,12 +194,7 @@ end if`;
 
   // ─── Event-specific notification logic ──────────────────────────────────
 
-  const notifyWithContext = async (
-    eventType: string,
-    fallbackMessage: string,
-    sound?: string,
-    aiPrompt?: string,
-  ) => {
+  const notifyWithContext = async (eventType, fallbackMessage, sound, aiPrompt) => {
     if (isFjellyspaces) {
       // Inside container: signal the daemon, which handles host notifications.
       await $`fj-signal idle`.quiet().nothrow();
@@ -220,14 +209,14 @@ end if`;
     // Host: get workspace context, tmux session, AI summary, and show dialog.
     const context = await getWorkspaceContext();
     const tmuxSession = await getTmuxSession();
-    let summary: string | null = null;
+    let summary = null;
 
     if (aiPrompt) {
       summary = await summarizeWithAI(aiPrompt);
     }
 
     const message = summary || fallbackMessage;
-    
+
     // Build notification body with all available context
     let body = "";
     if (tmuxSession) {
@@ -243,8 +232,8 @@ end if`;
     }
 
     // Choose buttons based on event type.
-    let buttons: string[];
-    let defaultButton: string;
+    let buttons;
+    let defaultButton;
 
     if (eventType === "stop") {
       buttons = ["OK"];
@@ -284,7 +273,7 @@ end if`;
         event.type === "session.error" ||
         event.type === "permission.asked"
       ) {
-        const sessionID = (event.properties as any).sessionID;
+        const sessionID = event.properties?.sessionID;
         if (sessionID) {
           try {
             const result = await client.session.get({ sessionID });

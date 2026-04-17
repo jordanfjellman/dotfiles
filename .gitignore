@@ -1,6 +1,7 @@
 .DS_Store
 .lazy-lock.json
 .luarc.json
+.package-lock.json
 .private_keys
 .opencode/
 packer_compiled.lua

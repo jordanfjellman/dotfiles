@@ -1,0 +1,64 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  // "instructions": ["~/code/personal/notes/LLM Context/AGENTS.md"],
+  "permission": {
+    "bash": {
+      "date *": "allow",
+      "mkdir -p .opencode/sessions": "allow"
+    },
+    "external_directory": {
+      "*": "ask",
+      "/Users/jordan/.config/opencode/**/*": "allow",
+      "/Users/jordan/code/personal/notes/**/*.md": "allow"
+    }
+  },
+  "mcp": {
+    "brave-search": {
+      "enabled": true,
+      "type": "local",
+      "command": ["npx", "-y", "@brave/brave-search-mcp-server"],
+      "environment": {
+        "BRAVE_API_KEY": "{file:~/.secrets/opencode-brave-api-key}"
+      }
+    }
+  //   "excalidraw": {
+  //     "enabled": false,
+  //     "type": "local",
+  //     "command": [
+  //       "docker",
+  //       "run",
+  //       "-i",
+  //       "--rm",
+  //       "--network",
+  //       "host",
+  //       "-e",
+  //       "EXPRESS_SERVER_URL=http://localhost:3000",
+  //       "-e",
+  //       "ENABLE_CANVAS_SYNC=true",
+  //       "ghcr.io/yctimlin/mcp_excalidraw:latest",
+  //     ],
+  //   },
+  //   "github": {
+  //     "enabled": false,
+  //     "type": "local",
+  //     "command": [
+  //       "docker",
+  //       "run",
+  //       "-i",
+  //       "--rm",
+  //       "-e",
+  //       "GITHUB_PERSONAL_ACCESS_TOKEN",
+  //       "ghcr.io/github/github-mcp-server",
+  //     ],
+  //     "environment": {
+  //       "GITHUB_PERSONAL_ACCESS_TOKEN": "{file:~/.secrets/opencode-github-token}",
+  //     },
+  //   },
+  //   "youtube-transcript": {
+  //     "enabled": false,
+  //     "type": "local",
+  //     "command": ["npx", "-y", "@kimtaeyoon83/mcp-server-youtube-transcript"],
+  //   },
+  // },
+  }
+}
