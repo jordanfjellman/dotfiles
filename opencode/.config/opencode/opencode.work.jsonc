@@ -8,7 +8,7 @@
     "external_directory": {
       "*": "ask",
       "/Users/jordan.fjellman/.config/opencode/**/*": "allow",
-      "/Users/jordan.fjellman/code/personal/notes/**/*.md": "allow"
+      "/Users/jordan.fjellman/notes/**/*.md": "allow"
     }
   },
   "provider": {

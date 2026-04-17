@@ -6,7 +6,7 @@ auto_start = true
 image = "fjellyspaces:latest"
 shell = "fish"
 dotfiles_host_path = "~/code/personal/dotfiles"
-notes_host_path = "~/code/personal/notes"
+notes_host_path = "~/notes"
 workspace_root = "~/.local/share/fjellyspaces/volumes"
 dotfiles_exclude_packages = ["opencode"]
 
@@ -23,7 +23,7 @@ additional_skills_paths = [
   "~/code/personal/skills/.agents/skills",
   "~/code/personal/skills/skills",
   "~/code/personal/skills/.claude/skills",
-  "~/code/personal/dotfiles/claude/.claude/hooks"
+  "~/code/personal/dotfiles/claude/.claude/hooks",
 ]
 
 [profiles.default]
@@ -32,18 +32,12 @@ auth_ports = []
 env = {}
 
 [profiles.web]
-ports = [
-  { host = 3000, container = 3000 },
-  { host = 5173, container = 5173 },
-]
+ports = [{ host = 3000, container = 3000 }, { host = 5173, container = 5173 }]
 auth_ports = [9876]
 env = {}
 
 [profiles.api]
-ports = [
-  { host = 8080, container = 8080 },
-  { host = 5432, container = 5432 },
-]
+ports = [{ host = 8080, container = 8080 }, { host = 5432, container = 5432 }]
 auth_ports = []
 env = {}
 

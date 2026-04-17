@@ -8,7 +8,7 @@ End the day by walking through a short checklist, confirming task completion, an
 ## Constants
 
 - Vault name: `notes`
-- Vault path: `~/code/personal/notes`
+- Vault path: `~/notes`
 - Daily notes path: `Objectives and Reviews/Daily`
 - Weekly notes path: `Objectives and Reviews/Weekly`
 - Daily note format: `YYYY-MM-DD.md`

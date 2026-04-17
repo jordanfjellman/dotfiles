@@ -65,7 +65,7 @@ table.insert(keys, {
 	action = wezterm.action_callback(function(window, pane)
 		workspacer.open(window, pane, {
 			title = "Choose note",
-			cmd = "$HOME/.local/share/mise/shims/fd -t d --max-depth 3 . $HOME/code/personal/notes",
+			cmd = "$HOME/.local/share/mise/shims/fd -t d --max-depth 3 . $HOME/notes",
 		})
 	end),
 })

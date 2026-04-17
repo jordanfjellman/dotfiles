@@ -8,7 +8,7 @@ Start the day by reviewing yesterday's loose ends, ensuring today's daily note e
 ## Constants
 
 - Vault name: `notes`
-- Vault path: `~/code/personal/notes`
+- Vault path: `~/notes`
 - Daily notes path: `Objectives and Reviews/Daily`
 - Weekly notes path: `Objectives and Reviews/Weekly`
 - Daily note format: `YYYY-MM-DD.md`

@@ -1,5 +1,5 @@
 #!/bin/bash
 
-fd -t d --max-depth 3 . ~/code/personal/notes/ \
+fd -t d --max-depth 3 . ~/notes/ \
   | fzf --select-1 \
   | tmux-sessionizer
