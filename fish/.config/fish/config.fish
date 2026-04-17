@@ -44,6 +44,51 @@ if test -f $HOME/.private_keys
     source $HOME/.private_keys
 end
 
+# Function to load standard KEY=value env files into Fish
+function load_env
+    if test (count $argv) -lt 1
+        echo "Usage: load_env <env_file>"
+        return 1
+    end
+    
+    set -l env_file $argv[1]
+    
+    if not test -f $env_file
+        echo "Error: File not found: $env_file"
+        return 1
+    end
+    
+    while read -l line
+        # Skip empty lines and comments
+        if test -z (string trim -- $line); or string match -q '#*' -- $line
+            continue
+        end
+        
+        # Parse KEY=value format
+        # Find the first = to split key and value
+        if string match -q '*=*' -- $line
+            set -l key (string split -m 1 '=' $line)[1]
+            set -l value (string split -m 1 '=' $line)[2]
+            
+            # Trim whitespace and quotes
+            set key (string trim -- $key)
+            set value (string trim -- $value)
+            
+            # Remove surrounding quotes if present
+            set value (string trim -c '"' -- $value)
+            set value (string trim -c "'" -- $value)
+            
+            # Export the variable globally
+            set -gx $key $value
+        end
+    end <$env_file
+end
+
+# Source skills configuration if it exists
+if test -f $HOME/.secrets/skills.env
+    load_env $HOME/.secrets/skills.env
+end
+
 # Initialize starship prompt
 if command -q starship
     function starship_transient_prompt_func
@@ -128,23 +173,74 @@ function is_home_machine
 end
 
 function up_skills
-  set -l skills_repo ~/code/personal/skills
+  set -l skills_file ~/.secrets/skills.txt
 
-  # Check for uncommitted changes
-  set -l git_status (git -C $skills_repo status --porcelain 2>/dev/null)
-  if test -n "$git_status"
-    echo "⚠️  Warning: $skills_repo has uncommitted changes."
-    echo "Please commit and push your changes first, then re-run 'up'."
+  # Sync from Bitwarden Secrets Manager first (if configured)
+  if test -n "$SKILLS_CONFIG"; and test -n "$BWS_ACCESS_TOKEN"
+    echo "⬇️  Syncing skills config from Bitwarden Secrets Manager..."
+
+    # Find the secret by name
+    set -l secret_json (bws secret list --output json 2>/dev/null | jq -r ".[] | select(.key == \"$SKILLS_CONFIG\")" 2>/dev/null)
+
+    if test -z "$secret_json"
+      echo "❌ Error: Secret '$SKILLS_CONFIG' not found in Bitwarden Secrets Manager."
+      echo "Please create the secret first in the 'Skills' project or check your configuration."
+      return 1
+    end
+
+    set -l secret_value (echo "$secret_json" | jq -r '.value')
+
+    # Decode base64 and write to file
+    echo "$secret_value" | openssl base64 -d -out "$skills_file"
+    if test $status -ne 0
+      echo "❌ Error: Failed to decode secret value from Bitwarden."
+      return 1
+    end
+
+    echo "✅ Skills config synced from Bitwarden"
+  end
+
+  if not test -f $skills_file
+    echo "❌ Error: Skills configuration file not found at $skills_file"
+    echo "Create the file and add skills in the format:"
+    echo "  git@github.com:owner/repo.git --skill skill-name"
     return 1
   end
 
   echo "🧹 Cleaning up previous installations..."
   npx skills remove --global --all --yes
 
-  echo "📦 Installing skills from jordanfjellman/skills..."
-  npx skills add git@github.com:jordanfjellman/skills.git \
-    --global --yes --skill '*' \
-    --agent '*'
+  echo "📦 Installing skills from $skills_file..."
+
+  # Read all lines from file into array first (avoids stdin conflicts with npx)
+  set -l all_lines (cat "$skills_file")
+
+  # Process each line
+  for line in $all_lines
+    # Skip empty lines and comments
+    if test -z "$line"; or string match -q '#*' -- $line
+      continue
+    end
+
+    # Trim leading/trailing whitespace
+    set -l trimmed (string trim -- $line)
+
+    # Skip if trimmed line is empty or a comment
+    if test -z "$trimmed"; or string match -q '#*' -- $trimmed
+      continue
+    end
+
+    # Split line into arguments (repo URL and flags)
+    set -l args (string split ' ' -- $trimmed)
+
+    echo "➡️  Installing: $trimmed"
+    npx skills add $args[1] $args[2] $args[3] --global --yes
+    if test $status -ne 0
+      echo "❌ Error: Failed to install skill: $trimmed"
+      echo "Comment out this line in $skills_file to skip it."
+      return 1
+    end
+  end
 
   echo "📦 Updating skills to latest versions..."
   npx skills update --global
@@ -157,6 +253,93 @@ function up
   up_skills
   up_homebrew
   up_mise
+end
+
+function sync_skills_up
+  set -l skills_file ~/.secrets/skills.txt
+
+  # Check if SKILLS_CONFIG is set
+  if test -z "$SKILLS_CONFIG"
+    echo "❌ Error: SKILLS_CONFIG is not set."
+    echo "Set it in ~/.secrets/skills.env to the Bitwarden secret name."
+    return 1
+  end
+
+  # Check if Bitwarden Secrets Manager access token is set
+  if test -z "$BWS_ACCESS_TOKEN"
+    echo "❌ Error: BWS_ACCESS_TOKEN is not set."
+    echo "Set it in ~/.secrets/skills.env with your machine account access token."
+    return 1
+  end
+
+  # Check if skills file exists
+  if not test -f $skills_file
+    echo "❌ Error: Skills file not found at $skills_file"
+    return 1
+  end
+
+  # Read and base64 encode file content (preserves newlines and special characters)
+  set -l encoded_content (openssl base64 -in "$skills_file" | tr -d '\n')
+
+  # Find the secret by name in the Skills project
+  set -l secret_json (bws secret list --output json 2>/dev/null | jq -r ".[] | select(.key == \"$SKILLS_CONFIG\")" 2>/dev/null)
+
+  if test -z "$secret_json"
+    echo "❌ Error: Secret '$SKILLS_CONFIG' not found in Bitwarden Secrets Manager."
+    echo "Please create the secret first in the 'Skills' project."
+    return 1
+  end
+
+  set -l secret_id (echo "$secret_json" | jq -r '.id')
+
+  # Update secret value with base64 encoded content
+  echo "⬆️  Uploading $skills_file to Bitwarden secret '$SKILLS_CONFIG'..."
+  bws secret edit "$secret_id" --value "$encoded_content" 2>/dev/null
+  if test $status -ne 0
+    echo "❌ Error: Failed to update secret."
+    return 1
+  end
+
+  echo "✅ Skills config uploaded successfully to Bitwarden Secrets Manager"
+end
+
+function sync_skills_down
+  set -l skills_file ~/.secrets/skills.txt
+
+  # Check if SKILLS_CONFIG is set
+  if test -z "$SKILLS_CONFIG"
+    echo "❌ Error: SKILLS_CONFIG is not set."
+    echo "Set it in ~/.secrets/skills.env to the Bitwarden secret name."
+    return 1
+  end
+
+  # Check if Bitwarden Secrets Manager access token is set
+  if test -z "$BWS_ACCESS_TOKEN"
+    echo "❌ Error: BWS_ACCESS_TOKEN is not set."
+    echo "Set it in ~/.secrets/skills.env with your machine account access token."
+    return 1
+  end
+
+  # Find the secret by name
+  set -l secret_json (bws secret list --output json 2>/dev/null | jq -r ".[] | select(.key == \"$SKILLS_CONFIG\")" 2>/dev/null)
+
+  if test -z "$secret_json"
+    echo "❌ Error: Secret '$SKILLS_CONFIG' not found in Bitwarden Secrets Manager."
+    echo "Please create the secret first in the 'Skills' project."
+    return 1
+  end
+
+  set -l secret_value (echo "$secret_json" | jq -r '.value')
+
+  # Decode base64 and write to file
+  echo "⬇️  Downloading skills config from Bitwarden..."
+  echo "$secret_value" | openssl base64 -d -out "$skills_file"
+  if test $status -ne 0
+    echo "❌ Error: Failed to decode secret value."
+    return 1
+  end
+
+  echo "✅ Skills config downloaded to $skills_file"
 end
 
 function kiro-login
