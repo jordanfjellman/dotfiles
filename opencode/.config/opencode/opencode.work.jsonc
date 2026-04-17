@@ -24,7 +24,7 @@
         "auto": {
           "name": "Auto"
         },
-        "claude-opus-4.7": {
+        "claude-opus-4.6": {
           "name": "Opus"
         },
         "claude-sonnet-4.6": {

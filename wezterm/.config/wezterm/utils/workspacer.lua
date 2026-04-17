@@ -21,15 +21,16 @@ module.open = function(window, pane, opts)
 			title = opts.title or "Choose workspace",
 			fuzzy = true,
 			choices = choices,
-			action = wezterm.action_callback(function(_, _, _, label)
-				if not label then
-					return
-				end
-				local name = label:match("([^/]+)$")
-				window:perform_action(
-					act.SwitchToWorkspace({ name = name, spawn = { label = name, cwd = label } }),
-					pane
-				)
+		action = wezterm.action_callback(function(_, _, _, label)
+			if not label then
+				return
+			end
+			local cwd = label:gsub("/$", "")
+			local name = cwd:match("([^/]+)$"):gsub("[%s%p]", "_")
+			window:perform_action(
+				act.SwitchToWorkspace({ name = name, spawn = { label = name, cwd = cwd } }),
+				pane
+			)
 			end),
 		}),
 		pane
