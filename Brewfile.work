@@ -1,3 +1,5 @@
+tap "hashicorp/tap"
+
 brew "bruno-cli"
 brew "coursier"
 brew "telnet"

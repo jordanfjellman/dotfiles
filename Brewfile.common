@@ -2,6 +2,7 @@ tap "nikitabobko/tap"
 # tap "jordanfjellman/tap"  # Uncomment to install fjelly via Homebrew
 
 brew "ansible"
+brew "bitwarden-cli"
 brew "docker"
 brew "docker-compose"
 brew "docker-credential-helper"
