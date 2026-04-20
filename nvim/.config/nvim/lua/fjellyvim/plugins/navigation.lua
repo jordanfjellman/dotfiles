@@ -25,20 +25,19 @@ return {
     },
   },
   {
-    "christoomey/vim-tmux-navigator",
-    cmd = {
-      "TmuxNavigateLeft",
-      "TmuxNavigateDown",
-      "TmuxNavigateUp",
-      "TmuxNavigateRight",
-      "TmuxNavigatePrevious",
-    },
+    "mrjones2014/smart-splits.nvim",
+    lazy = false,
     keys = {
-      { "<c-h>", "<cmd><C-U>TmuxNavigateLeft<cr>" },
-      { "<c-j>", "<cmd><C-U>TmuxNavigateDown<cr>" },
-      { "<c-k>", "<cmd><C-U>TmuxNavigateUp<cr>" },
-      { "<c-l>", "<cmd><C-U>TmuxNavigateRight<cr>" },
-      { "<c-\\>", "<cmd><C-U>TmuxNavigatePrevious<cr>" },
+      -- Navigation (Ctrl+hjkl)
+      { "<C-h>", function() require("smart-splits").move_cursor_left() end, desc = "Move to left pane" },
+      { "<C-j>", function() require("smart-splits").move_cursor_down() end, desc = "Move to below pane" },
+      { "<C-k>", function() require("smart-splits").move_cursor_up() end, desc = "Move to above pane" },
+      { "<C-l>", function() require("smart-splits").move_cursor_right() end, desc = "Move to right pane" },
+      -- Resizing (Meta+hjkl)
+      { "<M-h>", function() require("smart-splits").resize_left() end, desc = "Resize pane left" },
+      { "<M-j>", function() require("smart-splits").resize_down() end, desc = "Resize pane down" },
+      { "<M-k>", function() require("smart-splits").resize_up() end, desc = "Resize pane up" },
+      { "<M-l>", function() require("smart-splits").resize_right() end, desc = "Resize pane right" },
     },
   },
 }

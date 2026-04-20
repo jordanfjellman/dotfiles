@@ -2,5 +2,6 @@
   "defaultProvider": "fireworks",
   "defaultModel": "accounts/fireworks/routers/kimi-k2p5-turbo",
   "theme": "dark",
-  "lastChangelogVersion": "0.67.68"
+  "lastChangelogVersion": "0.67.68",
+  "defaultThinkingLevel": "medium"
 }
