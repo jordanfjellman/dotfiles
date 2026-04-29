@@ -175,31 +175,6 @@ end
 function up_skills
   set -l skills_file ~/.secrets/skills.txt
 
-  # Sync from Bitwarden Secrets Manager first (if configured)
-  if test -n "$SKILLS_CONFIG"; and test -n "$BWS_ACCESS_TOKEN"
-    echo "⬇️  Syncing skills config from Bitwarden Secrets Manager..."
-
-    # Find the secret by name
-    set -l secret_json (bws secret list --output json 2>/dev/null | jq -r ".[] | select(.key == \"$SKILLS_CONFIG\")" 2>/dev/null)
-
-    if test -z "$secret_json"
-      echo "❌ Error: Secret '$SKILLS_CONFIG' not found in Bitwarden Secrets Manager."
-      echo "Please create the secret first in the 'Skills' project or check your configuration."
-      return 1
-    end
-
-    set -l secret_value (echo "$secret_json" | jq -r '.value')
-
-    # Decode base64 and write to file
-    echo "$secret_value" | openssl base64 -d -out "$skills_file"
-    if test $status -ne 0
-      echo "❌ Error: Failed to decode secret value from Bitwarden."
-      return 1
-    end
-
-    echo "✅ Skills config synced from Bitwarden"
-  end
-
   if not test -f $skills_file
     echo "❌ Error: Skills configuration file not found at $skills_file"
     echo "Create the file and add skills in the format:"
