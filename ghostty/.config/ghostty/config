@@ -9,9 +9,5 @@ macos-option-as-alt = true
 
 quit-after-last-window-closed = true
 
-# Disabled to prevent terminal query responses (XTVERSION, DECRPM) from
-# leaking into tmux panes and triggering unexpected window switches.
-# When enabled, Ghostty's shell integration sends capability queries
-# that bypass tmux passthrough controls entirely.
-shell-integration = none
+shell-integration = detect
 
