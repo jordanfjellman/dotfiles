@@ -18,77 +18,57 @@ spoon.SpoonInstall:andUse("AppLauncher", {
 		m = "Microsoft Outlook", -- [m]ail
 		o = "Obsidian",
 		s = "Slack",
-		t = "Wezterm", -- [t]erminal
+		t = "Ghostty", -- [t]erminal
 		v = "zoom.us", -- [v]ideo calls
 		x = "Xcode", -- [x]code
 	},
 })
 
 function openURLReuseDomain(theURL)
-	local asa = [[
-      on run argv
-          set theURL to "%URL%"
+	local browser = "Brave Browser"
 
-          -- Parse domain (simple: after // and before next / or end)
-          try
-              set AppleScript's text item delimiters to "//"
-              set parts to text items of theURL
-              set hostPart to item 2 of parts
-              set AppleScript's text item delimiters to "/"
-              set domain to text item 1 of hostPart
-          on error
-              set domain to ""
-          end try
+	-- Parse domain from URL
+	local domain = theURL:match("^https?://([^/]+)")
+	if not domain then
+		hs.alert.show("Invalid URL: " .. theURL, 4)
+		return
+	end
 
-          if domain is "" then
-              display dialog "Invalid URL"
-              return
-          end if
+	local jxa = string.format([[
+		var app = Application("%s");
+		app.activate();
 
-          tell application "%BROWSER%"
-              activate
+		var dominated = "%s";
+		var theURL = "%s";
+		var found = false;
 
-              set found to false
+		var wins = app.windows();
+		for (var i = 0; i < wins.length; i++) {
+			var tabs = wins[i].tabs();
+			for (var j = 0; j < tabs.length; j++) {
+				var tabURL = tabs[j].url();
+				if (tabURL && tabURL.indexOf(dominated) !== -1) {
+					wins[i].activeTabIndex = j + 1;
+					wins[i].index = 1;
+					found = true;
+					break;
+				}
+			}
+			if (found) break;
+		}
 
-              repeat with w in every window
-                  set tabIndex to 0
-                  repeat with t in every tab of w
-                      set tabIndex to tabIndex + 1
-                      try
-                          set tabURL to URL of t
-                          if tabURL contains domain then
-                              set active tab index of w to tabIndex
-                              set index of w to 1 -- bring window to front
-                              -- tell t to reload -- optional: reload with new page
-                              -- set URL of t to theURL -- navigate to exact URL
-                              set found to true
-                              exit repeat
-                          end if
-                      end try
-                  end repeat
-                  if found then exit repeat
-              end repeat
+		if (!found) {
+			if (wins.length === 0) app.Window().make();
+			var w = app.windows[0];
+			var t = app.Tab({url: theURL});
+			w.tabs.push(t);
+		}
+	]], browser, domain, theURL)
 
-              if not found then
-                  -- No matching domain tab: open in new tab in front window
-                  if (count of windows) = 0 then make new window
-                  tell front window
-                      make new tab with properties {URL:theURL}
-                  end tell
-              end if
-          end tell
-      end run
-    ]]
+	local ok, result, raw = hs.osascript.javascript(jxa)
 
-	asa = asa:gsub("%%BROWSER%%", "Brave Browser")
-	asa = asa:gsub("%%URL%%", theURL)
-
-	local ok, result = hs.osascript.applescript(asa, theURL)
-
-	if ok then
-		hs.alert.show("Success: " .. result, 4)
-	else
-		hs.alert.show("AppleScript ERROR: " .. tostring(result), 8)
+	if not ok then
+		hs.alert.show("JXA ERROR: " .. tostring(result), 8)
 	end
 end
 
