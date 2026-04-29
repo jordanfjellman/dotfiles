@@ -27,17 +27,18 @@ return {
   {
     "mrjones2014/smart-splits.nvim",
     lazy = false,
-    keys = {
+    config = function()
+      local smart_splits = require("smart-splits")
       -- Navigation (Ctrl+hjkl)
-      { "<C-h>", function() require("smart-splits").move_cursor_left() end, desc = "Move to left pane" },
-      { "<C-j>", function() require("smart-splits").move_cursor_down() end, desc = "Move to below pane" },
-      { "<C-k>", function() require("smart-splits").move_cursor_up() end, desc = "Move to above pane" },
-      { "<C-l>", function() require("smart-splits").move_cursor_right() end, desc = "Move to right pane" },
+      vim.keymap.set("n", "<C-h>", smart_splits.move_cursor_left, { desc = "Move to left pane" })
+      vim.keymap.set("n", "<C-j>", smart_splits.move_cursor_down, { desc = "Move to below pane" })
+      vim.keymap.set("n", "<C-k>", smart_splits.move_cursor_up, { desc = "Move to above pane" })
+      vim.keymap.set("n", "<C-l>", smart_splits.move_cursor_right, { desc = "Move to right pane" })
       -- Resizing (Meta+hjkl)
-      { "<M-h>", function() require("smart-splits").resize_left() end, desc = "Resize pane left" },
-      { "<M-j>", function() require("smart-splits").resize_down() end, desc = "Resize pane down" },
-      { "<M-k>", function() require("smart-splits").resize_up() end, desc = "Resize pane up" },
-      { "<M-l>", function() require("smart-splits").resize_right() end, desc = "Resize pane right" },
-    },
+      vim.keymap.set("n", "<M-h>", smart_splits.resize_left, { desc = "Resize pane left" })
+      vim.keymap.set("n", "<M-j>", smart_splits.resize_down, { desc = "Resize pane down" })
+      vim.keymap.set("n", "<M-k>", smart_splits.resize_up, { desc = "Resize pane up" })
+      vim.keymap.set("n", "<M-l>", smart_splits.resize_right, { desc = "Resize pane right" })
+    end,
   },
 }

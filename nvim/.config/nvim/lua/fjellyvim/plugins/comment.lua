@@ -6,6 +6,11 @@ return {
     dependencies = { "nvim-lua/plenary.nvim" },
     opts = { signs = false },
   },
+  {
+    "folke/ts-comments.nvim",
+    event = "VeryLazy",
+    opts = {},
+  },
   -- {
   --   "numToStr/Comment.nvim",
   --   dependencies = {
