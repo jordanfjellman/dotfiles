@@ -16,7 +16,9 @@ colima/.colima/_templates
 colima/.colima/default/daemon/
 colima/.colima/ssh_config
 docker/.docker/contexts/
-fish/.config/fish/conf.d/
+fish/.config/fish/conf.d/*
+!fish/.config/fish/conf.d/jwt.fish
+!fish/.config/fish/conf.d/rustup.fish
 fish/.config/fish/fish_variables
 hammerspoon/.hammerspoon/Spoons/
 nushell/.config/nushell/history.txt
