@@ -213,7 +213,7 @@ return {
     },
     opts = {
       ensure_installed = {
-        "prettierd", -- prettier formatter
+        "prettierd", -- prettier formatter (daemon mode)
         "stylua", -- lua formatter
         "pylint", -- python linter
         "eslint_d", -- js linter
