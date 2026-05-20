@@ -11,6 +11,7 @@ spoon.SpoonInstall:andUse("AppLauncher", {
 	hotkeys = {
 		a = "Android Studio",
 		b = "Brave Browser",
+		c = "Claude",
 		e = "Visual Studio Code", -- code [e]ditor
 		f = "Firefox Developer Edition",
 		g = "Google Chrome Canary",
@@ -34,7 +35,8 @@ function openURLReuseDomain(theURL)
 		return
 	end
 
-	local jxa = string.format([[
+	local jxa = string.format(
+		[[
 		var app = Application("%s");
 		app.activate();
 
@@ -63,7 +65,11 @@ function openURLReuseDomain(theURL)
 			var t = app.Tab({url: theURL});
 			w.tabs.push(t);
 		}
-	]], browser, domain, theURL)
+	]],
+		browser,
+		domain,
+		theURL
+	)
 
 	local ok, result, raw = hs.osascript.javascript(jxa)
 
