@@ -135,33 +135,6 @@ return {
     end,
   },
   {
-    "zbirenbaum/copilot.lua",
-    cmd = "Copilot",
-    event = "InsertEnter",
-    config = function()
-      require("copilot").setup({
-        panel = { enabled = false },
-        suggestion = {
-          auto_trigger = false,
-          keymap = {
-            -- [y]es, accept completion
-            -- note: if this conflicts with a normal completion, try using <C-space> instead
-            accept = "<C-space>",
-            -- next [s]uggestion
-            next = "<C-s>",
-            -- cycle to get to previous suggestion
-            prev = false,
-            -- [e]xit suggestions
-            dismiss = "<C-e>",
-          },
-        },
-        filetypes = {
-          yaml = true,
-        },
-      })
-    end,
-  },
-  {
     "supermaven-inc/supermaven-nvim",
     config = function()
       require("supermaven-nvim").setup({})
