@@ -130,7 +130,7 @@ function up_homebrew
     cat $brewfile_dir/Brewfile.work >> $tmp_brewfile
   end
   brew bundle --file=$tmp_brewfile
-  brew bundle cleanup --file=$tmp_brewfile --cleanup --force
+  brew bundle cleanup --file=$tmp_brewfile --force
   rm $tmp_brewfile
 
   brew update --quiet
@@ -407,3 +407,8 @@ if not type -q fj
         fish_add_path "$HOME/.cargo/bin"
     end
 end
+
+# Added by LM Studio CLI (lms)
+set -gx PATH $PATH /Users/jordan.fjellman/.lmstudio/bin
+# End of LM Studio CLI section
+
