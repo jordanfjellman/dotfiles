@@ -216,7 +216,6 @@ return {
         "prettierd", -- prettier formatter (daemon mode)
         "stylua", -- lua formatter
         "pylint", -- python linter
-        "eslint_d", -- js linter
         "gofumpt", -- more strict than gofmt
         "goimports-reviser", -- organizes imports
         "golines", -- cleans up long lines
