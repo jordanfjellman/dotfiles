@@ -1,8 +1,5 @@
 {
-  "apiKeyHelper": "cat ~/.secrets/kiro-gateway-password",
-  "env": {
-    "ANTHROPIC_BASE_URL": "http://localhost:9111"
-  },
+  "model": "claude-fable-5[1m]",
   "hooks": {
     "PreToolUse": [
       {
@@ -79,5 +76,7 @@
   },
   "enabledPlugins": {
     "lua-lsp@claude-plugins-official": true
-  }
+  },
+  "effortLevel": "high",
+  "theme": "dark"
 }
