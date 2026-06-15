@@ -23,3 +23,6 @@ fish/.config/fish/fish_variables
 hammerspoon/.hammerspoon/Spoons/
 nushell/.config/nushell/history.txt
 nushell/.config/nushell/plugin.msgpackz
+pi/.pi/agent/auth.json
+pi/.pi/agent/sessions/
+pi/.pi/agent/git/
