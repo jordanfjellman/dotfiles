@@ -59,3 +59,9 @@
   path = .gitconfig_personal
 [includeIf "hasconfig:remote.*.url:https://github.com/jordanfjellman/**"]
   path = .gitconfig_personal
+[push]
+	autoSetupRemote = true
+[worktree]
+	guessRemote = true
+[rerere]
+	enabled = true

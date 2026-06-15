@@ -1,2 +1,5 @@
 *~
 .DS_Store
+.kiro/
+
+**/.claude/settings.local.json
