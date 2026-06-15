@@ -3,6 +3,8 @@ tap "hashicorp/tap"
 brew "bruno-cli"
 brew "coursier"
 brew "telnet"
+brew "mermaid-cli"
+brew "presenterm"
 
 cask "android-platform-tools"
 cask "android-studio"

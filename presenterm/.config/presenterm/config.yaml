@@ -1,0 +1,5 @@
+defaults:
+  theme: terminal-dark
+
+mermaid:
+  scale: 4
