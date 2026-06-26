@@ -1,8 +1,10 @@
 tap "hashicorp/tap"
+tap "modem-dev/tap"
 
 brew "bruno-cli"
 brew "coursier"
 brew "telnet"
+brew "modem-dev/tap/hunk"
 brew "mermaid-cli"
 brew "presenterm"
 
