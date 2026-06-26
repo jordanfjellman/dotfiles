@@ -11,7 +11,6 @@ return {
       ensure_installed = {
         "bashls",
         "biome",
-        "bright_script",
         "cmake",
         "cssls",
         "diagnosticls",
@@ -32,18 +31,34 @@ return {
   {
     "neovim/nvim-lspconfig",
     dependencies = {
+      "hrsh7th/cmp-nvim-lsp",
       "b0o/schemastore.nvim",
     },
     event = { "BufReadPre", "BufNewFile" },
     config = function()
-      vim.opt_local.omnifunc = "v:lua.vim.lsp.omnifunc"
+      vim.lsp.config("*", {
+        capabilities = require("cmp_nvim_lsp").default_capabilities(),
+      })
 
-      local disable_builtin_lsp_formatter = function(client)
-        client.server_capabilities.documentFormattingProvider = false
-        client.server_capabilities.documentRangeFormattingProvider = false
-      end
-
-      local capabilities = require("cmp_nvim_lsp").default_capabilities()
+      -- Formatting is delegated to conform.nvim (see plugins/formatting.lua), so
+      -- disable these servers' builtin formatter to avoid double-formatting.
+      local disable_lsp_format = {
+        ansiblels = true,
+        gopls = true,
+        graphql = true,
+        jsonls = true,
+        marksman = true,
+      }
+      vim.api.nvim_create_autocmd("LspAttach", {
+        group = vim.api.nvim_create_augroup("fjellyvim-lsp-format", { clear = true }),
+        callback = function(args)
+          local client = vim.lsp.get_client_by_id(args.data.client_id)
+          if client and disable_lsp_format[client.name] then
+            client.server_capabilities.documentFormattingProvider = false
+            client.server_capabilities.documentRangeFormattingProvider = false
+          end
+        end,
+      })
 
       -- LSP keymaps covered by Neovim 0.12 defaults:
       --   K       -> hover
@@ -65,132 +80,27 @@ return {
       --   <leader>ss  -> lsp_symbols
       --   <leader>sS  -> lsp_workspace_symbols
 
-      vim.lsp.config("dockerls", {})
-
-      vim.lsp.config("cssls", { capabilities = capabilities })
-
-      vim.lsp.config("ansiblels", {
-        capabilities = capabilities,
-        on_attach = disable_builtin_lsp_formatter,
-      })
-
-      vim.lsp.config("gopls", {
-        capabilities = capabilities,
-        on_attach = disable_builtin_lsp_formatter,
-        cmd = { "gopls" },
-        filetypes = { "go", "gomod", "gowork", "gotmpl" },
-        project_root = { "go.work", "go.mod", ".git" },
-      })
-
-      vim.lsp.config("graphql", {
-        capabilities = capabilities,
-        on_attach = disable_builtin_lsp_formatter,
-      })
-
-      vim.lsp.config("jsonls", {
-        capabilities = capabilities,
-        on_attach = disable_builtin_lsp_formatter,
-        settings = {
-          json = {
-            schemas = require("schemastore").json.schemas(),
-            validate = { enable = true },
-          },
-        },
-      })
-
-      vim.lsp.config("marksman", {
-        capabilities = capabilities,
-        on_attach = disable_builtin_lsp_formatter,
-      })
-
-      vim.lsp.config("bright_script", {
-        capabilities = capabilities,
-        on_attach = disable_builtin_lsp_formatter,
-        cmd = { "bsc", "--lsp", "--stdio" },
-        filetypes = { "bs", "brs" },
-        root_markers = { "bsconfig.json", "makefile", "Makefile", ".git" },
-      })
-      -- local swift_capabilities = require("cmp_nvim_lsp").default_capabilities()
-      -- swift_capabilities.workspace.didChangeWatchedFiles = { dynamicRegistration = true }
-      vim.lsp.config("sourcekit", {
-        capabilities = capabilities,
-      })
-
-      vim.lsp.config("yamlls", {
-        capabilities = capabilities,
-        filetypes = { "yaml", "yml" },
-        settings = {
-          yaml = {
-            completion = true,
-            customTags = {
-              "!And",
-              "!If",
-              "!Not",
-              "!Equals",
-              "!Equals sequence",
-              "!Or",
-              "!FindInMap sequence",
-              "!Base64",
-              "!Cidr",
-              "!Ref",
-              "!Sub",
-              "!GetAtt",
-              "!GetAZs",
-              "!ImportValue",
-              "!Select",
-              "!Select sequence",
-              "!Split",
-              "!Join sequence",
-            },
-            format = {
-              enable = true,
-            },
-            hover = true,
-            validate = true,
-          },
-        },
-      })
-
-      -- Enable all configured LSP servers
       vim.lsp.enable({
-        "dockerls",
-        "cssls",
         "ansiblels",
+        "bashls",
+        "biome",
+        "cmake",
+        "cssls",
+        "diagnosticls",
+        "dockerls",
+        "eslint",
         "gopls",
         "graphql",
+        "html",
         "jsonls",
-        "marksman",
-        "bright_script",
-        "sourcekit",
-        "yamlls",
         "lua_ls",
+        "marksman",
         "rust_analyzer",
+        "sourcekit",
+        "taplo",
+        "ts_ls",
+        "yamlls",
       })
-
-      -- Define and enable remaining mason-lspconfig servers
-      vim.lsp.config("bashls", { capabilities = capabilities })
-      vim.lsp.enable("bashls")
-
-      vim.lsp.config("biome", { capabilities = capabilities })
-      vim.lsp.enable("biome")
-
-      vim.lsp.config("cmake", { capabilities = capabilities })
-      vim.lsp.enable("cmake")
-
-      vim.lsp.config("diagnosticls", { capabilities = capabilities })
-      vim.lsp.enable("diagnosticls")
-
-      vim.lsp.config("eslint", { capabilities = capabilities })
-      vim.lsp.enable("eslint")
-
-      vim.lsp.config("html", { capabilities = capabilities })
-      vim.lsp.enable("html")
-
-      vim.lsp.config("taplo", { capabilities = capabilities })
-      vim.lsp.enable("taplo")
-
-      vim.lsp.config("ts_ls", { capabilities = capabilities })
-      vim.lsp.enable("ts_ls")
     end,
     keys = {
       {
