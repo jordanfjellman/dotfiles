@@ -13,7 +13,16 @@ if [[ -z $selected ]]; then
   exit 0
 fi
 
-selected_name=$(basename "$selected" | tr ' .' '_')
+# Name the session after the path. For bare-repo worktrees, a plain
+# basename collides (myrepo/feature-x and other/feature-x both -> feature-x),
+# so when the parent dir is a bare-repo root (has a .bare sibling) we use
+# repo/branch instead.
+if [[ -d "$(dirname "$selected")/.bare" ]]; then
+  selected_name=$(basename "$(dirname "$selected")")/$(basename "$selected")
+else
+  selected_name=$(basename "$selected")
+fi
+selected_name=$(echo "$selected_name" | tr ' .' '_')
 tmux_running=$(pgrep tmux)
 
 if [[ -z $TMUX ]] && [[ -z $tmux_running ]]; then

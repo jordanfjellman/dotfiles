@@ -1,7 +1,8 @@
 #!/bin/bash
 
-find $HOME/code -name .git -o -name worktrees -type d -prune -mindepth 1 -maxdepth 3 \
-  | sed 's/\/.git$//' \
-  | sed 's/\/worktrees$//' \
+find "$HOME/code" -mindepth 1 -maxdepth 3 \( -name .git -o -name .bare \) -print \
+  | sed 's/\/\.git$//' \
+  | sed 's/\/\.bare$//' \
+  | sort -u \
   | fzf --select-1 \
   | tmux-sessionizer
