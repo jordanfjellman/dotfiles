@@ -33,13 +33,13 @@ return {
   {
     "neovim/nvim-lspconfig",
     dependencies = {
-      "hrsh7th/cmp-nvim-lsp",
+      "saghen/blink.cmp",
       "b0o/schemastore.nvim",
     },
     event = { "BufReadPre", "BufNewFile" },
     config = function()
       vim.lsp.config("*", {
-        capabilities = require("cmp_nvim_lsp").default_capabilities(),
+        capabilities = require("blink.cmp").get_lsp_capabilities(),
       })
 
       -- Formatting is delegated to conform.nvim (see plugins/formatting.lua), so
