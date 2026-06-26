@@ -6,8 +6,7 @@ M.setup = function()
   -- global
   vim.opt_global.backup = false
   vim.opt_global.cmdheight = 1
-  vim.opt_global.completeopt = { "menu", "menuone", "noselect" } -- Completion options (for deoplete)
-  vim.opt_global.hidden = true -- Enable background buffers
+  vim.opt_global.completeopt = { "menu", "menuone", "noselect" } -- Completion options
   vim.opt_global.ignorecase = true -- Ignore case
   vim.opt_global.mouse = "n"
   vim.opt_global.list = false -- Show some invisible characters
@@ -20,7 +19,6 @@ M.setup = function()
   vim.opt_global.smartcase = true -- Do not ignore case with capitals
   vim.opt_global.splitbelow = true -- Put new windows below current
   vim.opt_global.splitright = true -- Put new windows right of current
-  vim.opt_global.termguicolors = true -- True color support
   vim.opt_global.updatetime = 300
   vim.opt_global.wildignore = {
     ".git",

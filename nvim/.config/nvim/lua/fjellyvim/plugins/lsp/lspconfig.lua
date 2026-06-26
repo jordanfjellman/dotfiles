@@ -9,12 +9,14 @@ return {
     lazy = false,
     opts = {
       ensure_installed = {
+        "ansiblels",
         "bashls",
         "biome",
         "cmake",
         "cssls",
         "diagnosticls",
         "dockerls",
+        "eslint",
         "gopls",
         "graphql",
         "html",
@@ -80,27 +82,9 @@ return {
       --   <leader>ss  -> lsp_symbols
       --   <leader>sS  -> lsp_workspace_symbols
 
-      vim.lsp.enable({
-        "ansiblels",
-        "bashls",
-        "biome",
-        "cmake",
-        "cssls",
-        "diagnosticls",
-        "dockerls",
-        "eslint",
-        "gopls",
-        "graphql",
-        "html",
-        "jsonls",
-        "lua_ls",
-        "marksman",
-        "rust_analyzer",
-        "sourcekit",
-        "taplo",
-        "ts_ls",
-        "yamlls",
-      })
+      -- mason-lspconfig auto-enables every mason-installed server. sourcekit
+      -- ships with the Swift toolchain (not a mason package), so enable it here.
+      vim.lsp.enable("sourcekit")
     end,
     keys = {
       {

@@ -58,7 +58,6 @@ return {
           -- Manually trigger a completion from nvim-cmp.
           --  Generally you don't need this, because nvim-cmp will display
           --  completions whenever it has completion options available.
-          --  note: temporarily disabled because it conflicts with copilot
           -- ["<C-space>"] = cmp.mapping.complete({}),
 
           -- Think of <c-l> as moving to the right of your snippet expansion.
@@ -102,7 +101,7 @@ return {
           entries = "custom", -- can be "custom", "wildmenu" or "native"
         },
         experimental = {
-          ghost_text = false, -- this feature conflict with copilot.vim's preview.
+          ghost_text = false, -- conflicts with supermaven's inline preview
         },
       })
 

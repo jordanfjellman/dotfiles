@@ -7,7 +7,7 @@ return {
         path ~= vim.fn.stdpath("config")
         and (vim.uv.fs_stat(path .. "/.luarc.json") or vim.uv.fs_stat(path .. "/.luarc.jsonc"))
       then
-        print("Found .luarc.json/.luarc.jsonc in workspace folder, skipping global type extensions")
+        vim.notify("Found .luarc.json/.luarc.jsonc in workspace folder, skipping global type extensions")
         return
       end
     end
