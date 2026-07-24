@@ -5,6 +5,11 @@ experimental = true
 [settings.github]
 credential_command = "gh auth token"
 
+[env]
+# Use the git CLI (ssh-agent) for cargo git fetches, so cargo: tools sourced
+# from private repos (e.g. skills-cli) authenticate without libgit2 ssh issues.
+CARGO_NET_GIT_FETCH_WITH_CLI = "true"
+
 [tools]
 # --- Runtimes & Package Managers ---
 java = "corretto-17"
@@ -65,7 +70,6 @@ kubens = "latest"
 lima = "latest"
 mkcert = "latest"
 pandoc = "latest"
-pi = "latest"
 ripgrep = "latest"
 stern = "latest"
 starship = "latest"
@@ -73,3 +77,4 @@ tree-sitter = "latest"
 tmux = "latest"
 typst = "latest"
 xh = "latest"
+pi = "latest"
