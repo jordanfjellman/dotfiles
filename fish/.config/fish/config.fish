@@ -328,6 +328,17 @@ function opencode
     command opencode $argv
 end
 
+function claude
+    # `--mcp-config` is variadic, so append it last (it stops at end of args) and
+    # skip it for management subcommands (`claude mcp ...` etc.) that would choke on it.
+    set -l subcmds agents auth auto-mode doctor gateway install mcp plugin plugins project setup-token ultrareview update upgrade
+    if not is_home_machine; and test -f ~/.claude/mcp.work.json; and not contains -- "$argv[1]" $subcmds
+        command claude $argv --mcp-config ~/.claude/mcp.work.json
+    else
+        command claude $argv
+    end
+end
+
 function k
     kubectl $argv
 end
