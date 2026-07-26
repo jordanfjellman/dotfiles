@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Agent Memory — Brain Activity</title>
+<style>
+  :root {
+    --bg: #16161d; --panel: #1d1d26; --line: #2c2c38; --text: #d8d8e0;
+    --dim: #6f6f80; --read: #7dcfff; --edit: #ffc777; --write: #c3e88d; --search: #bb9af7;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; height: 100vh; display: flex; flex-direction: column;
+         background: var(--bg); color: var(--text);
+         font: 13px/1.5 ui-monospace, SFMono-Regular, Menlo, monospace; }
+  header { display: flex; align-items: center; gap: 18px; padding: 8px 14px;
+           border-bottom: 1px solid var(--line); flex: 0 0 auto; flex-wrap: wrap; }
+  h1 { font-size: 13px; font-weight: 600; margin: 0; letter-spacing: .04em; }
+  .stat { color: var(--dim); }
+  .stat b { color: var(--text); font-weight: 600; }
+  .op-read b { color: var(--read); } .op-edit b { color: var(--edit); }
+  .op-write b { color: var(--write); } .op-search b { color: var(--search); }
+  #status { margin-left: auto; display: flex; align-items: center; gap: 8px; color: var(--dim); }
+  #dot { width: 8px; height: 8px; border-radius: 50%; background: #f7768e; }
+  #dot.live { background: var(--write); box-shadow: 0 0 8px var(--write); }
+  main { flex: 1; display: flex; min-height: 0; }
+  #canvas-wrap { flex: 1; position: relative; min-width: 0; }
+  canvas { display: block; width: 100%; height: 100%; }
+  #hint { position: absolute; left: 12px; bottom: 10px; color: var(--dim); font-size: 11px; }
+  aside { width: 340px; flex: 0 0 auto; border-left: 1px solid var(--line);
+          background: var(--panel); display: flex; flex-direction: column; }
+  aside h2 { font-size: 11px; text-transform: uppercase; letter-spacing: .08em;
+             color: var(--dim); margin: 0; padding: 9px 12px; border-bottom: 1px solid var(--line); }
+  #ticker { flex: 1; overflow-y: auto; padding: 6px 0; }
+  .ev { display: grid; grid-template-columns: 52px 46px 1fr; gap: 6px;
+        padding: 2px 12px; font-size: 11px; white-space: nowrap; }
+  .ev.replayed { opacity: .45; }
+  .ev time { color: var(--dim); }
+  .ev .op { font-weight: 600; }
+  .ev .path { overflow: hidden; text-overflow: ellipsis; }
+  .ev .skill { color: var(--dim); }
+  #legend { border-top: 1px solid var(--line); padding: 8px 12px; font-size: 11px; color: var(--dim); }
+  #legend span { display: inline-block; margin-right: 10px; }
+  #legend i { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 4px; }
+  label { color: var(--dim); font-size: 11px; cursor: pointer; user-select: none; }
+</style>
+</head>
+<body>
+<header>
+  <h1>BRAIN ACTIVITY</h1>
+  <span class="stat op-read">read <b id="c-read">0</b></span>
+  <span class="stat op-edit">edit <b id="c-edit">0</b></span>
+  <span class="stat op-write">write <b id="c-write">0</b></span>
+  <span class="stat op-search">search <b id="c-search">0</b></span>
+  <span class="stat">touched <b id="c-touched">0</b>/<b id="c-total">0</b></span>
+  <span class="stat">skill <b id="c-skill">—</b></span>
+  <label><input type="checkbox" id="show-all"> show cold notes</label>
+  <div id="status"><span id="dot"></span><span id="status-text">connecting…</span></div>
+</header>
+<main>
+  <div id="canvas-wrap"><canvas id="graph"></canvas>
+    <div id="hint">drag to pan · scroll to zoom · hover a node for its path</div>
+  </div>
+  <aside>
+    <h2>Event stream</h2>
+    <div id="ticker"></div>
+    <div id="legend"></div>
+  </aside>
+</main>
+<script type="module">
+const OP_COLOR = { read: '#7dcfff', edit: '#ffc777', write: '#c3e88d', search: '#bb9af7' };
+const TYPE_COLOR = {
+  'Idea': '#7aa2f7', 'Decision': '#f7768e', 'Preference': '#e0af68', 'Principle': '#ff9e64',
+  'Person': '#9ece6a', 'Team': '#73daca', 'Division': '#41a6b5', 'Department': '#2ac3de',
+  'Guild': '#b4f9f8', 'Application': '#bb9af7', 'Service': '#9d7cd8', 'Domain': '#ff007c',
+  'Vendor': '#c0caf5', 'Technology': '#89ddff', 'Design Pattern': '#f7768e',
+  'Map of Content': '#565f89', 'Meeting Transcript': '#414868', 'Agent Session': '#545c7e',
+  'Daily Review': '#6183bb', 'Section': '#3b4261', 'Knowledge Bundle': '#e0af68', 'Guide': '#a9b1d6',
+};
+const HEAT_HALFLIFE = 6000;   // ms for a node's glow to halve
+const GHOST_TTL = 20000;      // ms a co-read edge stays drawn
+
+const canvas = document.getElementById('graph');
+const ctx = canvas.getContext('2d');
+const counts = { read: 0, edit: 0, write: 0, search: 0 };
+const nodes = new Map();      // path -> node
+const edges = [];             // structural links
+const ghosts = [];            // { a, b, at } co-read edges observed live
+const lastRead = new Map();   // session -> last note path read
+let view = { x: 0, y: 0, k: 1 };
+let hover = null;
+let alpha = 1;
+
+function resize() {
+  const dpr = window.devicePixelRatio || 1;
+  const { clientWidth: w, clientHeight: h } = canvas.parentElement;
+  canvas.width = w * dpr; canvas.height = h * dpr;
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+}
+new ResizeObserver(resize).observe(document.getElementById('canvas-wrap'));
+
+const shortLabel = (p) => p.replace(/\.md$/, '').split('/').pop();
+
+async function loadGraph() {
+  const { nodes: ns, edges: es } = await (await fetch('/graph.json')).json();
+  const w = canvas.parentElement.clientWidth || 800;
+  const h = canvas.parentElement.clientHeight || 600;
+  for (const n of ns) {
+    nodes.set(n.id, {
+      id: n.id, type: n.type, label: shortLabel(n.id),
+      x: (Math.random() - 0.5) * w * 0.8, y: (Math.random() - 0.5) * h * 0.8,
+      vx: 0, vy: 0, degree: 0, heat: 0, pulse: 0, touched: false, lastOp: null,
+    });
+  }
+  for (const e of es) {
+    const a = nodes.get(e.source); const b = nodes.get(e.target);
+    if (!a || !b) continue;
+    a.degree++; b.degree++;
+    edges.push({ a, b });
+  }
+  document.getElementById('c-total').textContent = nodes.size;
+  renderLegend();
+  alpha = 1;
+}
+
+function renderLegend() {
+  const present = [...new Set([...nodes.values()].map(n => n.type))].sort();
+  document.getElementById('legend').innerHTML = present
+    .map(t => `<span><i style="background:${TYPE_COLOR[t] ?? '#565f89'}"></i>${t}</span>`).join('');
+}
+
+// ------------------------------------------------------------------ simulation
+// Only laid-out nodes participate, so a cold vault costs nothing until shown.
+function visibleNodes() {
+  return showAll.checked ? [...nodes.values()] : [...nodes.values()].filter(n => n.visible);
+}
+
+function markVisible(node) {
+  if (node.visible) return;
+  node.visible = true;
+  alpha = Math.max(alpha, 0.6);
+}
+
+function tick() {
+  if (alpha < 0.004) return;
+  const ns = visibleNodes();
+  const k = 1;
+  for (let i = 0; i < ns.length; i++) {
+    const a = ns[i];
+    for (let j = i + 1; j < ns.length; j++) {
+      const b = ns[j];
+      let dx = b.x - a.x, dy = b.y - a.y;
+      let d2 = dx * dx + dy * dy;
+      if (d2 < 1) { dx = Math.random() - 0.5; dy = Math.random() - 0.5; d2 = 1; }
+      const rep = (600 * k) / d2;
+      const d = Math.sqrt(d2);
+      const fx = (dx / d) * rep, fy = (dy / d) * rep;
+      a.vx -= fx; a.vy -= fy; b.vx += fx; b.vy += fy;
+    }
+  }
+  for (const e of edges) {
+    if (!e.a.visible && !showAll.checked) continue;
+    if (!e.b.visible && !showAll.checked) continue;
+    const dx = e.b.x - e.a.x, dy = e.b.y - e.a.y;
+    const d = Math.hypot(dx, dy) || 1;
+    const f = (d - 70) * 0.008;
+    const fx = (dx / d) * f, fy = (dy / d) * f;
+    e.a.vx += fx; e.a.vy += fy; e.b.vx -= fx; e.b.vy -= fy;
+  }
+  for (const n of ns) {
+    n.vx -= n.x * 0.0016; n.vy -= n.y * 0.0016;   // gravity toward center
+    n.x += n.vx * alpha; n.y += n.vy * alpha;
+    n.vx *= 0.82; n.vy *= 0.82;
+  }
+  alpha *= 0.985;
+}
+
+// ---------------------------------------------------------------------- render
+function draw() {
+  const w = canvas.parentElement.clientWidth, h = canvas.parentElement.clientHeight;
+  ctx.save();
+  ctx.clearRect(0, 0, w, h);
+  ctx.translate(w / 2 + view.x, h / 2 + view.y);
+  ctx.scale(view.k, view.k);
+
+  const now = performance.now();
+  const vis = visibleNodes();
+  const visSet = new Set(vis);
+
+  ctx.lineWidth = 1 / view.k;
+  ctx.strokeStyle = '#2c2c38';
+  ctx.beginPath();
+  for (const e of edges) {
+    if (!visSet.has(e.a) || !visSet.has(e.b)) continue;
+    ctx.moveTo(e.a.x, e.a.y); ctx.lineTo(e.b.x, e.b.y);
+  }
+  ctx.stroke();
+
+  for (let i = ghosts.length - 1; i >= 0; i--) {
+    const g = ghosts[i];
+    const age = now - g.at;
+    if (age > GHOST_TTL) { ghosts.splice(i, 1); continue; }
+    ctx.strokeStyle = `rgba(125,207,255,${0.5 * (1 - age / GHOST_TTL)})`;
+    ctx.lineWidth = 1.6 / view.k;
+    ctx.setLineDash([4 / view.k, 4 / view.k]);
+    ctx.beginPath(); ctx.moveTo(g.a.x, g.a.y); ctx.lineTo(g.b.x, g.b.y); ctx.stroke();
+    ctx.setLineDash([]);
+  }
+
+  for (const n of vis) {
+    const r = Math.min(11, 3 + Math.sqrt(n.degree) * 1.5) + n.heat * 3;
+    if (n.heat > 0.02) {
+      const glow = OP_COLOR[n.lastOp] ?? '#7dcfff';
+      ctx.beginPath();
+      ctx.arc(n.x, n.y, r + 10 * n.heat, 0, Math.PI * 2);
+      ctx.fillStyle = glow + Math.round(40 * n.heat).toString(16).padStart(2, '0');
+      ctx.fill();
+    }
+    ctx.beginPath();
+    ctx.arc(n.x, n.y, r, 0, Math.PI * 2);
+    ctx.fillStyle = n.touched ? (TYPE_COLOR[n.type] ?? '#565f89') : '#33333f';
+    ctx.fill();
+    if (n.heat > 0.02) {
+      ctx.strokeStyle = OP_COLOR[n.lastOp] ?? '#7dcfff';
+      ctx.lineWidth = 1.5 / view.k; ctx.stroke();
+    }
+    if (n.pulse > 0) {
+      ctx.beginPath();
+      ctx.arc(n.x, n.y, r + (1 - n.pulse) * 26, 0, Math.PI * 2);
+      ctx.strokeStyle = (OP_COLOR[n.lastOp] ?? '#7dcfff') + Math.round(200 * n.pulse).toString(16).padStart(2, '0');
+      ctx.lineWidth = 1.5 / view.k; ctx.stroke();
+    }
+    if (view.k > 1.15 || n.heat > 0.25 || n === hover) {
+      ctx.fillStyle = n === hover ? '#ffffff' : '#8b8ba0';
+      ctx.font = `${11 / view.k}px ui-monospace, monospace`;
+      ctx.fillText(n.label.slice(0, 42), n.x + r + 3 / view.k, n.y + 3 / view.k);
+    }
+  }
+  ctx.restore();
+}
+
+let last = performance.now();
+function frame(t) {
+  const dt = t - last; last = t;
+  const decay = Math.pow(0.5, dt / HEAT_HALFLIFE);
+  for (const n of nodes.values()) {
+    if (n.heat > 0) n.heat *= decay;
+    if (n.pulse > 0) n.pulse = Math.max(0, n.pulse - dt / 900);
+  }
+  tick();
+  draw();
+  requestAnimationFrame(frame);
+}
+
+// ----------------------------------------------------------------- interaction
+const showAll = document.getElementById('show-all');
+showAll.addEventListener('change', () => { alpha = 1; });
+
+let drag = null;
+canvas.addEventListener('mousedown', (e) => { drag = { x: e.clientX, y: e.clientY }; });
+window.addEventListener('mouseup', () => { drag = null; });
+window.addEventListener('mousemove', (e) => {
+  if (drag) {
+    view.x += e.clientX - drag.x; view.y += e.clientY - drag.y;
+    drag = { x: e.clientX, y: e.clientY };
+    return;
+  }
+  const rect = canvas.getBoundingClientRect();
+  const mx = (e.clientX - rect.left - rect.width / 2 - view.x) / view.k;
+  const my = (e.clientY - rect.top - rect.height / 2 - view.y) / view.k;
+  hover = null;
+  let best = 14 / view.k;
+  for (const n of visibleNodes()) {
+    const d = Math.hypot(n.x - mx, n.y - my);
+    if (d < best) { best = d; hover = n; }
+  }
+  canvas.title = hover ? hover.id : '';
+});
+canvas.addEventListener('wheel', (e) => {
+  e.preventDefault();
+  const f = e.deltaY < 0 ? 1.1 : 1 / 1.1;
+  view.k = Math.max(0.25, Math.min(6, view.k * f));
+}, { passive: false });
+
+// ------------------------------------------------------------------ event feed
+const ticker = document.getElementById('ticker');
+
+function addRow(ev, path) {
+  const row = document.createElement('div');
+  row.className = 'ev' + (ev.replay ? ' replayed' : '');
+  const time = new Date(ev.ts).toLocaleTimeString([], { hour12: false });
+  row.innerHTML = `<time>${time}</time>`
+    + `<span class="op" style="color:${OP_COLOR[ev.op] ?? '#d8d8e0'}">${ev.op}</span>`
+    + `<span class="path" title="${path}">${path}`
+    + (ev.skill ? ` <span class="skill">· ${ev.skill}</span>` : '') + '</span>';
+  ticker.prepend(row);
+  while (ticker.childElementCount > 200) ticker.lastElementChild.remove();
+}
+
+function apply(ev) {
+  if (!ev.replay) {
+    counts[ev.op] = (counts[ev.op] ?? 0) + 1;
+    for (const op of Object.keys(counts)) document.getElementById(`c-${op}`).textContent = counts[op];
+    if (ev.skill) document.getElementById('c-skill').textContent = ev.skill;
+  }
+  for (const path of ev.paths ?? []) {
+    addRow(ev, path);
+    const n = nodes.get(path);
+    if (!n) continue;
+    markVisible(n);
+    n.touched = true;
+    n.lastOp = ev.op;
+    n.heat = Math.min(1, n.heat + (ev.replay ? 0.25 : 1));
+    if (!ev.replay) n.pulse = 1;
+    // Reading two notes back to back in one session is the co-read signal.
+    if (ev.op === 'read') {
+      const prev = lastRead.get(ev.session);
+      if (prev && prev !== path && nodes.has(prev)) {
+        ghosts.push({ a: nodes.get(prev), b: n, at: performance.now() - (ev.replay ? GHOST_TTL * 0.7 : 0) });
+      }
+      lastRead.set(ev.session, path);
+    }
+    for (const e of edges) {                       // pull in linked neighbors
+      if (e.a === n) markVisible(e.b);
+      else if (e.b === n) markVisible(e.a);
+    }
+  }
+  document.getElementById('c-touched').textContent =
+    [...nodes.values()].filter(n => n.touched).length;
+}
+
+function connect() {
+  const dot = document.getElementById('dot');
+  const text = document.getElementById('status-text');
+  const es = new EventSource('/events');
+  es.onopen = () => { dot.classList.add('live'); text.textContent = 'live'; };
+  es.onerror = () => { dot.classList.remove('live'); text.textContent = 'reconnecting…'; };
+  es.onmessage = (m) => { try { apply(JSON.parse(m.data)); } catch { /* partial line */ } };
+}
+
+resize();
+await loadGraph();
+connect();
+requestAnimationFrame(frame);
+</script>
+</body>
+</html>

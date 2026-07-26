@@ -1,0 +1,715 @@
+#!/usr/bin/env node
+// memory-brain — observe how the agent memory at ~/agent-memory is read and written.
+//
+// backfill  reconstruct access events from the pi / Claude Code session logs
+// stats     summarize recall patterns from the access log
+// serve     tail the access log and broadcast it over SSE to a live page
+//
+// The access log lives OUTSIDE the vault: the vault is an OKF bundle (text and
+// files, no runtime), and a churning append-only log is neither a concept nor
+// something Obsidian Sync should carry.
+
+import { readFileSync, writeFileSync, appendFileSync, existsSync, mkdirSync, readdirSync, statSync, realpathSync, watch, openSync, readSync, closeSync } from 'node:fs';
+import { join, basename, dirname, sep, relative, resolve, isAbsolute } from 'node:path';
+import { homedir } from 'node:os';
+import { fileURLToPath } from 'node:url';
+import { createServer } from 'node:http';
+
+const HOME = homedir();
+const VAULT = process.env.AGENT_MEMORY_DIR ?? join(HOME, 'agent-memory');
+const STATE = process.env.MEMORY_BRAIN_STATE ?? join(HOME, '.local', 'state', 'agent-memory', 'access');
+const PI_SESSIONS = join(HOME, '.pi', 'agent', 'sessions');
+const CLAUDE_SESSIONS = join(HOME, '.claude', 'projects');
+// Sibling asset. `~/.local/share` is gitignored in the dotfiles bin package, so
+// the page lives under lib/ where it stays tracked.
+const SELF_DIR = dirname(fileURLToPath(import.meta.url));
+const PAGE = [
+  join(SELF_DIR, '..', 'lib', 'memory-brain', 'brain.html'),
+  join(HOME, '.local', 'lib', 'memory-brain', 'brain.html'),
+].find(existsSync) ?? join(HOME, '.local', 'lib', 'memory-brain', 'brain.html');
+
+const USAGE = `memory-brain — observe agent memory access
+
+  memory-brain backfill [--since 30d] [--harness pi|claude-code] [--dry-run]
+  memory-brain stats    [--since 30d] [--top 15]
+  memory-brain serve    [--port 7777] [--open]
+  memory-brain record   --harness pi|claude-code   < event.json
+Options
+  --since <30d|2w|3m|YYYY-MM-DD>   window to scan (default: all of it for backfill)
+  --harness <pi|claude-code>       restrict to one harness
+  --dry-run                        print what backfill would write, write nothing
+  --top <n>                        rows per stats table (default 15)
+
+The record command is the live path: the pi extension and the Claude Code
+PostToolUse hook pipe their tool-call payload in, and it appends an event only
+when the call touched the vault. Exits 0 no matter what -- it must never break
+a tool call.
+
+Paths
+  vault      ${VAULT}
+  access log ${STATE}/YYYY-MM.jsonl
+  page       ${PAGE}
+`;
+
+// ------------------------------------------------------------------- plumbing
+
+function parseArgs(argv) {
+  const args = { _: [] };
+  for (let i = 0; i < argv.length; i++) {
+    const a = argv[i];
+    if (a.startsWith('--')) {
+      const key = a.slice(2);
+      const next = argv[i + 1];
+      if (next && !next.startsWith('--')) { args[key] = next; i++; } else args[key] = true;
+    } else args._.push(a);
+  }
+  return args;
+}
+
+/** `30d` / `2w` / `3m` / an ISO date -> epoch ms floor, or null for "everything". */
+function resolveSince(v) {
+  if (!v || v === true) return null;
+  const rel = /^(\d+)([dwmy])$/.exec(String(v));
+  if (rel) {
+    const [, n, unit] = rel;
+    const days = { d: 1, w: 7, m: 30, y: 365 }[unit] * Number(n);
+    return Date.now() - days * 86400000;
+  }
+  const t = Date.parse(v);
+  return Number.isNaN(t) ? null : t;
+}
+
+function walkJsonl(root) {
+  if (!existsSync(root)) return [];
+  const files = [];
+  const stack = [root];
+  while (stack.length) {
+    const dir = stack.pop();
+    let entries;
+    try { entries = readdirSync(dir, { withFileTypes: true }); } catch { continue; }
+    for (const e of entries) {
+      const p = join(dir, e.name);
+      if (e.isDirectory()) stack.push(p);
+      else if (e.isFile() && e.name.endsWith('.jsonl')) files.push(p);
+    }
+  }
+  return files;
+}
+
+function readJsonl(file) {
+  let raw;
+  try { raw = readFileSync(file, 'utf8'); } catch { return []; }
+  const out = [];
+  for (const line of raw.split('\n')) {
+    if (!line.trim()) continue;
+    try { out.push(JSON.parse(line)); } catch { /* truncated tail */ }
+  }
+  return out;
+}
+
+// ------------------------------------------------------- vault path detection
+
+/**
+ * The vault answers to more than one path: `~/meetings` is a symlink left from
+ * its old name, so sessions that ran there log paths under the alias. Discover
+ * aliases instead of hardcoding them, or every pre-rename session reads as
+ * "outside the vault".
+ */
+function vaultPrefixes() {
+  const prefixes = [VAULT];
+  let real = VAULT;
+  try { real = realpathSync(VAULT); } catch { /* vault missing */ }
+  if (real !== VAULT) prefixes.push(real);
+  let entries = [];
+  try { entries = readdirSync(HOME, { withFileTypes: true }); } catch { /* unreadable */ }
+  for (const e of entries) {
+    if (!e.isSymbolicLink()) continue;
+    const p = join(HOME, e.name);
+    try { if (realpathSync(p) === real) prefixes.push(p); } catch { /* dangling */ }
+  }
+  return [...new Set(prefixes)].map(p => (p.endsWith(sep) ? p : p + sep));
+}
+
+const VAULT_PREFIXES = vaultPrefixes();
+
+/** Vault-relative path, or null when the target is outside the vault. */
+function vaultRelative(p, cwd) {
+  if (!p || typeof p !== 'string') return null;
+  let abs = p.startsWith('~/') ? join(HOME, p.slice(2)) : p;
+  if (!isAbsolute(abs)) {
+    if (!cwd) return null;
+    abs = resolve(cwd, abs);
+  }
+  for (const prefix of VAULT_PREFIXES) {
+    const root = prefix.slice(0, -1);
+    if (abs !== root && !abs.startsWith(prefix)) continue;
+    const rel = relative(root, abs);
+    if (!rel || rel.startsWith('..')) return null;
+    return UUID_SEGMENT_RE.test(rel.split(sep)[0]) ? null : rel;
+  }
+  return null;
+}
+
+const inVault = (cwd) => Boolean(cwd) && VAULT_PREFIXES.some(p => cwd === p.slice(0, -1) || cwd.startsWith(p));
+
+// Harness scratch dirs (Claude Code writes `<session-uuid>/scratchpad/...`) resolve
+// against a vault cwd and would otherwise register as vault content.
+const UUID_SEGMENT_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
+// A bare mention of the vault inside a shell command, under any of its names.
+const MENTION_RE = /(?:agent-memory|meetings)\/([^"'`\n|;>&$]*?\.(?:md|mjs|json))/g;
+
+/**
+ * A mention harvested from a shell command is a guess. Accept it if the file is
+ * really there; otherwise accept only shell-metachar-free, space-free candidates,
+ * so a since-renamed note still counts but `dir && wc -l foo.mjs` does not.
+ */
+function plausiblePath(rel) {
+  if (existsSync(join(VAULT, rel))) return true;
+  return !/[\s*?()\[\]]/.test(rel);
+}
+
+function pathsFromArgs(args, cwd) {
+  const found = new Set();
+  for (const key of ['path', 'file_path', 'filePath', 'notebook_path']) {
+    const rel = vaultRelative(args?.[key], cwd);
+    if (rel) found.add(rel);
+  }
+  const blob = typeof args === 'string' ? args : JSON.stringify(args ?? '');
+  for (const m of blob.matchAll(MENTION_RE)) {
+    const rel = vaultRelative(join(VAULT, m[1].trim()), cwd);
+    if (rel && plausiblePath(rel)) found.add(rel);
+  }
+  return [...found];
+}
+
+const SKILL_RE = /(?:^|\/)skills\/([a-z0-9][a-z0-9._-]*)\/SKILL\.md$/i;
+
+const OP_BY_TOOL = {
+  read: 'read', Read: 'read',
+  edit: 'edit', Edit: 'edit', MultiEdit: 'edit', NotebookEdit: 'edit',
+  write: 'write', Write: 'write',
+  bash: 'search', Bash: 'search', Grep: 'search', Glob: 'search',
+};
+
+const SECRET_PATTERNS = [
+  [/\b(?:AKIA|ASIA)[0-9A-Z]{16}\b/g, '<redacted:aws-key>'],
+  [/\bxox[baprs]-[A-Za-z0-9-]{10,}\b/g, '<redacted:slack-token>'],
+  [/\bgh[pousr]_[A-Za-z0-9]{20,}\b/g, '<redacted:github-token>'],
+  [/\beyJ[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{10,}\b/g, '<redacted:jwt>'],
+  [/\b(Bearer|Basic)\s+[A-Za-z0-9._~+/=-]{16,}/gi, '$1 <redacted>'],
+  [/\b(password|passwd|secret|api[_-]?key|token|client[_-]?secret)\s*[:=]\s*\S{6,}/gi, '$1=<redacted>'],
+];
+
+function redact(text) {
+  let out = String(text ?? '');
+  for (const [re, sub] of SECRET_PATTERNS) out = out.replace(re, sub);
+  return out;
+}
+
+function queryFromArgs(tool, args) {
+  const raw = args?.pattern ?? args?.query ?? args?.command ?? null;
+  if (!raw) return null;
+  return redact(String(raw)).slice(0, 240);
+}
+
+function repoLabel(cwd) {
+  if (!cwd) return 'unknown';
+  if (inVault(cwd)) return basename(VAULT);
+  const parts = cwd.split(sep).filter(Boolean);
+  const i = parts.indexOf('code');
+  if (i >= 0 && parts.length > i + 2) return parts[i + 2];
+  return parts[parts.length - 1] || 'unknown';
+}
+
+const shortId = (id) => String(id ?? '').replace(/-/g, '').slice(0, 12);
+
+// --------------------------------------------------------------- log scanning
+
+/**
+ * One access event per tool call that touched the vault. `paths` is 0..n
+ * vault-relative targets so read/edit/write/search share a single shape.
+ */
+function makeEvent(ctx, { ts, op, paths, query, tool }) {
+  return {
+    ts,
+    harness: ctx.harness,
+    session: ctx.session,
+    actor: ctx.actor,
+    repo: ctx.repo,
+    model: ctx.model ?? null,
+    skill: ctx.skill ?? null,
+    op,
+    tool,
+    paths,
+    query: query ?? null,
+    src: 'backfill',
+  };
+}
+
+function scanPi(file, since) {
+  const records = readJsonl(file);
+  const events = [];
+  const ctx = {
+    harness: 'pi',
+    session: shortId(basename(file).replace(/\.jsonl$/, '').split('_').pop()),
+    actor: 'main',
+    repo: 'unknown',
+    model: null,
+    skill: null,
+  };
+  let cwd = null;
+
+  for (const r of records) {
+    if (r.type === 'session') {
+      cwd = r.cwd ?? cwd;
+      ctx.repo = repoLabel(cwd);
+      if (r.id) ctx.session = shortId(r.id);
+      continue;
+    }
+    if (r.type === 'model_change') { ctx.model = `${r.provider ?? '?'}/${r.modelId ?? '?'}`; continue; }
+    if (r.type !== 'message' || r.message?.role !== 'assistant') continue;
+    const ts = r.timestamp;
+    if (since && ts && Date.parse(ts) < since) continue;
+
+    for (const b of r.message.content ?? []) {
+      if (b.type !== 'toolCall') continue;
+      const op = OP_BY_TOOL[b.name];
+      if (!op) continue;
+      const paths = pathsFromArgs(b.arguments, cwd);
+      if (!paths.length) continue;
+      const skillHit = paths.map(p => SKILL_RE.exec(p)?.[1]).find(Boolean);
+      if (skillHit) ctx.skill = skillHit;
+      events.push(makeEvent(ctx, { ts, op, paths, query: queryFromArgs(b.name, b.arguments), tool: b.name }));
+    }
+  }
+  return events;
+}
+
+const CLAUDE_SUBAGENT_RE = /(?:^|\/)agent-[0-9a-f]+\.jsonl$/;
+
+function scanClaude(file, since) {
+  const records = readJsonl(file);
+  const events = [];
+  const ctx = {
+    harness: 'claude-code',
+    session: shortId(basename(file).replace(/\.jsonl$/, '')),
+    actor: CLAUDE_SUBAGENT_RE.test(file) ? 'subagent' : 'main',
+    repo: 'unknown',
+    model: null,
+    skill: null,
+  };
+  let cwd = null;
+
+  for (const r of records) {
+    if (r.cwd && !cwd) { cwd = r.cwd; ctx.repo = repoLabel(cwd); }
+    if (r.sessionId) ctx.session = shortId(r.sessionId);
+    if (r.type !== 'assistant') continue;
+    const ts = r.timestamp;
+    if (since && ts && Date.parse(ts) < since) continue;
+    if (r.message?.model) ctx.model = r.message.model;
+    const actor = r.isSidechain === true ? 'subagent' : ctx.actor;
+
+    for (const b of r.message?.content ?? []) {
+      if (b.type !== 'tool_use') continue;
+      if (b.name === 'Skill' && b.input?.skill) { ctx.skill = b.input.skill; continue; }
+      const op = OP_BY_TOOL[b.name];
+      if (!op) continue;
+      const paths = pathsFromArgs(b.input, cwd);
+      if (!paths.length) continue;
+      const skillHit = paths.map(p => SKILL_RE.exec(p)?.[1]).find(Boolean);
+      if (skillHit) ctx.skill = skillHit;
+      events.push(makeEvent({ ...ctx, actor }, { ts, op, paths, query: queryFromArgs(b.name, b.input), tool: b.name }));
+    }
+  }
+  return events;
+}
+
+// -------------------------------------------------------------- the event log
+
+const monthOf = (ts) => (ts ?? '').slice(0, 7) || 'unknown';
+const eventKey = (e) => `${e.session}|${e.ts}|${e.op}|${e.paths.join(',')}`;
+
+function logFiles() {
+  if (!existsSync(STATE)) return [];
+  return readdirSync(STATE).filter(f => f.endsWith('.jsonl')).sort().map(f => join(STATE, f));
+}
+
+function readLog(since) {
+  const events = [];
+  for (const f of logFiles()) {
+    for (const e of readJsonl(f)) {
+      if (since && e.ts && Date.parse(e.ts) < since) continue;
+      events.push(e);
+    }
+  }
+  return events.sort((a, b) => String(a.ts).localeCompare(String(b.ts)));
+}
+
+function existingKeys() {
+  const keys = new Set();
+  for (const f of logFiles()) for (const e of readJsonl(f)) keys.add(eventKey(e));
+  return keys;
+}
+
+// ------------------------------------------------------------------- backfill
+
+function cmdBackfill(args) {
+  const since = resolveSince(args.since);
+  const harness = args.harness === true ? null : args.harness;
+  const files = [];
+  if (harness !== 'claude-code') files.push(...walkJsonl(PI_SESSIONS).map(f => ['pi', f]));
+  if (harness !== 'pi') files.push(...walkJsonl(CLAUDE_SESSIONS).map(f => ['claude-code', f]));
+
+  let events = [];
+  for (const [kind, f] of files) {
+    if (since) {
+      // Cheap prefilter: a log whose last write predates the window has nothing in it.
+      try { if (statSync(f).mtimeMs < since) continue; } catch { continue; }
+    }
+    events.push(...(kind === 'pi' ? scanPi(f, since) : scanClaude(f, since)));
+  }
+  events.sort((a, b) => String(a.ts).localeCompare(String(b.ts)));
+
+  const seen = existingKeys();
+  const fresh = events.filter(e => !seen.has(eventKey(e)));
+
+  const byMonth = new Map();
+  for (const e of fresh) {
+    const m = monthOf(e.ts);
+    if (!byMonth.has(m)) byMonth.set(m, []);
+    byMonth.get(m).push(e);
+  }
+
+  console.log(`scanned  ${files.length} session logs`);
+  console.log(`matched  ${events.length} vault-touching tool calls`);
+  console.log(`new      ${fresh.length} events across ${byMonth.size} month(s)`);
+
+  if (args['dry-run']) {
+    for (const e of fresh.slice(-8)) console.log(`  ${e.ts}  ${e.harness}  ${e.op.padEnd(6)} ${e.paths[0]}`);
+    console.log('\n(dry run — nothing written)');
+    return;
+  }
+
+  mkdirSync(STATE, { recursive: true });
+  for (const [month, list] of [...byMonth].sort()) {
+    const file = join(STATE, `${month}.jsonl`);
+    appendFileSync(file, list.map(e => JSON.stringify(e)).join('\n') + '\n');
+    console.log(`  wrote ${String(list.length).padStart(6)} -> ${file}`);
+  }
+}
+
+// ---------------------------------------------------------------------- stats
+
+function vaultNotes() {
+  const notes = new Map(); // vault-relative path -> { type, links:Set }
+  const stack = [VAULT];
+  while (stack.length) {
+    const dir = stack.pop();
+    let entries;
+    try { entries = readdirSync(dir, { withFileTypes: true }); } catch { continue; }
+    for (const e of entries) {
+      if (e.name.startsWith('.') || e.name === 'node_modules') continue;
+      const p = join(dir, e.name);
+      if (e.isDirectory()) stack.push(p);
+      else if (e.isFile() && e.name.endsWith('.md')) {
+        const rel = relative(VAULT, p);
+        let text = '';
+        try { text = readFileSync(p, 'utf8'); } catch { /* unreadable */ }
+        notes.set(rel, { type: frontmatterType(text), links: linkTargets(text) });
+      }
+    }
+  }
+  return notes;
+}
+
+function frontmatterType(text) {
+  const m = /^---\n([\s\S]*?)\n---/.exec(text);
+  if (!m) return 'untyped';
+  const t = /^type:\s*(.+)$/m.exec(m[1]);
+  return t ? t[1].trim() : 'untyped';
+}
+
+/** Both link graphs at once: [[wikilinks]] by basename, and .md markdown links. */
+function linkTargets(text) {
+  const out = new Set();
+  for (const m of text.matchAll(/\[\[([^\]|#]+)/g)) out.add(m[1].trim());
+  for (const m of text.matchAll(/\]\(([^)\s]+\.md)\)/g)) out.add(basename(m[1], '.md'));
+  return out;
+}
+
+function linked(notes, a, b) {
+  const nameA = basename(a, '.md');
+  const nameB = basename(b, '.md');
+  return Boolean(notes.get(a)?.links.has(nameB) || notes.get(b)?.links.has(nameA));
+}
+
+function table(rows, top) {
+  const width = Math.max(0, ...rows.slice(0, top).map(r => String(r[0]).length));
+  return rows.slice(0, top).map(r => `  ${String(r[0]).padEnd(width)}  ${r[1]}`).join('\n');
+}
+
+function cmdStats(args) {
+  const since = resolveSince(args.since);
+  const top = Number(args.top === true ? 15 : args.top ?? 15);
+  const events = readLog(since);
+  if (!events.length) return console.log('no access events yet — run `memory-brain backfill` first');
+
+  const notes = vaultNotes();
+  const reads = new Map();
+  const writes = new Map();
+  const byOp = new Map();
+  const bySkill = new Map();
+  const byHarness = new Map();
+  const sessions = new Map(); // session -> ordered list of read paths
+
+  for (const e of events) {
+    byOp.set(e.op, (byOp.get(e.op) ?? 0) + 1);
+    byHarness.set(e.harness, (byHarness.get(e.harness) ?? 0) + 1);
+    if (e.skill) bySkill.set(e.skill, (bySkill.get(e.skill) ?? 0) + 1);
+    for (const p of e.paths) {
+      // Skill and harness files under dotdirs are activity, not graph nodes.
+      if (!p.endsWith('.md') || p.startsWith('.')) continue;
+      if (e.op === 'read') {
+        reads.set(p, (reads.get(p) ?? 0) + 1);
+        if (!sessions.has(e.session)) sessions.set(e.session, []);
+        sessions.get(e.session).push(p);
+      } else if (e.op === 'edit' || e.op === 'write') {
+        writes.set(p, (writes.get(p) ?? 0) + 1);
+      }
+    }
+  }
+
+  const desc = (m) => [...m].sort((a, b) => b[1] - a[1]);
+  const section = (title) => `\n${title}\n${'─'.repeat(title.length)}`;
+
+  console.log(`${events.length} events  ${events[0].ts?.slice(0, 10)} → ${events.at(-1).ts?.slice(0, 10)}`);
+  console.log(`ops: ${desc(byOp).map(([k, v]) => `${k} ${v}`).join('  ')}`);
+  console.log(`harness: ${desc(byHarness).map(([k, v]) => `${k} ${v}`).join('  ')}`);
+
+  console.log(section('hottest notes (reads)'));
+  console.log(table(desc(reads), top));
+
+  console.log(section('most rewritten notes'));
+  console.log(table(desc(writes), top));
+
+  // Layer adherence: memory-ask says read the distilled layer before transcripts.
+  const layer = (p) => p.split('/')[0];
+  const layers = new Map();
+  for (const [p, n] of reads) layers.set(layer(p), (layers.get(layer(p)) ?? 0) + n);
+  console.log(section('reads by section'));
+  console.log(table(desc(layers), top));
+
+  if (bySkill.size) {
+    console.log(section('events by driving skill'));
+    console.log(table(desc(bySkill), top));
+  }
+
+  // Cold storage: notes the agent has never opened.
+  const cold = [...notes.keys()].filter(p => !reads.has(p) && !p.endsWith('index.md'));
+  console.log(section('coverage'));
+  console.log(`  ${notes.size} notes in vault, ${reads.size} ever read (${Math.round(100 * reads.size / notes.size)}%)`);
+  console.log(`  ${cold.length} never read`);
+
+  // Co-read coupling: notes opened together in a session but with no link between
+  // them. This is the missing-edge signal memory-grow wants as input. Structural
+  // files (guides, section indexes) are read in nearly every session, so pairing
+  // on them says nothing about the content.
+  const structural = (p) => p.endsWith('index.md') || !p.includes('/');
+  const pairs = new Map();
+  for (const list of sessions.values()) {
+    const uniq = [...new Set(list)].filter(p => !structural(p));
+    for (let i = 0; i < uniq.length; i++) {
+      for (let j = i + 1; j < uniq.length; j++) {
+        const key = [uniq[i], uniq[j]].sort().join(' || ');
+        pairs.set(key, (pairs.get(key) ?? 0) + 1);
+      }
+    }
+  }
+  const unlinked = desc(pairs).filter(([key, n]) => {
+    if (n < 2) return false;
+    const [a, b] = key.split(' || ');
+    return notes.has(a) && notes.has(b) && !linked(notes, a, b);
+  });
+  console.log(section('co-read but not linked (missing-edge candidates)'));
+  console.log(unlinked.length ? table(unlinked, top) : '  none');
+}
+
+// ---------------------------------------------------------------------- record
+
+function readStdin() {
+  return new Promise((res) => {
+    let data = '';
+    process.stdin.setEncoding('utf8');
+    process.stdin.on('data', (c) => { data += c; });
+    process.stdin.on('end', () => res(data));
+    process.stdin.on('error', () => res(''));
+  });
+}
+
+/**
+ * Which skill is driving is stateful — it is set by one call and applies to the
+ * next several — so live recording keeps a per-session sidecar rather than
+ * guessing from each call in isolation.
+ */
+function skillMemo(session, found) {
+  const file = join(STATE, `.skill-${session}`);
+  if (found) {
+    try { writeFileSync(file, found); } catch { /* best effort */ }
+    return found;
+  }
+  try { return readFileSync(file, 'utf8').trim() || null; } catch { return null; }
+}
+
+async function cmdRecord(args) {
+  const harness = args.harness === true ? 'pi' : args.harness;
+  let p;
+  try { p = JSON.parse(await readStdin()); } catch { return; }
+
+  const claude = harness === 'claude-code';
+  const session = shortId(claude ? p.session_id : p.sessionId);
+  const cwd = (claude ? p.cwd : p.cwd) ?? null;
+  const tool = claude ? p.tool_name : p.toolName;
+  const toolArgs = claude ? p.tool_input : p.args;
+  if (!tool) return;
+
+  let skill = tool === 'Skill' ? (toolArgs?.skill ?? null) : null;
+  const op = OP_BY_TOOL[tool];
+  const paths = op ? pathsFromArgs(toolArgs, cwd) : [];
+  if (!skill) skill = paths.map(x => SKILL_RE.exec(x)?.[1]).find(Boolean) ?? null;
+  const activeSkill = skillMemo(session, skill);
+  if (!op || !paths.length) return;
+
+  const event = {
+    ts: new Date().toISOString(),
+    harness,
+    session,
+    actor: p.actor ?? 'main',
+    repo: repoLabel(cwd),
+    model: p.model ?? null,
+    skill: activeSkill,
+    op,
+    tool,
+    paths,
+    query: queryFromArgs(tool, toolArgs),
+    src: 'live',
+  };
+  mkdirSync(STATE, { recursive: true });
+  appendFileSync(currentLogFile(), JSON.stringify(event) + '\n');
+}
+
+// ---------------------------------------------------------------------- serve
+
+function currentLogFile() {
+  const month = new Date().toISOString().slice(0, 7);
+  return join(STATE, `${month}.jsonl`);
+}
+
+function graphPayload() {
+  const notes = vaultNotes();
+  const byName = new Map();
+  for (const p of notes.keys()) byName.set(basename(p, '.md'), p);
+
+  const nodes = [...notes].map(([path, meta]) => ({ id: path, type: meta.type }));
+  const edges = [];
+  const seen = new Set();
+  for (const [path, meta] of notes) {
+    for (const target of meta.links) {
+      const to = byName.get(target);
+      if (!to || to === path) continue;
+      const key = [path, to].sort().join('|');
+      if (seen.has(key)) continue;
+      seen.add(key);
+      edges.push({ source: path, target: to });
+    }
+  }
+  return { nodes, edges };
+}
+
+function cmdServe(args) {
+  const port = Number(args.port === true ? 7777 : args.port ?? 7777);
+  const clients = new Set();
+  mkdirSync(STATE, { recursive: true });
+
+  let file = currentLogFile();
+  let offset = existsSync(file) ? statSync(file).size : 0;
+
+  const pump = () => {
+    if (!existsSync(file)) { offset = 0; return; }
+    const size = statSync(file).size;
+    if (size <= offset) { offset = Math.min(offset, size); return; }
+    const fd = openSync(file, 'r');
+    const buf = Buffer.alloc(size - offset);
+    readSync(fd, buf, 0, buf.length, offset);
+    closeSync(fd);
+    offset = size;
+    for (const line of buf.toString('utf8').split('\n')) {
+      if (!line.trim()) continue;
+      for (const res of clients) res.write(`data: ${line}\n\n`);
+    }
+  };
+
+  watch(STATE, (_type, name) => {
+    if (!name?.endsWith('.jsonl')) return;
+    const want = currentLogFile();
+    if (want !== file) { file = want; offset = 0; }
+    pump();
+  });
+
+  const server = createServer((req, res) => {
+    const url = new URL(req.url, `http://${req.headers.host}`);
+    if (url.pathname === '/events') {
+      res.writeHead(200, {
+        'content-type': 'text/event-stream',
+        'cache-control': 'no-cache',
+        connection: 'keep-alive',
+      });
+      res.write('retry: 2000\n\n');
+      clients.add(res);
+      // Seed the page with recent history so it isn't blank until the next read.
+      for (const e of readLog(Date.now() - 2 * 3600_000).slice(-200)) {
+        res.write(`data: ${JSON.stringify({ ...e, replay: true })}\n\n`);
+      }
+      req.on('close', () => clients.delete(res));
+      return;
+    }
+    if (url.pathname === '/graph.json') {
+      res.writeHead(200, { 'content-type': 'application/json' });
+      res.end(JSON.stringify(graphPayload()));
+      return;
+    }
+    if (url.pathname === '/' || url.pathname === '/index.html') {
+      if (!existsSync(PAGE)) { res.writeHead(500).end(`missing page: ${PAGE}`); return; }
+      res.writeHead(200, { 'content-type': 'text/html; charset=utf-8' });
+      res.end(readFileSync(PAGE));
+      return;
+    }
+    res.writeHead(404).end('not found');
+  });
+
+  // Loopback only, deliberately: this serves file paths and search queries with
+  // no authentication, so it must not be reachable off the machine.
+  server.listen(port, '127.0.0.1', () => {
+    console.log(`memory-brain serving http://127.0.0.1:${port}  (tailing ${STATE})`);
+    if (args.open) {
+      import('node:child_process').then(({ spawn }) =>
+        spawn('open', [`http://127.0.0.1:${port}`], { stdio: 'ignore', detached: true }).unref());
+    }
+  });
+}
+
+// ------------------------------------------------------------------ dispatch
+
+const args = parseArgs(process.argv.slice(2));
+const cmd = args._[0];
+
+if (!cmd || cmd === 'help' || args.help) { console.log(USAGE); process.exit(0); }
+else if (cmd === 'backfill') cmdBackfill(args);
+else if (cmd === 'stats') cmdStats(args);
+else if (cmd === 'serve') cmdServe(args);
+else if (cmd === 'record') {
+  // A recorder that throws would surface as a hook failure mid-tool-call.
+  try { await cmdRecord(args); } catch { /* observability is never worth a failed call */ }
+  process.exit(0);
+}
+else { console.error(`unknown command: ${cmd}\n`); console.log(USAGE); process.exit(1); }
