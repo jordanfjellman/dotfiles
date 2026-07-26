@@ -52,13 +52,14 @@
   <span class="stat op-write">write <b id="c-write">0</b></span>
   <span class="stat op-search">search <b id="c-search">0</b></span>
   <span class="stat">touched <b id="c-touched">0</b>/<b id="c-total">0</b></span>
+  <span class="stat" style="color:var(--dim)">links &Delta;<b id="c-links" style="color:var(--write)">0</b></span>
   <span class="stat">skill <b id="c-skill">—</b></span>
   <label><input type="checkbox" id="show-all"> show cold notes</label>
   <div id="status"><span id="dot"></span><span id="status-text">connecting…</span></div>
 </header>
 <main>
   <div id="canvas-wrap"><canvas id="graph"></canvas>
-    <div id="hint">drag to pan · scroll to zoom · hover a node for its path</div>
+    <div id="hint">drag to pan · scroll to zoom · hover a node for its path · new links flash green</div>
   </div>
   <aside>
     <h2>Event stream</h2>
@@ -78,14 +79,20 @@ const TYPE_COLOR = {
 };
 const HEAT_HALFLIFE = 6000;   // ms for a node's glow to halve
 const GHOST_TTL = 20000;      // ms a co-read edge stays drawn
+const NEW_EDGE_TTL = 45000;   // ms a newly created link stays highlighted
+const DEAD_EDGE_TTL = 8000;   // ms a removed link lingers before it disappears
+const NEW_EDGE_COLOR = '#c3e88d';
+const DEAD_EDGE_COLOR = '#f7768e';
 
 const canvas = document.getElementById('graph');
 const ctx = canvas.getContext('2d');
 const counts = { read: 0, edit: 0, write: 0, search: 0 };
 const nodes = new Map();      // path -> node
 const edges = [];             // structural links
+const edgeIndex = new Map();  // "a|b" -> edge, so a delta can find one
 const ghosts = [];            // { a, b, at } co-read edges observed live
 const lastRead = new Map();   // session -> last note path read
+let linkChanges = 0;
 let view = { x: 0, y: 0, k: 1 };
 let hover = null;
 let alpha = 1;
@@ -99,25 +106,44 @@ function resize() {
 new ResizeObserver(resize).observe(document.getElementById('canvas-wrap'));
 
 const shortLabel = (p) => p.replace(/\.md$/, '').split('/').pop();
+const edgeKey = (a, b) => [a, b].sort().join('|');
+
+function addNode(id, type) {
+  let n = nodes.get(id);
+  if (n) { if (type) n.type = type; return n; }
+  n = {
+    id, type: type ?? 'untyped', label: shortLabel(id),
+    x: (Math.random() - 0.5) * 200, y: (Math.random() - 0.5) * 200,
+    vx: 0, vy: 0, degree: 0, heat: 0, pulse: 0, touched: false, lastOp: null,
+  };
+  nodes.set(id, n);
+  document.getElementById('c-total').textContent = nodes.size;
+  return n;
+}
+
+function addEdge(source, target, bornAt = null) {
+  const key = edgeKey(source, target);
+  const existing = edgeIndex.get(key);
+  if (existing) { existing.diedAt = null; return existing; }
+  const a = nodes.get(source); const b = nodes.get(target);
+  if (!a || !b) return null;
+  a.degree++; b.degree++;
+  const edge = { a, b, key, bornAt, diedAt: null };
+  edges.push(edge);
+  edgeIndex.set(key, edge);
+  return edge;
+}
 
 async function loadGraph() {
   const { nodes: ns, edges: es } = await (await fetch('/graph.json')).json();
   const w = canvas.parentElement.clientWidth || 800;
   const h = canvas.parentElement.clientHeight || 600;
   for (const n of ns) {
-    nodes.set(n.id, {
-      id: n.id, type: n.type, label: shortLabel(n.id),
-      x: (Math.random() - 0.5) * w * 0.8, y: (Math.random() - 0.5) * h * 0.8,
-      vx: 0, vy: 0, degree: 0, heat: 0, pulse: 0, touched: false, lastOp: null,
-    });
+    const node = addNode(n.id, n.type);
+    node.x = (Math.random() - 0.5) * w * 0.8;
+    node.y = (Math.random() - 0.5) * h * 0.8;
   }
-  for (const e of es) {
-    const a = nodes.get(e.source); const b = nodes.get(e.target);
-    if (!a || !b) continue;
-    a.degree++; b.degree++;
-    edges.push({ a, b });
-  }
-  document.getElementById('c-total').textContent = nodes.size;
+  for (const e of es) addEdge(e.source, e.target);
   renderLegend();
   alpha = 1;
 }
@@ -191,9 +217,43 @@ function draw() {
   ctx.beginPath();
   for (const e of edges) {
     if (!visSet.has(e.a) || !visSet.has(e.b)) continue;
+    if (e.bornAt !== null || e.diedAt !== null) continue;   // drawn highlighted below
     ctx.moveTo(e.a.x, e.a.y); ctx.lineTo(e.b.x, e.b.y);
   }
   ctx.stroke();
+
+  // A link that just came into existence, or just stopped existing. Both fade back
+  // to the resting graph rather than snapping, so a change is impossible to miss
+  // but does not permanently distort the picture.
+  for (let i = edges.length - 1; i >= 0; i--) {
+    const e = edges[i];
+    if (e.bornAt === null && e.diedAt === null) continue;
+    const dying = e.diedAt !== null;
+    const age = now - (dying ? e.diedAt : e.bornAt);
+    const ttl = dying ? DEAD_EDGE_TTL : NEW_EDGE_TTL;
+    if (age > ttl) {
+      if (dying) {
+        e.a.degree--; e.b.degree--;
+        edgeIndex.delete(e.key);
+        edges.splice(i, 1);
+      } else e.bornAt = null;
+      continue;
+    }
+    if (!visSet.has(e.a) || !visSet.has(e.b)) continue;
+    const t = 1 - age / ttl;
+    ctx.strokeStyle = dying ? DEAD_EDGE_COLOR : NEW_EDGE_COLOR;
+    ctx.globalAlpha = 0.25 + 0.75 * t;
+    ctx.lineWidth = (1 + 2.5 * t) / view.k;
+    if (dying) ctx.setLineDash([5 / view.k, 3 / view.k]);
+    ctx.beginPath();
+    // A new link draws itself in from source to target over its first second.
+    const grow = dying ? 1 : Math.min(1, age / 900);
+    ctx.moveTo(e.a.x, e.a.y);
+    ctx.lineTo(e.a.x + (e.b.x - e.a.x) * grow, e.a.y + (e.b.y - e.a.y) * grow);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.globalAlpha = 1;
+  }
 
   for (let i = ghosts.length - 1; i >= 0; i--) {
     const g = ghosts[i];
@@ -296,7 +356,54 @@ function addRow(ev, path) {
   while (ticker.childElementCount > 200) ticker.lastElementChild.remove();
 }
 
+function addLinkRow(ts, kind, text, color) {
+  const row = document.createElement('div');
+  row.className = 'ev';
+  const time = new Date(ts ?? Date.now()).toLocaleTimeString([], { hour12: false });
+  row.innerHTML = `<time>${time}</time>`
+    + `<span class="op" style="color:${color}">${kind}</span>`
+    + `<span class="path" title="${text}">${text}</span>`;
+  ticker.prepend(row);
+  while (ticker.childElementCount > 200) ticker.lastElementChild.remove();
+}
+
+/** A link (or note) came into existence, or stopped existing. */
+function applyGraphDelta(delta) {
+  const now = performance.now();
+  for (const n of delta.nodes ?? []) {
+    const node = addNode(n.id, n.type);
+    markVisible(node);
+    node.touched = true;
+    node.pulse = 1;
+  }
+  for (const e of delta.added ?? []) {
+    addNode(e.source); addNode(e.target);
+    const edge = addEdge(e.source, e.target, now);
+    if (!edge) continue;
+    edge.bornAt = now;
+    markVisible(edge.a); markVisible(edge.b);
+    linkChanges++;
+    addLinkRow(delta.ts, '+link', `${shortLabel(e.source)} → ${shortLabel(e.target)}`, NEW_EDGE_COLOR);
+  }
+  for (const e of delta.removed ?? []) {
+    const edge = edgeIndex.get(edgeKey(e.source, e.target));
+    if (!edge) continue;
+    edge.bornAt = null;
+    edge.diedAt = now;
+    linkChanges++;
+    addLinkRow(delta.ts, '−link', `${shortLabel(e.source)} → ${shortLabel(e.target)}`, DEAD_EDGE_COLOR);
+  }
+  for (const id of delta.gone ?? []) {
+    if (!nodes.delete(id)) continue;
+    document.getElementById('c-total').textContent = nodes.size;
+    addLinkRow(delta.ts, '−note', shortLabel(id), DEAD_EDGE_COLOR);
+  }
+  document.getElementById('c-links').textContent = linkChanges;
+  if ((delta.added?.length ?? 0) + (delta.nodes?.length ?? 0) > 0) alpha = Math.max(alpha, 0.5);
+}
+
 function apply(ev) {
+  if (ev.kind === 'graph') return applyGraphDelta(ev);
   if (!ev.replay) {
     counts[ev.op] = (counts[ev.op] ?? 0) + 1;
     for (const op of Object.keys(counts)) document.getElementById(`c-${op}`).textContent = counts[op];

@@ -416,7 +416,7 @@ function vaultNotes() {
         const rel = relative(VAULT, p);
         let text = '';
         try { text = readFileSync(p, 'utf8'); } catch { /* unreadable */ }
-        notes.set(rel, { type: frontmatterType(text), links: linkTargets(text) });
+        notes.set(rel, { type: frontmatterType(text), aliases: frontmatterAliases(text), ...linkTargets(text, rel) });
       }
     }
   }
@@ -430,18 +430,40 @@ function frontmatterType(text) {
   return t ? t[1].trim() : 'untyped';
 }
 
-/** Both link graphs at once: [[wikilinks]] by basename, and .md markdown links. */
-function linkTargets(text) {
-  const out = new Set();
-  for (const m of text.matchAll(/\[\[([^\]|#]+)/g)) out.add(m[1].trim());
-  for (const m of text.matchAll(/\]\(([^)\s]+\.md)\)/g)) out.add(basename(m[1], '.md'));
-  return out;
+/** Aliases carry the display names that `[[Full Name]]` wikilinks actually use. */
+function frontmatterAliases(text) {
+  const m = /^---\n([\s\S]*?)\n---/.exec(text);
+  if (!m) return [];
+  const block = /^aliases:[ \t]*(.*)$((?:\n[ \t]+-.*)*)/m.exec(m[1]);
+  if (!block) return [];
+  const inline = block[1].trim().replace(/^\[|\]$/g, '');
+  const out = inline ? inline.split(',').map(s => s.trim().replace(/^['"]|['"]$/g, '')) : [];
+  for (const line of (block[2] ?? '').split('\n')) {
+    const v = /^[ \t]+-\s*(.+)$/.exec(line);
+    if (v) out.push(v[1].trim().replace(/^['"]|['"]$/g, ''));
+  }
+  return out.filter(Boolean);
 }
 
-function linked(notes, a, b) {
-  const nameA = basename(a, '.md');
-  const nameB = basename(b, '.md');
-  return Boolean(notes.get(a)?.links.has(nameB) || notes.get(b)?.links.has(nameA));
+/**
+ * Both link graphs at once. Wikilinks resolve by note name, the way Obsidian does
+ * them; Markdown links resolve by path relative to the linking file, because
+ * basenames are not unique here — every section has an `index.md`.
+ */
+function linkTargets(text, fromRel) {
+  const names = new Set();
+  const paths = new Set();
+  for (const m of text.matchAll(/\[\[([^\]|#]+)/g)) names.add(m[1].trim());
+  for (const m of text.matchAll(/\]\(([^)\s]+\.md)\)/g)) {
+    const target = relative(VAULT, resolve(VAULT, dirname(fromRel), m[1]));
+    if (target && !target.startsWith('..')) paths.add(target);
+  }
+  return { names, paths };
+}
+
+function linked(g, a, b) {
+  const key = edgeKey(a, b);
+  return edgesFrom(g, a).has(key) || edgesFrom(g, b).has(key);
 }
 
 function table(rows, top) {
@@ -455,7 +477,8 @@ function cmdStats(args) {
   const events = readLog(since);
   if (!events.length) return console.log('no access events yet — run `memory-brain backfill` first');
 
-  const notes = vaultNotes();
+  const g = openGraph();
+  const notes = g.notes;
   const reads = new Map();
   const writes = new Map();
   const byOp = new Map();
@@ -529,7 +552,7 @@ function cmdStats(args) {
   const unlinked = desc(pairs).filter(([key, n]) => {
     if (n < 2) return false;
     const [a, b] = key.split(' || ');
-    return notes.has(a) && notes.has(b) && !linked(notes, a, b);
+    return notes.has(a) && notes.has(b) && !linked(g, a, b);
   });
   console.log(section('co-read but not linked (missing-edge candidates)'));
   console.log(unlinked.length ? table(unlinked, top) : '  none');
@@ -605,31 +628,131 @@ function currentLogFile() {
   return join(STATE, `${month}.jsonl`);
 }
 
-function graphPayload() {
-  const notes = vaultNotes();
-  const byName = new Map();
-  for (const p of notes.keys()) byName.set(basename(p, '.md'), p);
+const edgeKey = (a, b) => [a, b].sort().join('|');
+const noteName = (p) => basename(p, '.md');
 
-  const nodes = [...notes].map(([path, meta]) => ({ id: path, type: meta.type }));
-  const edges = [];
+/**
+ * The live graph the page renders. Held in memory so a note's links can be
+ * re-parsed on change and diffed — a rebuild would only give a snapshot, and the
+ * interesting event is the *delta*: a link that just came into existence.
+ */
+function openGraph() {
+  const notes = vaultNotes();
+  return { notes, byName: buildNameIndex(notes) };
+}
+
+/**
+ * Wikilink target -> note path, case-insensitively, filenames first and aliases
+ * second so `People/ryan-means.md` wins its own name and still answers to
+ * `[[Ryan Means]]`. An alias never displaces a real filename.
+ */
+function buildNameIndex(notes) {
+  const byName = new Map();
+  for (const p of notes.keys()) byName.set(noteName(p).toLowerCase(), p);
+  for (const [p, meta] of notes) {
+    for (const alias of meta.aliases ?? []) {
+      const key = alias.toLowerCase();
+      if (!byName.has(key)) byName.set(key, p);
+    }
+  }
+  return byName;
+}
+
+/** Outbound edges of one note that resolve to a real note. */
+function edgesFrom(g, path) {
+  const out = new Set();
+  const meta = g.notes.get(path);
+  if (!meta) return out;
+  for (const name of meta.names) {
+    const to = g.byName.get(name.toLowerCase());
+    if (to && to !== path) out.add(edgeKey(path, to));
+  }
+  for (const to of meta.paths) {
+    if (to !== path && g.notes.has(to)) out.add(edgeKey(path, to));
+  }
+  return out;
+}
+
+function graphPayload(g) {
+  const nodes = [...g.notes].map(([path, meta]) => ({ id: path, type: meta.type }));
   const seen = new Set();
-  for (const [path, meta] of notes) {
-    for (const target of meta.links) {
-      const to = byName.get(target);
-      if (!to || to === path) continue;
-      const key = [path, to].sort().join('|');
+  const edges = [];
+  for (const path of g.notes.keys()) {
+    for (const key of edgesFrom(g, path)) {
       if (seen.has(key)) continue;
       seen.add(key);
-      edges.push({ source: path, target: to });
+      const [source, target] = key.split('|');
+      edges.push({ source, target });
     }
   }
   return { nodes, edges };
+}
+
+/**
+ * Re-read one note and report what changed about the graph. Creating a note can
+ * also resolve links other notes already had pointing at its name, so a new node
+ * pulls in inbound edges too.
+ */
+function reparseNote(g, rel) {
+  const abs = join(VAULT, rel);
+  const existed = g.notes.has(rel);
+  const before = existed ? edgesFrom(g, rel) : new Set();
+  const asEdge = (k) => { const [source, target] = k.split('|'); return { source, target }; };
+
+  if (!existsSync(abs)) {
+    if (!existed) return null;
+    const gone = new Set(before);
+    for (const other of g.notes.keys()) {
+      if (other !== rel && edgesFrom(g, other).has(edgeKey(other, rel))) gone.add(edgeKey(other, rel));
+    }
+    g.notes.delete(rel);
+    const key = noteName(rel).toLowerCase();
+    if (g.byName.get(key) === rel) g.byName.delete(key);
+    return { added: [], removed: [...gone].map(asEdge), nodes: [], gone: [rel] };
+  }
+
+  let text = '';
+  try { text = readFileSync(abs, 'utf8'); } catch { return null; }
+  const meta = { type: frontmatterType(text), aliases: frontmatterAliases(text), ...linkTargets(text, rel) };
+  const typeChanged = g.notes.get(rel)?.type !== meta.type;
+  g.notes.set(rel, meta);
+  g.byName.set(noteName(rel).toLowerCase(), rel);
+  for (const alias of meta.aliases) {
+    const key = alias.toLowerCase();
+    if (!g.byName.has(key)) g.byName.set(key, rel);
+  }
+
+  const after = edgesFrom(g, rel);
+  const added = [...after].filter(k => !before.has(k));
+  const removed = [...before].filter(k => !after.has(k));
+
+  if (!existed) {
+    for (const other of g.notes.keys()) {
+      if (other === rel) continue;
+      const key = edgeKey(other, rel);
+      if (edgesFrom(g, other).has(key) && !added.includes(key)) added.push(key);
+    }
+  }
+
+  if (!added.length && !removed.length && existed && !typeChanged) return null;
+  return {
+    added: added.map(asEdge),
+    removed: removed.map(asEdge),
+    nodes: existed && !typeChanged ? [] : [{ id: rel, type: meta.type }],
+    gone: [],
+  };
 }
 
 function cmdServe(args) {
   const port = Number(args.port === true ? 7777 : args.port ?? 7777);
   const clients = new Set();
   mkdirSync(STATE, { recursive: true });
+
+  const graph = openGraph();
+  const broadcast = (payload) => {
+    const line = JSON.stringify(payload);
+    for (const res of clients) res.write(`data: ${line}\n\n`);
+  };
 
   let file = currentLogFile();
   let offset = existsSync(file) ? statSync(file).size : 0;
@@ -656,6 +779,20 @@ function cmdServe(args) {
     pump();
   });
 
+  // Watch the vault directly, not just the access log: a link I type in Obsidian
+  // is a new edge too, and no tool call announces it.
+  const pending = new Map();
+  watch(VAULT, { recursive: true }, (_type, name) => {
+    if (!name?.endsWith('.md') || name.split(sep)[0].startsWith('.')) return;
+    clearTimeout(pending.get(name));
+    // Editors write in bursts (temp file, rename, mtime touch); one parse per burst.
+    pending.set(name, setTimeout(() => {
+      pending.delete(name);
+      const delta = reparseNote(graph, name);
+      if (delta) broadcast({ kind: 'graph', ts: new Date().toISOString(), ...delta });
+    }, 250));
+  });
+
   const server = createServer((req, res) => {
     const url = new URL(req.url, `http://${req.headers.host}`);
     if (url.pathname === '/events') {
@@ -675,7 +812,7 @@ function cmdServe(args) {
     }
     if (url.pathname === '/graph.json') {
       res.writeHead(200, { 'content-type': 'application/json' });
-      res.end(JSON.stringify(graphPayload()));
+      res.end(JSON.stringify(graphPayload(graph)));
       return;
     }
     if (url.pathname === '/' || url.pathname === '/index.html') {
