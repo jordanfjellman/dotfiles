@@ -5,9 +5,11 @@
 .private_keys
 .opencode/
 packer_compiled.lua
-bin/.local/bin/ctpcli*
-bin/.local/bin/maelstrom/
 bin/.local/bin/*kiro*
+bin/.local/bin/ctpcli*
+bin/.local/bin/dce*
+bin/.local/bin/maelstrom/
+bin/.local/lib/*python*
 bin/.local/share/
 bin/.local/state/
 colima/.colima/_lima
@@ -19,6 +21,7 @@ docker/.docker/contexts/
 fish/.config/fish/conf.d/*
 !fish/.config/fish/conf.d/jwt.fish
 !fish/.config/fish/conf.d/rustup.fish
+fish/.config/fish/completions  
 fish/.config/fish/fish_variables
 hammerspoon/.hammerspoon/Spoons/
 nushell/.config/nushell/history.txt
