@@ -1,0 +1,6 @@
+#!/bin/bash
+
+urls=$(tmux capture-pane -J -p | grep -oE 'https?://[^ >"]+' | sed 's/[].)},;:!?"'"'"']*$//' | sort -u)
+[ -z "$urls" ] && { tmux display 'No URLs found'; exit 0; }
+selected=$(printf '%s\n' "$urls" | fzf --tmux center,100%,50% --multi --no-preview)
+[ -n "$selected" ] && while read -r url; do open "$url"; done <<< "$selected"
