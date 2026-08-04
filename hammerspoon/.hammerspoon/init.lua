@@ -86,7 +86,6 @@ for _, pair in ipairs({
 	{ "m", "https://mail.google.com" },
 	{ "r", "https://read.readwise.io" },
 	{ "s", "https://web.telegram.org/a/" }, -- "s" is similar to "slack" (local messaging app)
-	{ "t", "https://teams.cloud.microsoft/" },
 	{ "w", "https://lifeway.atlassian.net/jira/for-you" }, -- [w]orkboard
 	{ "x", "https://x.com" },
 	{ "y", "https://music.youtube.com" },
@@ -97,6 +96,11 @@ for _, pair in ipairs({
 		openURLReuseDomain(link)
 	end)
 end
+
+-- [t]eams: launch/focus the native app instead of the web client
+hs.hotkey.bind(meh, "t", function()
+	hs.application.launchOrFocus("Microsoft Teams")
+end)
 
 spoon.SpoonInstall:andUse("ReloadConfiguration", {
 	hotkeys = { reloadConfiguration = { meh, "H" } },
