@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+
+if [[ $# -eq 1 ]]; then
+  selected=$1
+elif [[ ! -t 0 ]]; then
+  read -r selected
+else
+  echo "Usage: sessionizer <path>"
+  exit 0
+fi
+
+if [[ -z $selected ]]; then
+  exit 0
+fi
+
+if [[ -n $HERDR_SOCKET_PATH ]]; then
+  exec herdr-sessionizer "$selected"
+else
+  exec tmux-sessionizer "$selected"
+fi

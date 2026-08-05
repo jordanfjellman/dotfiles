@@ -1,0 +1,36 @@
+#!/usr/bin/env bash
+
+if [[ $# -eq 1 ]]; then
+  selected=$1
+elif [[ ! -t 0 ]]; then
+  read -r selected
+else
+  echo "Usage: herdr-sessionizer <path>"
+  exit 0
+fi
+
+if [[ -z $selected ]]; then
+  exit 0
+fi
+
+# Name the workspace after the path, matching tmux-sessionizer so the same
+# directory yields one predictable workspace under either multiplexer. For
+# bare-repo worktrees a plain basename collides (myrepo/feature-x and
+# other/feature-x both -> feature-x), so use repo/branch there.
+if [[ -d "$(dirname "$selected")/.bare" ]]; then
+  selected_name=$(basename "$(dirname "$selected")")/$(basename "$selected")
+else
+  selected_name=$(basename "$selected")
+fi
+selected_name=$(echo "$selected_name" | tr ' .' '_')
+
+existing=$(herdr workspace list \
+  | jq -r --arg n "$selected_name" \
+      '.result.workspaces[] | select(.label == $n) | .workspace_id' \
+  | head -n1)
+
+if [[ -n $existing ]]; then
+  herdr workspace focus "$existing" >/dev/null
+else
+  herdr workspace create --cwd "$selected" --label "$selected_name" --focus >/dev/null
+fi

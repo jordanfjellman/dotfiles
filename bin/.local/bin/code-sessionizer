@@ -5,4 +5,4 @@ find "$HOME/code" -mindepth 1 -maxdepth 3 \( -name .git -o -name .bare \) -print
   | sed 's/\/\.bare$//' \
   | sort -u \
   | fzf --select-1 \
-  | tmux-sessionizer
+  | sessionizer

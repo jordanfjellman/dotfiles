@@ -2,4 +2,4 @@
 
 fd -t d --max-depth 3 . ~/notes/ \
   | fzf --select-1 \
-  | tmux-sessionizer
+  | sessionizer
