@@ -5,6 +5,8 @@ next_tab = "alt+]"
 previous_tab = "alt+["
 new_tab = "alt+t"
 close_pane = "alt+w"
+open_worktree = "prefix+shift+o"
+remove_worktree = "prefix+shift+x"
 
 [[keys.command]]
 key = "prefix+t"
