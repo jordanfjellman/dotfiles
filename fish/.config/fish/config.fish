@@ -347,6 +347,10 @@ function v
     nvim $argv
 end
 
+function hr
+    herdr $argv
+end
+
 function cat
     bat --style=plain $argv
 end

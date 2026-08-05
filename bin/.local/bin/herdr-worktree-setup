@@ -1,0 +1,57 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+log_dir=${HERDR_PLUGIN_STATE_DIR:-${TMPDIR:-/tmp}}
+mkdir -p "$log_dir" 2>/dev/null || true
+printf '%s\n' "${HERDR_PLUGIN_EVENT_JSON:-}" >"$log_dir/last-event.json" 2>/dev/null || true
+
+# The new worktree's workspace. herdr focuses it on creation, so the hook's
+# HERDR_WORKSPACE_ID is that workspace; resolve its checkout path from the API.
+new=""
+if [[ -n ${HERDR_WORKSPACE_ID:-} ]]; then
+  new=$(herdr worktree list --workspace "$HERDR_WORKSPACE_ID" 2>/dev/null \
+    | jq -r --arg ws "$HERDR_WORKSPACE_ID" \
+        '.result.worktrees[]? | select(.open_workspace_id == $ws and .is_linked_worktree == true) | .path' \
+    | head -n1)
+fi
+# Fallback: any absolute dir path in the event payload that is a linked worktree.
+if [[ -z $new && -n ${HERDR_PLUGIN_EVENT_JSON:-} ]]; then
+  while read -r cand; do
+    [[ -d $cand ]] || continue
+    git -C "$cand" rev-parse --is-inside-work-tree >/dev/null 2>&1 || continue
+    if [[ $(git -C "$cand" rev-parse --git-dir) != $(git -C "$cand" rev-parse --git-common-dir) ]]; then
+      new=$cand
+      break
+    fi
+  done < <(printf '%s' "$HERDR_PLUGIN_EVENT_JSON" | jq -r '[.. | select(type == "string")] | .[] | select(startswith("/"))' 2>/dev/null)
+fi
+
+[[ -n $new && -d $new ]] || exit 0
+
+# Main checkout is the first entry of `git worktree list` (the non-linked root).
+source=$(git -C "$new" worktree list --porcelain 2>/dev/null \
+  | awk '/^worktree /{print $2; exit}')
+[[ -n $source && -d $source ]] || exit 0
+[[ $source != "$new" ]] || exit 0
+
+# Copy only git-ignored env files (git already checks tracked ones out), keeping
+# their nested paths. This misses env files ignored in the new worktree but not
+# yet present in the source checkout.
+while IFS= read -r -d '' rel; do
+  base=${rel##*/}
+  case $base in
+    *.example|*.sample|*.template|*.dist) continue ;;
+  esac
+  [[ -e "$new/$rel" ]] && continue
+  mkdir -p "$new/$(dirname "$rel")"
+  cp -p "$source/$rel" "$new/$rel"
+  echo "copied $rel"
+done < <(git -C "$source" ls-files --others --ignored --exclude-standard -z \
+           -- ':(glob).env*' ':(glob)**/.env*')
+
+# Per-repo setup stays in the dotfiles, keyed by repo, so it never lands in a project repo.
+repo=$(basename "$source")
+setup_dir=${HERDR_PLUGIN_ROOT:-"$HOME/code/personal/dotfiles/herdr/.config/herdr/plugins/worktree-env"}/repos
+if [[ -x "$setup_dir/$repo" ]]; then
+  ( cd "$new" && "$setup_dir/$repo" "$source" "$new" )
+fi

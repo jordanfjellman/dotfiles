@@ -13,6 +13,10 @@
    ```shell
    sudo ln -s "$HOME/.colima/default/docker.sock" /var/run/docker.sock
    ```
+6. Link the herdr worktree-env plugin (per machine; herdr records it in its own registry, so stow can't):
+   ```shell
+   herdr plugin link ~/code/personal/dotfiles/herdr/.config/herdr/plugins/worktree-env
+   ```
 
 ## Default Shell
 

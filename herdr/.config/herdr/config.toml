@@ -1,0 +1,28 @@
+[keys]
+next_workspace = "alt+}"
+previous_workspace = "alt+{"
+next_tab = "alt+]"
+previous_tab = "alt+["
+new_tab = "alt+t"
+close_pane = "alt+w"
+
+[[keys.command]]
+key = "prefix+t"
+type = "popup"
+command = "code-sessionizer"
+width = "100%"
+height = "50%"
+
+[[keys.command]]
+key = "prefix+n"
+type = "shell"
+command = "sessionizer ~/notes"
+
+[[keys.command]]
+key = "prefix+m"
+type = "shell"
+command = "sessionizer ~/agent-memory"
+
+[ui]
+agent_panel_sort = "spaces"
+prompt_new_tab_name = false
