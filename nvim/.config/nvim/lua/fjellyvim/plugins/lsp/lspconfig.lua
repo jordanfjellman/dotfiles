@@ -25,7 +25,6 @@ return {
         "lua_ls",
         "rust_analyzer",
         "taplo",
-        "ts_ls",
         "yamlls",
       },
     },
@@ -82,9 +81,9 @@ return {
       --   <leader>ss  -> lsp_symbols
       --   <leader>sS  -> lsp_workspace_symbols
 
-      -- mason-lspconfig auto-enables every mason-installed server. sourcekit
-      -- ships with the Swift toolchain (not a mason package), so enable it here.
-      vim.lsp.enable("sourcekit")
+      -- mason-lspconfig only auto-enables mason-installed servers. sourcekit comes
+      -- from the Swift toolchain and tsgo from mise, so enable both here.
+      vim.lsp.enable({ "sourcekit", "tsgo" })
     end,
     keys = {
       {

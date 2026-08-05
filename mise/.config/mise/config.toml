@@ -32,11 +32,17 @@ gofumpt = "latest"
 "npm:eslint_d" = "latest"
 # --- LSP Servers ---
 "npm:@biomejs/biome" = "latest"
+# tsgo binary — the Go TypeScript language server. nvim-lspconfig's tsgo config
+# runs `tsgo --lsp --stdio`, which only this package provides; TypeScript 7.0
+# stable ships the same server as `tsc --lsp` and has no lspconfig entry yet.
+# Pinned because this package only publishes prereleases, which mise will not
+# resolve from "latest" — bump by hand, or switch to npm:typescript once
+# lspconfig gains a tsc entry.
+"npm:@typescript/native-preview" = "7.0.0-dev.20260707.2"
 "npm:bash-language-server" = "latest"
 "npm:diagnostic-languageserver" = "latest"
 "npm:dockerfile-language-server-nodejs" = "latest"
 "npm:graphql-language-service" = "latest"
-"npm:typescript-language-server" = "latest"
 "npm:vscode-css-languageserver-bin" = "latest"
 "npm:vscode-html-languageserver-bin" = "latest"
 "npm:vscode-json-languageserver-bin" = "latest"
