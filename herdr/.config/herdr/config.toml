@@ -16,6 +16,13 @@ width = "100%"
 height = "50%"
 
 [[keys.command]]
+key = "prefix+u"
+type = "popup"
+command = "herdr-urls"
+width = "100%"
+height = "50%"
+
+[[keys.command]]
 key = "prefix+n"
 type = "shell"
 command = "sessionizer ~/notes"

@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+
+# A popup is not a pane, so HERDR_PANE_ID is unset here; ask the server which
+# tiled pane still holds focus.
+pane=$(herdr pane list | jq -r '.result.panes[] | select(.focused) | .pane_id')
+[ -z "$pane" ] && { herdr notification show 'No focused pane'; exit 0; }
+
+urls=$(herdr pane read "$pane" --source recent-unwrapped --lines 2000 | grep -oE 'https?://[^ >"]+' | sed 's/[].)},;:!?"'"'"']*$//' | sort -u)
+[ -z "$urls" ] && { herdr notification show 'No URLs found'; exit 0; }
+selected=$(printf '%s\n' "$urls" | fzf --multi --no-preview)
+[ -n "$selected" ] && while read -r url; do open "$url"; done <<< "$selected"
