@@ -39,6 +39,10 @@ fzf --fish | source
 # Jest
 set -gx DEBUG_PRINT_LIMIT 10000
 
+# pi
+set -gx PI_SKIP_VERSION_CHECK 1
+set -gx PI_OFFLINE 1
+
 # Source private keys if they exist
 if test -f $HOME/.private_keys
     source $HOME/.private_keys
@@ -101,6 +105,9 @@ end
 # Key bindings
 bind \ca beginning-of-line
 bind \ce end-of-line
+if type -q tmux-sessionizer
+    bind \cf 'tmux-sessionizer; commandline -f repaint'
+end
 
 # Functions
 function pr
@@ -327,6 +334,10 @@ function opencode
     command opencode $argv
 end
 
+function claude-aws
+    claude --settings ~/.claude/settings.aws.json $argv
+end
+
 function k
     kubectl $argv
 end
@@ -349,6 +360,10 @@ end
 
 function hr
     herdr $argv
+end
+
+function aihc
+    ai-healthcheck $argv
 end
 
 function cat
