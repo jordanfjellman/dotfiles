@@ -2,9 +2,10 @@ local x = vim.diagnostic.severity
 vim.diagnostic.config({
   virtual_text = false, -- { prefix = "" },
   signs = { text = { [x.ERROR] = "󰅙", [x.WARN] = "", [x.INFO] = "󰋼", [x.HINT] = "󰌵" } },
-  underline = {
-    severity = { min = x.WARN },
-  },
+  underline = true, -- include HINT/INFO; some "unused" diagnostics arrive
+  -- below WARN severity. Tagged-Unnecessary unused code also grays out via
+  -- the DiagnosticUnnecessary highlight (links to Comment) regardless of
+  -- severity, once the LSP advertises publishDiagnostics tagSupport.
   float = {
     --   focus = false,
     --   focusable = false,
