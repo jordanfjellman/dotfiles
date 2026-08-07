@@ -18,6 +18,19 @@
    herdr plugin link ~/code/personal/dotfiles/herdr/.config/herdr/plugins/worktree-env
    ```
 
+## Keeping Machines Up To Date
+
+`up` runs every `up-*` unit it finds on PATH. `up -n` reports what is out of
+date and changes nothing. `up nvim brew` runs only those units.
+
+A unit takes no args to apply, `-n` to report, and exits 0 clean, 2 drift, 1
+failed. Adding a unit means adding one `up-<thing>` to `bin/.local/bin/` and
+nothing else — `up` finds it.
+
+`machine-profile` prints `home` or `work`. It fails on an unknown host on
+purpose, because `up-brew` picks a Brewfile from it and then runs `brew bundle
+cleanup`, which uninstalls whatever that Brewfile omits.
+
 ## Default Shell
 
 I prefer to use `fish` as my default shell. To do this, I first need to add Fish an acceptable shell, then set it for my user:

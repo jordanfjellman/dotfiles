@@ -1,0 +1,29 @@
+#!/usr/bin/env bash
+# Reconcile Neovim plugins through lazy.nvim. See `up` for the unit contract.
+#
+# A real run rewrites lazy-lock.json inside the dotfiles repo, so up-repos
+# reports dotfiles as dirty afterwards. That is the lock file waiting to be
+# committed, not a fault.
+set -uo pipefail
+
+if [[ ${1:-} == -n ]]; then
+  # `Lazy! check` writes its progress to stderr and reports nothing usable, so
+  # count the plugins lazy marked with pending updates instead.
+  pending=$(
+    nvim --headless \
+      -c 'lua require("lazy").check({ show = false, wait = true })' \
+      -c 'lua local n = 0; for _, p in pairs(require("lazy").plugins()) do if p._ and p._.updates then n = n + 1 end end; io.stderr:write("PENDING=" .. n .. "\n")' \
+      +qa 2>&1 | sed -n 's/^PENDING=//p'
+  )
+
+  [[ -z $pending ]] && {
+    echo "  could not read lazy.nvim state"
+    exit 2
+  }
+  [[ $pending -eq 0 ]] && exit 0
+  echo "  $pending plugins to update"
+  exit 2
+fi
+
+nvim --headless "+Lazy! sync" +qa
+nvim --headless "+TSUpdateSync" +qa

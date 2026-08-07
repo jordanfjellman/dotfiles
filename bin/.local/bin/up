@@ -1,0 +1,115 @@
+#!/usr/bin/env bash
+# Run every up-* unit and summarize. Adding a unit means adding one `up-<thing>`
+# to PATH and nothing else.
+#
+# Unit contract:
+#   no args   apply the change
+#   -n        report drift on stdout, change nothing
+#   exit 0    clean
+#   exit 2    drift found
+#   exit 1    the unit itself failed
+#
+# ORDER runs first. Pulling the repos is what makes Brewfile.* and lazy-lock.json
+# current before up-brew and up-nvim read them, so up-repos has to lead. A unit
+# missing from ORDER still runs, after the named ones.
+set -uo pipefail
+
+usage() {
+  cat <<'EOF'
+Usage: up [-n] [unit ...]
+
+  -n    report what is out of date, change nothing
+  unit  run only these units, e.g. `up nvim brew`
+
+With no unit, runs every up-* found on PATH.
+EOF
+}
+
+ORDER="repos brew mise nvim skills"
+
+check=0
+while getopts ':nh' opt; do
+  case $opt in
+    n) check=1 ;;
+    h)
+      usage
+      exit 0
+      ;;
+    *)
+      usage >&2
+      exit 2
+      ;;
+  esac
+done
+shift $((OPTIND - 1))
+
+discover() {
+  local dir unit
+  local IFS=:
+  for dir in $PATH; do
+    for unit in "$dir"/up-*; do
+      [[ -x $unit && ! -d $unit ]] && basename "$unit" | sed 's/^up-//'
+    done
+  done 2>/dev/null
+}
+
+units=()
+seen=" "
+
+add() {
+  case $seen in
+    *" $1 "*) return ;;
+  esac
+  command -v "up-$1" > /dev/null 2>&1 || return
+  units+=("$1")
+  seen="$seen$1 "
+}
+
+if [[ $# -gt 0 ]]; then
+  for unit in "$@"; do
+    if ! command -v "up-$unit" > /dev/null 2>&1; then
+      echo "up: no such unit: up-$unit" >&2
+      exit 2
+    fi
+    add "$unit"
+  done
+else
+  for unit in $ORDER; do add "$unit"; done
+  while IFS= read -r unit; do add "$unit"; done < <(discover)
+fi
+
+if [[ ${#units[@]} -eq 0 ]]; then
+  echo "up: no up-* units found on PATH" >&2
+  exit 1
+fi
+
+drifted=''
+failed=''
+rc=0
+
+for unit in "${units[@]}"; do
+  echo "==> $unit"
+  if [[ $check -eq 1 ]]; then
+    "up-$unit" -n
+  else
+    "up-$unit"
+  fi
+  case $? in
+    0) ;;
+    2)
+      drifted="${drifted:+$drifted }$unit"
+      [[ $rc -eq 0 ]] && rc=2
+      ;;
+    *)
+      failed="${failed:+$failed }$unit"
+      rc=1
+      ;;
+  esac
+done
+
+echo
+[[ -n $drifted ]] && echo "out of date: $drifted"
+[[ -n $failed ]] && echo "failed: $failed"
+[[ -z $drifted && -z $failed ]] && echo "up to date"
+
+exit $rc

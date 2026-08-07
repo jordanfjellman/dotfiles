@@ -1,0 +1,67 @@
+#!/usr/bin/env bash
+# Pull the repos I keep in sync across both Macs. See `up` for the unit contract.
+#
+# The list is ai-repos plus the repos that are not AI tooling, so a new AI repo
+# gets added to ai-repos and nowhere else.
+set -uo pipefail
+
+check=0
+[[ ${1:-} == -n ]] && check=1
+
+repos=()
+while IFS= read -r repo; do
+  repos+=("$repo")
+done < <(ai-repos)
+
+for repo in "$HOME/code/personal/dotfiles" "$HOME/notes" "$HOME/agent-memory"; do
+  [[ -d $repo/.git ]] && repos+=("$repo")
+done
+
+drift=0
+
+for repo in "${repos[@]}"; do
+  name=$(basename "$repo")
+  note=''
+  add() { note="${note:+$note, }$1"; }
+
+  if ! git -C "$repo" fetch --quiet --prune 2>/dev/null; then
+    echo "  $name: fetch failed"
+    drift=1
+    continue
+  fi
+
+  dirty=$(git -C "$repo" status --porcelain 2>/dev/null | grep -c . || true)
+  upstream=$(git -C "$repo" rev-parse --abbrev-ref '@{u}' 2>/dev/null || true)
+  behind=0
+  ahead=0
+  if [[ -n $upstream ]]; then
+    behind=$(git -C "$repo" rev-list --count '@..@{u}' 2>/dev/null || echo 0)
+    ahead=$(git -C "$repo" rev-list --count '@{u}..@' 2>/dev/null || echo 0)
+  else
+    add 'no upstream'
+  fi
+
+  # Report every condition, then decide separately whether a pull is safe.
+  [[ $behind -gt 0 ]] && add "$behind to pull"
+  [[ $ahead -gt 0 ]] && add "$ahead to push"
+  [[ $dirty -gt 0 ]] && add "$dirty uncommitted"
+
+  if [[ $behind -gt 0 && $check -eq 0 ]]; then
+    if [[ $dirty -gt 0 ]]; then
+      add 'not pulled, tree is dirty'
+    elif git -C "$repo" merge --ff-only '@{u}' --quiet 2>/dev/null; then
+      note=''
+      add "pulled $behind"
+      [[ $ahead -gt 0 ]] && add "$ahead to push"
+    else
+      add 'cannot fast-forward, needs a manual merge'
+    fi
+  fi
+
+  if [[ -n $note ]]; then
+    echo "  $name: $note"
+    drift=1
+  fi
+done
+
+exit $([[ $drift -eq 0 ]] && echo 0 || echo 2)

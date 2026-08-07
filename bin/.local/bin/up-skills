@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+# Reconcile this machine to the skills manifest. See `up` for the unit contract.
+set -uo pipefail
+
+if [[ ${1:-} == -n ]]; then
+  out=$(skills status 2>&1) || {
+    echo "$out" | sed 's/^/  /'
+    exit 2
+  }
+  echo "$out" | grep -qiE 'drift|missing|stale|out of date' && {
+    echo "$out" | sed 's/^/  /'
+    exit 2
+  }
+  exit 0
+fi
+
+skills up

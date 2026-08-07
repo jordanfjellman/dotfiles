@@ -1,0 +1,45 @@
+#!/usr/bin/env bash
+# Reconcile Homebrew to the Brewfiles. See `up` for the unit contract.
+set -uo pipefail
+
+check=0
+[[ ${1:-} == -n ]] && check=1
+
+dotfiles="$HOME/code/personal/dotfiles"
+
+profile=$(machine-profile) || exit 1
+
+brewfile=$(mktemp)
+trap 'rm -f "$brewfile"' EXIT
+cat "$dotfiles/Brewfile.common" "$dotfiles/Brewfile.$profile" > "$brewfile"
+
+brew update --quiet 2>/dev/null
+
+if [[ $check -eq 1 ]]; then
+  drift=0
+
+  # brew writes the `→ Foo needs to be installed` lines to stderr, mixed in with
+  # warnings about untrusted taps.
+  unmet=$(brew bundle check --file="$brewfile" --verbose 2>&1 | sed -n 's/^→ /  missing: /p')
+  [[ -n $unmet ]] && {
+    echo "$unmet"
+    drift=1
+  }
+
+  outdated=$(brew outdated --quiet | wc -l | tr -d ' ')
+  [[ $outdated -gt 0 ]] && {
+    echo "  $outdated outdated"
+    drift=1
+  }
+
+  # No --force, so this only lists what a real run would uninstall.
+  extra=$(brew bundle cleanup --file="$brewfile" 2>/dev/null | grep -c . || true)
+  [[ $extra -gt 0 ]] && echo "  $extra not in the Brewfile, up-brew uninstalls them"
+
+  exit $([[ $drift -eq 0 ]] && echo 0 || echo 2)
+fi
+
+brew bundle --file="$brewfile"
+brew bundle cleanup --file="$brewfile" --force
+brew upgrade --quiet
+brew cleanup --prune=all --quiet

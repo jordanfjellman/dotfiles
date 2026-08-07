@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+# Which of my two Macs this is: home or work.
+#
+# This must fail on an unknown host, not guess. up-brew picks Brewfile.home or
+# Brewfile.work from this answer and then runs `brew bundle cleanup`, which
+# uninstalls anything the chosen Brewfile omits. A wrong guess removes packages.
+set -euo pipefail
+
+case "$(hostname -s)" in
+  MacBookPro | fjellymac) echo home ;;
+  KTHKXF0QXT) echo work ;;
+  *)
+    echo "machine-profile: unknown host $(hostname -s); add it to machine-profile" >&2
+    exit 1
+    ;;
+esac

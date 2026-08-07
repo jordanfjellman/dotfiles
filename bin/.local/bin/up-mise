@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+# Reconcile mise tool versions. See `up` for the unit contract.
+set -uo pipefail
+
+if [[ ${1:-} == -n ]]; then
+  outdated=$(mise outdated 2>/dev/null | tail -n +2 | grep -c . || true)
+  [[ $outdated -eq 0 ]] && exit 0
+  echo "  $outdated outdated"
+  exit 2
+fi
+
+mise upgrade
+mise prune --yes
