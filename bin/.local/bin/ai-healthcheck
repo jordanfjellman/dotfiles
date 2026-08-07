@@ -1,0 +1,80 @@
+#!/usr/bin/env bash
+# What needs a pull, a commit, a push, or a `skills up` across the AI-tooling repos.
+set -uo pipefail
+
+usage() {
+  cat <<'EOF'
+Usage: ai-healthcheck [-f]
+
+  -f  git fetch each repo first, so ahead/behind counts are current
+EOF
+}
+
+fetch=0
+while getopts ':fh' opt; do
+  case $opt in
+    f) fetch=1 ;;
+    h)
+      usage
+      exit 0
+      ;;
+    *)
+      usage >&2
+      exit 2
+      ;;
+  esac
+done
+
+printf '%-18s %-26s %s\n' REPO BRANCH STATUS
+
+while IFS= read -r repo; do
+  if [[ $fetch -eq 1 ]]; then
+    git -C "$repo" fetch --quiet --prune 2>/dev/null
+  fi
+
+  branch='(detached)'
+  upstream=''
+  ahead=0
+  behind=0
+  tracked=0
+  untracked=0
+
+  while IFS= read -r line; do
+    case $line in
+      '# branch.head '*) branch=${line#\# branch.head } ;;
+      '# branch.upstream '*) upstream=${line#\# branch.upstream } ;;
+      '# branch.ab '*)
+        ab=${line#\# branch.ab }
+        ahead=${ab%% *}
+        ahead=${ahead#+}
+        behind=${ab##* }
+        behind=${behind#-}
+        ;;
+      '#'*) ;;
+      '?'*) untracked=$((untracked + 1)) ;;
+      *) tracked=$((tracked + 1)) ;;
+    esac
+  done < <(git -C "$repo" status --porcelain=v2 --branch 2>/dev/null)
+
+  # bash 3.2 with `set -u` treats an empty array as unbound, so build a string.
+  note=''
+  add() { note=${note:+$note, }$1; }
+
+  if [[ -z $upstream ]]; then
+    add 'no upstream'
+  else
+    [[ $behind -gt 0 ]] && add "pull $behind"
+    [[ $ahead -gt 0 ]] && add "push $ahead"
+  fi
+  [[ $tracked -gt 0 ]] && add "$tracked changed"
+  [[ $untracked -gt 0 ]] && add "$untracked untracked"
+
+  stashes=$(git -C "$repo" stash list 2>/dev/null | wc -l | tr -d ' ')
+  [[ $stashes -gt 0 ]] && add "$stashes stashed"
+
+  printf '%-18s %-26s %s\n' \
+    "$(basename "$repo")" "$branch" "${note:-clean}"
+done < <(ai-repos)
+
+echo
+skills status

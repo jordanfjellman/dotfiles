@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+# The repos that steer my AI tooling. `ai-workspaces` and `ai-healthcheck` both
+# read this list, so a repo gets added here and nowhere else.
+set -euo pipefail
+
+repos=(
+  "$HOME/code/personal/agents"
+  "$HOME/code/personal/skills-cli"
+  "$HOME/code/personal/skills-manifests"
+  "$HOME/code/personal/skills-personal"
+  "$HOME/code/work/skills-work"
+)
+
+# skills-work and dce-pi exist on the Lifeway mac only, so a missing path is
+# expected, not an error.
+for repo in "${repos[@]}"; do
+  if [[ -d $repo ]]; then
+    echo "$repo"
+  fi
+done

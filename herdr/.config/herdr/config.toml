@@ -32,6 +32,11 @@ key = "prefix+m"
 type = "shell"
 command = "sessionizer ~/agent-memory"
 
+[[keys.command]]
+key = "prefix+a"
+type = "shell"
+command = "ai-workspaces"
+
 [ui]
 agent_panel_sort = "spaces"
 prompt_new_tab_name = false

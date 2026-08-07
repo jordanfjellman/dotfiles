@@ -1,0 +1,27 @@
+#!/usr/bin/env bash
+# Open one workspace per AI-tooling repo and land back on the first.
+set -euo pipefail
+
+if [[ -z ${HERDR_SOCKET_PATH:-} && -z ${TMUX:-} ]]; then
+  echo "ai-workspaces: run this from inside herdr or tmux" >&2
+  exit 1
+fi
+
+# macOS ships bash 3.2, so no mapfile.
+repos=()
+while IFS= read -r repo; do
+  repos+=("$repo")
+done < <(ai-repos)
+
+if [[ ${#repos[@]} -eq 0 ]]; then
+  echo "ai-workspaces: no repos found" >&2
+  exit 1
+fi
+
+for repo in "${repos[@]}"; do
+  sessionizer "$repo"
+done
+
+# sessionizer focuses each workspace as it goes, so a second pass on the first
+# repo leaves the review starting where the list does.
+sessionizer "${repos[0]}"
