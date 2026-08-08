@@ -40,3 +40,4 @@ command = "ai-workspaces"
 [ui]
 agent_panel_sort = "spaces"
 prompt_new_tab_name = false
+hide_tab_bar_when_single_tab = true
