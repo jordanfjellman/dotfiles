@@ -1,8 +1,6 @@
 [theme]
 name = "terminal"
 
-# GitHub Dark Dimmed. Herdr has no theme registry, so the palette has to live
-# here as token overrides.
 [theme.custom]
 panel_bg    = "#1c2128"
 surface_dim = "#1c2128"
