@@ -44,6 +44,13 @@ width = "100%"
 height = "50%"
 
 [[keys.command]]
+key = "prefix+shift+u"
+type = "popup"
+command = "herdr-urls --scrollback"
+width = "100%"
+height = "50%"
+
+[[keys.command]]
 key = "prefix+n"
 type = "shell"
 command = "sessionizer ~/notes"

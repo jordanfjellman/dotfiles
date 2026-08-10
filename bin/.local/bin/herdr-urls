@@ -5,7 +5,13 @@
 pane=$(herdr pane list | jq -r '.result.panes[] | select(.focused) | .pane_id')
 [ -z "$pane" ] && { herdr notification show 'No focused pane'; exit 0; }
 
-urls=$(herdr pane read "$pane" --source recent-unwrapped --lines 2000 | grep -oE 'https?://[^ >"]+' | sed 's/[].)},;:!?"'"'"']*$//' | sort -u)
+if [ "$1" = "--scrollback" ]; then
+  read_args=(--source recent-unwrapped --lines 2000)
+else
+  read_args=(--source visible)
+fi
+
+urls=$(herdr pane read "$pane" "${read_args[@]}" | grep -oE 'https?://[^ >"]+' | sed 's/[].)},;:!?"'"'"']*$//' | sort -u)
 [ -z "$urls" ] && { herdr notification show 'No URLs found'; exit 0; }
 selected=$(printf '%s\n' "$urls" | fzf --multi --no-preview)
 [ -n "$selected" ] && while read -r url; do open "$url"; done <<< "$selected"
