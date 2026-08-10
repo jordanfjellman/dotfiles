@@ -1,3 +1,26 @@
+[theme]
+name = "terminal"
+
+# GitHub Dark Dimmed. Herdr has no theme registry, so the palette has to live
+# here as token overrides.
+[theme.custom]
+panel_bg    = "#1c2128"
+surface_dim = "#1c2128"
+surface0    = "#22272e"
+surface1    = "#2d333b"
+overlay0    = "#444c56"
+overlay1    = "#545d68"
+text        = "#adbac7"
+subtext0    = "#768390"
+accent      = "#539bf5"
+blue        = "#539bf5"
+mauve       = "#b083f0"
+green       = "#57ab5a"
+yellow      = "#c69026"
+red         = "#f47067"
+teal        = "#39c5cf"
+peach       = "#cc6b2c"
+
 [keys]
 next_workspace = "alt+}"
 previous_workspace = "alt+{"
