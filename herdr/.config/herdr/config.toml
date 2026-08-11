@@ -1,3 +1,4 @@
+onboarding = false
 [theme]
 name = "terminal"
 
@@ -24,6 +25,7 @@ next_workspace = "alt+}"
 previous_workspace = "alt+{"
 next_tab = "alt+]"
 previous_tab = "alt+["
+switch_tab = "alt+1..9"
 new_tab = "alt+t"
 close_pane = "alt+w"
 open_worktree = "prefix+shift+o"
