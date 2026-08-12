@@ -39,6 +39,9 @@ fzf --fish | source
 # Jest
 set -gx DEBUG_PRINT_LIMIT 10000
 
+# Delete this and CoCo ignores the config the agents repo stows under this path
+set -gx SNOWFLAKE_HOME $XDG_CONFIG_HOME/snowflake
+
 # pi
 set -gx PI_SKIP_VERSION_CHECK 1
 set -gx PI_OFFLINE 1

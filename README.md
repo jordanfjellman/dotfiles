@@ -17,6 +17,11 @@
    ```shell
    herdr plugin link ~/code/personal/dotfiles/herdr/.config/herdr/plugins/worktree-env
    ```
+7. Work mac only: install the CoCo CLI. `up-coco` updates it but never installs it.
+   ```shell
+   curl -LsS https://ai.snowflake.com/static/cc-scripts/install.sh | SKIP_PATH_PROMPT=1 sh
+   cortex completion generate --shell fish > ~/.config/fish/completions/cortex.fish
+   ```
 
 ## Keeping Machines Up To Date
 

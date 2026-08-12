@@ -1,0 +1,52 @@
+#!/usr/bin/env bash
+# Reconcile the CoCo CLI (`cortex`). See `up` for the unit contract.
+#
+# Drift compares the install path, not `cortex --version`. The two carry
+# different schemes: the path holds 1.1.65+211353.f096733670be, which is what
+# stable_version.txt publishes, while --version prints v0.26.0812.
+#
+# CoCo Desktop only ever prints. Its updater needs a click and an app restart,
+# so a plain run cannot clear it and it must not set the exit code.
+set -uo pipefail
+
+VERSION_URL="https://sfc-repo.snowflakecomputing.com/cortex-code-cli/a4643c4278/stable_version.txt"
+DESKTOP_APP="/Applications/Cortex Code.app"
+
+command -v cortex > /dev/null 2>&1 || exit 0
+
+report_desktop() {
+  [[ -d $DESKTOP_APP ]] || return 0
+  local version
+  version=$(defaults read "$DESKTOP_APP/Contents/Info" CFBundleShortVersionString 2> /dev/null)
+  echo "  desktop ${version:-unknown}, which updates itself"
+}
+
+installed_version() {
+  local launcher target
+  launcher=$(command -v cortex)
+  target=$(readlink "$launcher") || target=''
+  [[ -z $target ]] && target=$(cat "$launcher")
+  sed -n 's|.*/share/cortex/\([^/"]*\).*|\1|p' <<< "$target" | head -1
+}
+
+if [[ ${1:-} == -n ]]; then
+  latest=$(curl -fsSL --max-time 20 "$VERSION_URL" | tr -d '[:space:]')
+  [[ -z $latest ]] && {
+    echo "  could not read $VERSION_URL" >&2
+    exit 1
+  }
+
+  installed=$(installed_version)
+  [[ -z $installed ]] && {
+    echo "  could not read the installed version" >&2
+    exit 1
+  }
+
+  report_desktop
+  [[ $installed == "$latest" ]] && exit 0
+  echo "  cli $installed to $latest"
+  exit 2
+fi
+
+report_desktop
+cortex update
