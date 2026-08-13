@@ -1,0 +1,9 @@
+# A rule that exists because I decided it, not because a readability formula
+# implies it. Readers now treat the em dash as a tell that a machine wrote the
+# sentence, so the cost of using one is higher than the punctuation is worth.
+extends: existence
+message: "Don't use an em dash; readers read it as LLM output."
+level: error
+nonword: true
+tokens:
+  - '—'

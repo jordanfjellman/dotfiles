@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+# Shim so GUI apps can find Vale.
+#
+# The Obsidian Vale Linter plugin spawns the binary directly and never sees a
+# login shell, so mise's PATH activation does not reach it. Left to itself the
+# plugin probes /opt/homebrew/bin, /usr/local/bin, /usr/bin, then
+# $HOME/.local/bin, which is where stow puts this file.
+#
+# Written as a shim rather than typed into the plugin's settings because that
+# setting is stored in the vault and would carry one machine's home directory to
+# the other. $HOME keeps it portable across the personal and work accounts.
+set -euo pipefail
+
+exec "$HOME/.local/share/mise/installs/vale/latest/vale" "$@"

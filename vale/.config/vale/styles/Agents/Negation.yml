@@ -1,0 +1,19 @@
+# Steering an agent by prohibition backfires: naming the forbidden behaviour
+# puts it in context and makes it more available, and the negation is a weak
+# modifier the strongly-activated concept overruns. State the target behaviour
+# instead, so the banned one is never spoken.
+#
+# A hard guardrail that genuinely cannot be phrased positively is the exception.
+# Pair it with the positive target and silence this rule on the line.
+extends: existence
+message: "Prohibition. State the target behaviour instead."
+level: warning
+ignorecase: true
+tokens:
+  - 'don''t'
+  - 'do not'
+  - 'never'
+  - 'avoid'
+  - 'shouldn''t'
+  - 'should not'
+  - 'no need to'

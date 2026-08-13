@@ -1,0 +1,11 @@
+# Hemingway's core check: flag a sentence by its own word count, not by a
+# document-wide average. Vale's built-in readability extension scores a whole
+# document, which never points at the sentence that caused the score.
+#
+# 20 words is Hemingway's "hard to read" (yellow) threshold.
+extends: occurrence
+message: "Hard to read: over 20 words in this sentence."
+level: warning
+scope: sentence
+token: '\b[\w''’-]+\b'
+max: 20

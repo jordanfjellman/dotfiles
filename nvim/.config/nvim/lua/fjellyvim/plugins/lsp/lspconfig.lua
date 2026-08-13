@@ -82,8 +82,8 @@ return {
       --   <leader>sS  -> lsp_workspace_symbols
 
       -- mason-lspconfig only auto-enables mason-installed servers. sourcekit comes
-      -- from the Swift toolchain and tsgo from mise, so enable both here.
-      vim.lsp.enable({ "sourcekit", "tsgo" })
+      -- from the Swift toolchain, tsgo and harper_ls from mise, so enable them here.
+      vim.lsp.enable({ "sourcekit", "tsgo", "harper_ls" })
     end,
     keys = {
       {

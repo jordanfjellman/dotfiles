@@ -22,6 +22,12 @@
    curl -LsS https://ai.snowflake.com/static/cc-scripts/install.sh | SKIP_PATH_PROMPT=1 sh
    cortex completion generate --shell fish > ~/.config/fish/completions/cortex.fish
    ```
+8. Download Vale's external styles. They are downloaded, not committed, so until
+   this runs Vale lints with only my own rules and every `write-good.*` rule
+   silently does nothing:
+   ```shell
+   vale sync
+   ```
 
 ## Keeping Machines Up To Date
 

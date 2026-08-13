@@ -1,0 +1,9 @@
+# Hemingway's "very hard to read" (red) threshold. Kept as a separate rule from
+# SentenceLength so the two levels can be tuned, silenced, or promoted
+# independently per document type.
+extends: occurrence
+message: "Very hard to read: over 35 words in this sentence."
+level: error
+scope: sentence
+token: '\b[\w''’-]+\b'
+max: 35

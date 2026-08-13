@@ -1,0 +1,9 @@
+# Document-level grade score, the number Hemingway shows in its sidebar.
+# Complements the per-sentence rules rather than replacing them: this catches
+# prose made dense by long words even when every sentence is short.
+extends: readability
+message: "Grade %s. Aim for 9 or below."
+level: suggestion
+metrics:
+  - Flesch-Kincaid
+grade: 9

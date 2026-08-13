@@ -1,17 +1,28 @@
 #!/usr/bin/env zsh
 
 if [[ -z $STOW_FOLDERS ]]; then
-  STOW_FOLDERS="aerospace,bin,colima,docker,fish,ghostty,git,hammerspoon,herdr,hunk,mise,nvim,opencode,pi,presenterm,starship,tmux,vim,vscode,wezterm,zsh"
+  STOW_FOLDERS="aerospace,bin,colima,docker,fish,ghostty,git,hammerspoon,herdr,hunk,mise,nvim,opencode,pi,presenterm,starship,tmux,vale,vim,vscode,wezterm,zsh"
 fi
 
 if [[ -z $DOTFILES ]]; then
   DOTFILES=$HOME/code/personal/dotfiles
 fi
 
+# Packages whose target directory is also written to by something other than
+# stow. Folding collapses such a directory into a single symlink into this repo,
+# so the other writer's files land in git and need excluding by name forever.
+# --no-folding keeps real directories and links only the files I wrote.
+#
+#   vale — `vale sync` downloads style packages into StylesPath.
+NO_FOLDING="vale"
+
 pushd $DOTFILES
 for folder in $(echo $STOW_FOLDERS | sed "s/,/ /g"); do
+  stow_opts=()
+  [[ " $NO_FOLDING " == *" $folder "* ]] && stow_opts=(--no-folding)
+
   /opt/homebrew/bin/stow --delete $folder
-  /opt/homebrew/bin/stow --target=$HOME $folder
+  /opt/homebrew/bin/stow $stow_opts --target=$HOME $folder
 done
 popd
 
