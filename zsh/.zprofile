@@ -7,7 +7,7 @@ export LANG=en_US.UTF-8
 export LC_ALL=en_US.UTF-8
 
 # Set binary paths
-PATH="$HOME/bin:/usr/local/bin:$HOME/.local/bin:/usr/local/sbin::$PATH"
+PATH="$HOME/bin:/usr/local/bin:$HOME/.local/bin:/usr/local/sbin:$PATH"
 PATH="$PATH:/usr/local/opt/ruby/bin"
 PATH="$PATH:/usr/local/opt/kafka/bin"
 PATH="$PATH:/opt/homebrew/opt/llvm/bin" # install llvm for fast-linking during rust compilation
