@@ -7,7 +7,12 @@ return {
   opts = {
     bigfile = { enabled = true },
     gh = { enabled = true },
-    picker = { enabled = true },
+    picker = {
+      enabled = true,
+      sources = {
+        explorer = { hidden = true, ignored = true },
+      },
+    },
     quickfile = { enabled = true },
   },
   config = function(_, opts)
