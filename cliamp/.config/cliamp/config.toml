@@ -1,0 +1,45 @@
+theme = "kanagawa"
+
+# `cliamp vis list`. Fed by the audio pipeline, so it only reacts to what cliamp
+# plays itself.
+visualizer = "Bars"
+
+# Startup volume in dB, [-30, +6].
+volume = 0
+
+# off | all | one
+repeat = "off"
+shuffle = false
+mono = false
+
+# Flat, Rock, Pop, Jazz, or Custom to use the `eq` band array.
+eq_preset = "Flat"
+
+# Where the file browser opens.
+initial_directory = "~/Music"
+
+# debug | info | warn | error
+log_level = "warn"
+
+# Startup provider. Local files by default — set this once a remote provider
+# below is actually configured.
+# provider = "navidrome"
+
+# --- Providers ---------------------------------------------------------------
+# Secrets are read from the environment: a value that is exactly $VAR or ${VAR}
+# is interpolated. Mixed strings are left literal, so a password containing $
+# stays intact. `cliamp setup` writes these sections interactively.
+#
+# Amazon Music is not a provider and cannot be one — see the README.
+
+# [navidrome]
+# url = "https://music.example.com"
+# user = "jordan"
+# password = "${NAVIDROME_PASSWORD}"
+
+# [spotify]
+# client_id = "${SPOTIFY_CLIENT_ID}"
+
+# [qobuz]
+# email = "${QOBUZ_EMAIL}"
+# password = "${QOBUZ_PASSWORD}"
