@@ -1,17 +1,19 @@
-tap "nikitabobko/tap"
-tap "bjarneo/cliamp"
+tap "nikitabobko/tap", trusted: { cask: "aerospace" }
+tap "bjarneo/cliamp", trusted: { formula: "cliamp" }
 
 brew "ansible"
 brew "bitwarden-cli"
 brew "docker"
 brew "docker-compose"
 brew "docker-credential-helper"
+brew "ffmpeg"
 brew "fish"
 brew "git"
 brew "jsonpp"
 brew "mise"
 brew "stow"
 brew "tpm"
+brew "yt-dlp"
 brew "zsh"
 brew "zsh-autosuggestions"
 brew "bjarneo/cliamp/cliamp"

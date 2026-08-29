@@ -1,5 +1,5 @@
-tap "hashicorp/tap"
-tap "modem-dev/tap"
+tap "hashicorp/tap", trusted: { formula: "vault" }
+tap "modem-dev/tap", trusted: { formula: "hunk" }
 
 brew "bruno-cli"
 brew "coursier"
