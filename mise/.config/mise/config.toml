@@ -22,6 +22,7 @@ rust = "latest"
 uv = "latest"
 coursier = "latest"
 sbt = "latest"
+pnpm = "latest"
 yarn = "latest"
 
 # --- Formatters & Linters ---
