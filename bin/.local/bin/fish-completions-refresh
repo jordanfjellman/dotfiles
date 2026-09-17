@@ -1,0 +1,60 @@
+#!/usr/bin/env bash
+# Regenerate the committed fish completions in fish/.config/fish/completions.
+# Static files cost nothing at first tab-complete, but they go stale when a tool
+# is upgraded. Run this after a `mise up` or `brew upgrade`.
+set -euo pipefail
+
+dest="${1:-$HOME/.config/fish/completions}"
+
+# command:invocation. Hand-written files (kubectx, kubens) are not listed.
+tools=(
+  "bat:bat --completion fish"
+  "cliamp:cliamp completion fish"
+  "colima:colima completion fish"
+  "cs:cs completion fish"
+  "herdr:herdr completion fish"
+  "kubectl:kubectl completion fish"
+  "limactl:limactl completion fish"
+  "rg:rg --generate complete-fish"
+  "stern:stern --completion=fish"
+  "taplo:taplo completions fish"
+  "tree-sitter:tree-sitter complete --shell fish"
+  "xh:xh --generate complete-fish"
+)
+
+for entry in "${tools[@]}"; do
+  cmd="${entry%%:*}"
+  invocation="${entry#*:}"
+  if ! command -v "$cmd" >/dev/null 2>&1; then
+    printf 'skip    %s (not installed)\n' "$cmd"
+    continue
+  fi
+  tmp=$(mktemp)
+  if $invocation </dev/null >"$tmp" 2>/dev/null && [ -s "$tmp" ]; then
+    lines=$(wc -l <"$tmp" | tr -d ' ')
+    mv "$tmp" "$dest/$cmd.fish"
+    printf 'wrote   %s.fish (%s lines)\n' "$cmd" "$lines"
+  else
+    rm -f "$tmp"
+    printf 'FAILED  %s\n' "$cmd"
+  fi
+done
+
+# fd and bottom ship a completion file and have no generator. mise puts the
+# version in the install path, so find it.
+copy_shipped() {
+  local cmd=$1 mise_tool=$2 depth=$3
+  command -v "$cmd" >/dev/null 2>&1 || { printf 'skip    %s (not installed)\n' "$cmd"; return; }
+  local dir file
+  dir=$(mise where "$mise_tool" 2>/dev/null) || { printf 'FAILED  %s (not a mise tool)\n' "$cmd"; return; }
+  file=$(find "$dir" -maxdepth "$depth" -name "$cmd.fish" 2>/dev/null | head -1)
+  if [ -n "$file" ]; then
+    cp "$file" "$dest/$cmd.fish"
+    printf 'copied  %s.fish (%s lines)\n' "$cmd" "$(wc -l <"$file" | tr -d ' ')"
+  else
+    printf 'FAILED  %s (no shipped file under %s)\n' "$cmd" "$dir"
+  fi
+}
+
+copy_shipped fd fd 3
+copy_shipped btm bottom 2
