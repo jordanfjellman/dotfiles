@@ -5,7 +5,7 @@ return {
     lazy = false,
     priority = 1000,
     build = ":TSUpdate",
-    cmd = { "TSUpdateSync", "TSUpdate", "TSInstall" },
+    cmd = { "TSUpdate", "TSInstall" },
     main = "nvim-treesitter",
     opts = {
       ensure_installed = {

@@ -26,4 +26,9 @@ if [[ ${1:-} == -n ]]; then
 fi
 
 nvim --headless "+Lazy! sync" +qa
-nvim --headless "+TSUpdateSync" +qa
+
+# nvim-treesitter's main branch dropped TSUpdateSync, and its TSUpdate returns
+# before the parsers build. Wait on the task so a parser failure fails this run.
+nvim --headless \
+  -c 'lua require("nvim-treesitter.install").update(nil, { summary = true }):wait(600000)' \
+  +qa
