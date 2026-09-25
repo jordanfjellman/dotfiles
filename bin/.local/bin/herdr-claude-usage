@@ -1,0 +1,36 @@
+#!/usr/bin/env bash
+# Reports the Claude five-hour usage window, like "◕ 2h", as the $claude_usage
+# token on the first herdr workspace, so the sidebar shows it once at the top.
+# launchd runs this every minute (com.jordanfjellman.herdr-claude-usage).
+set -euo pipefail
+
+herdr=${HERDR_BIN_PATH:-herdr}
+
+token=$(security find-generic-password -s "Claude Code-credentials" -w |
+  jq -er '.claudeAiOauth.accessToken')
+
+value=$(curl -fsS --max-time 10 https://api.anthropic.com/api/oauth/usage \
+  -H "Authorization: Bearer $token" \
+  -H "anthropic-beta: oauth-2025-04-20" |
+  jq -er '
+    .five_hour
+    | ["○", "◔", "◑", "◕", "●"][(.utilization / 25 + 0.5 | floor | if . > 4 then 4 else . end)]
+      + if .resets_at == null then ""
+        else ((.resets_at | sub("\\.[0-9]+"; "") | sub("\\+00:00$"; "Z") | fromdateiso8601) - now)
+          | if . >= 3600 then " \(. / 3600 | floor)h" else " \([. / 60 | ceil, 0] | max)m" end
+        end
+  ')
+
+if [[ ${1:-} == --print ]]; then
+  printf '%s\n' "$value"
+  exit
+fi
+
+workspace=$("$herdr" workspace list |
+  jq -er '.result.workspaces | min_by(.number) | .workspace_id')
+
+# The TTL outlives two missed runs, then clears a value nobody refreshes.
+"$herdr" workspace report-metadata "$workspace" \
+  --source claude-usage \
+  --token "claude_usage=$value" \
+  --ttl-ms 150000 >/dev/null
