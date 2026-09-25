@@ -1,4 +1,14 @@
 onboarding = false
+
+# fjellybeads reports $blocking, $needs and $needs_all each tick.
+[ui.sidebar.spaces]
+rows = [
+  ["state_icon", "workspace"],
+  ["branch", "git_status"],
+  [{ token = "$blocking", fg = "#f47067", bold = true }, "$needs"],
+  [{ token = "$needs_all", dim = true }],
+]
+
 [theme]
 name = "terminal"
 
