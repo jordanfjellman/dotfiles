@@ -1,3 +1,3 @@
-function kns
+function kns --wraps kubens
     kubens $argv
 end
