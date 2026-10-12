@@ -3,7 +3,7 @@ function land --description 'Track a PR from merge to healthy prod: land <pr> [o
     set -l repo $argv[2]
     test -n "$repo"; or set repo (gh repo view --json nameWithOwner -q .nameWithOwner)
     set -l ref gh-pr-$repo#$pr
-    set -l open (bd list -n 0 --all --external-ref $ref --json | jq -r '[.[] | select(.status != "closed")][0].id // empty')
+    set -l open (BD_JSON_ENVELOPE=1 bd list -n 0 --all --external-ref $ref --json | jq -r '[.data[] | select(.status != "closed")][0].id // empty')
     if test -n "$open"
         echo "$repo#$pr is already landing as $open" >&2
         return 1
