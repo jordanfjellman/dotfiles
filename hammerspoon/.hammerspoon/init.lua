@@ -84,6 +84,7 @@ for _, pair in ipairs({
 	{ "e", "https://esv.org" },
 	{ "g", "https://github.com/notifications" },
 	{ "m", "https://mail.google.com" },
+	{ "p", "https://coder.disciple.sandbox.lifeway.com" }, -- [p]airwise
 	{ "r", "https://read.readwise.io" },
 	{ "s", "https://web.telegram.org/a/" }, -- "s" is similar to "slack" (local messaging app)
 	{ "w", "https://lifeway.atlassian.net/jira/for-you" }, -- [w]orkboard
