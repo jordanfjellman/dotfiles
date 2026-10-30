@@ -12,6 +12,7 @@ tools=(
   "cliamp:cliamp completion fish"
   "herdr:herdr completion fish"
   "kubectl:kubectl completion fish"
+  "rex:rex completion fish"
   "rg:rg --generate complete-fish"
   "stern:stern --completion=fish"
   "taplo:taplo completions fish"

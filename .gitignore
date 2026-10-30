@@ -32,6 +32,7 @@ fish/.config/fish/completions/*
 !fish/.config/fish/completions/kubectl.fish
 !fish/.config/fish/completions/kubectx.fish
 !fish/.config/fish/completions/kubens.fish
+!fish/.config/fish/completions/rex.fish
 !fish/.config/fish/completions/rg.fish
 !fish/.config/fish/completions/stern.fish
 !fish/.config/fish/completions/taplo.fish

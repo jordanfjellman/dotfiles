@@ -18,6 +18,7 @@ spoon.SpoonInstall:andUse("AppLauncher", {
 		i = "IntelliJ IDEA",
 		m = "Microsoft Outlook", -- [m]ail
 		o = "Obsidian",
+		r = "Rex Beta",
 		s = "Slack",
 		t = "Ghostty", -- [t]erminal
 		v = "zoom.us", -- [v]ideo calls
