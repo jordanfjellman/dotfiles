@@ -69,11 +69,12 @@ rex.action{
 }
 
 local function popup(command)
-  return function()
+  return function(ctx)
+    local argv = type(command) == "function" and command(ctx) or { command }
     rex.session.new_layer{
       bounds = { 0, 0.25, 1, 0.5 },
       focus  = true,
-      layout = rex.layout.block{ flavor = shell, options = { command = { command } } },
+      layout = rex.layout.block{ flavor = shell, options = { command = argv } },
     }
     return true
   end
@@ -81,6 +82,8 @@ end
 
 rex.bind("ctrl+b>t", popup("code-sessionizer"))
 rex.bind("ctrl+b>shift+t", popup("note-sessionizer"))
+rex.bind("ctrl+b>u", popup(function(ctx) return { "rex-urls", ctx.block_id } end))
+rex.bind("ctrl+b>shift+u", popup(function(ctx) return { "rex-urls", ctx.block_id, "--scrollback" } end))
 rex.bind("ctrl+b>n", "sessionizer", { path = "~/notes" })
 rex.bind("ctrl+b>m", "sessionizer", { path = "~/agent-memory" })
 rex.bind("ctrl+b>i", "sessionizer", { path = "~/lifewayit" })
