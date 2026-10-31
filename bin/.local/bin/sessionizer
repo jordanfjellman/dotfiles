@@ -13,9 +13,7 @@ if [[ -z $selected ]]; then
   exit 0
 fi
 
-if [[ -n $HERDR_SOCKET_PATH ]]; then
-  exec herdr-sessionizer "$selected"
-elif [[ -n $REX_BIN_DIR && -z $TMUX ]]; then
+if [[ -n $REX_BIN_DIR && -z $TMUX ]]; then
   exec rex-sessionizer "$selected"
 else
   exec tmux-sessionizer "$selected"

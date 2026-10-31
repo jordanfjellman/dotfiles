@@ -27,7 +27,7 @@ rex.bind("ctrl+b>r", "client.config.reload")
 local home = os.getenv("HOME")
 local shell = "com.superlogical.terminal.shell"
 
--- Matches tmux-sessionizer and herdr-sessionizer, so a directory maps to
+-- Matches tmux-sessionizer, so a directory maps to
 -- the same session name under every multiplexer.
 local function session_name(dir)
   local parent, base = dir:match("^(.*)/([^/]+)/?$")

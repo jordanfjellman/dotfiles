@@ -2,8 +2,8 @@
 # Open one workspace per AI-tooling repo and land back on the first.
 set -euo pipefail
 
-if [[ -z ${HERDR_SOCKET_PATH:-} && -z ${TMUX:-} ]]; then
-  echo "ai-workspaces: run this from inside herdr or tmux" >&2
+if [[ -z ${TMUX:-} ]]; then
+  echo "ai-workspaces: run this from inside tmux" >&2
   exit 1
 fi
 
