@@ -20,6 +20,7 @@ fish_add_path $HOME/.local/bin
 fish_add_path $HOME/Library/Application Support/Coursier/bin
 fish_add_path $HOME/.lmstudio/bin
 fish_add_path /Applications/Obsidian.app/Contents/MacOS
+fish_add_path "$HOME/Library/Application Support/com.superlogical.rex/RexServer/Versions/Current/Rex Server.app/Contents/MacOS"
 
 # MANPATH and INFOPATH
 ! set -q MANPATH; and set MANPATH ''

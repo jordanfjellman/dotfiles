@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+
+# A popup is its own block, so REX_BLOCK names the popup; the binding passes
+# the block that held focus when the key was pressed.
+block=$1
+[ -z "$block" ] && { echo 'Usage: rex-urls <block> [--scrollback]'; exit 1; }
+
+# capture always includes scrollback, so keep only the last screen of rows.
+if [ "$2" = "--scrollback" ]; then
+  text=$(rex capture -b "$block" --unwrap | tail -n 2000)
+else
+  rows=$(rex block call -b "$block" size | jq -r '.rows')
+  text=$(rex capture -b "$block" | tail -n "$rows")
+fi
+
+urls=$(printf '%s\n' "$text" | grep -oE 'https?://[^ >"]+' | sed 's/[].)},;:!?"'"'"']*$//' | sort -u)
+[ -z "$urls" ] && { echo 'No URLs found'; sleep 1; exit 0; }
+selected=$(printf '%s\n' "$urls" | fzf --multi --no-preview)
+[ -n "$selected" ] && while read -r url; do open "$url"; done <<< "$selected"

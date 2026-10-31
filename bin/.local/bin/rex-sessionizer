@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+
+if [[ $# -eq 1 ]]; then
+  selected=$1
+elif [[ ! -t 0 ]]; then
+  read -r selected
+else
+  echo "Usage: rex-sessionizer <path>"
+  exit 0
+fi
+
+if [[ -z $selected ]]; then
+  exit 0
+fi
+
+exec rex do sessionizer path="$selected"
