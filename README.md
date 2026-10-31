@@ -13,16 +13,12 @@
    ```shell
    sudo ln -s "$HOME/.colima/default/docker.sock" /var/run/docker.sock
    ```
-6. Link the herdr worktree-env plugin (per machine; herdr records it in its own registry, so stow can't):
-   ```shell
-   herdr plugin link ~/code/personal/dotfiles/herdr/.config/herdr/plugins/worktree-env
-   ```
-7. Work mac only: install the CoCo CLI. `up-coco` updates it but never installs it.
+6. Work mac only: install the CoCo CLI. `up-coco` updates it but never installs it.
    ```shell
    curl -LsS https://ai.snowflake.com/static/cc-scripts/install.sh | SKIP_PATH_PROMPT=1 sh
    cortex completion generate --shell fish > ~/.config/fish/completions/cortex.fish
    ```
-8. Download Vale's external styles. They are downloaded, not committed, so until
+7. Download Vale's external styles. They are downloaded, not committed, so until
    this runs Vale lints with only my own rules and every `write-good.*` rule
    silently does nothing:
    ```shell

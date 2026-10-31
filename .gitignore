@@ -45,8 +45,6 @@ fish/.config/fish/fish_variables
 hammerspoon/.hammerspoon/Spoons/
 herdr/.config/herdr/*
 !herdr/.config/herdr/config.toml
-!herdr/.config/herdr/plugins
-!herdr/.config/herdr/plugins/**
 nushell/.config/nushell/history.txt
 nushell/.config/nushell/plugin.msgpackz
 pi/.pi/agent/auth.json
