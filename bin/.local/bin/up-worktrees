@@ -63,7 +63,7 @@ done
 tmp=$(mktemp -d) || exit 1
 trap 'rm -rf "$tmp"' EXIT
 
-# Worktrees live anywhere: /private/tmp, agent scratchpads, ~/.herdr, ~/.bb. So
+# Worktrees live anywhere: /private/tmp, agent scratchpads, ~/.herdr. So
 # find the repos under ~/code, then ask each one for its worktrees. A .git dir
 # is a main checkout; a .git file is a linked worktree, or the root of a
 # bare+worktrees layout, and either one leads to the common dir.

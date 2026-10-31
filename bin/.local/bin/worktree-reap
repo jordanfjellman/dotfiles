@@ -16,7 +16,7 @@ Usage: worktree-reap [--apply] [--orphans] [PATH | BRANCH ...]
   PATH|BRANCH  act on only these; exit 1 if one is not safe to remove
 
 Also runs `git worktree prune` for every repo with a gone directory.
-Never touches ~/.bb worktrees (bb owns them) or a worktree a process is in.
+Never touches a worktree a process is in.
 EOF
 }
 
@@ -114,10 +114,6 @@ while IFS=$'\t' read -r bucket common wt branch detail; do
       ;;
   esac
 
-  if [[ $wt == "$HOME/.bb/"* ]]; then
-    [[ ${#targets[@]} -gt 0 ]] && echo "refuse $label: bb owns it" && refused=1
-    continue
-  fi
   if in_use "$wt"; then
     echo "skip $label: a process has its working directory there"
     [[ ${#targets[@]} -gt 0 ]] && refused=1
