@@ -1,0 +1,283 @@
+#!/usr/bin/env bash
+# Report Git worktrees that look finished. See `up` for the unit contract.
+#
+# This unit has no apply path, so `-n` and no args do the same thing. `up` with
+# no args applies, and removing a checkout loses uncommitted work in a way a
+# pull never does. `worktree-reap` owns the removal and reads --porcelain.
+set -uo pipefail
+
+root=$HOME/code
+stale_days=0
+porcelain=0
+
+usage() {
+  cat <<'EOF'
+Usage: up-worktrees [-n] [--stale DAYS] [--porcelain]
+
+  -n            report drift, change nothing (this unit never changes anything)
+  --stale DAYS  also report worktrees with no PR whose last commit is older
+  --porcelain   one TSV row per worktree: bucket, git common dir, path, branch, detail;
+                a detached HEAD has branch `-`
+
+Buckets:
+  reap    PR merged or closed, or detached; tree clean, every commit on a remote
+  orphan  detached, tree clean, but holds commits that are on no remote
+  stuck   PR merged or closed, but uncommitted or unpushed work is still here
+  prune   git still lists the worktree, but its directory is gone
+  active  PR open, or no PR (silent without --stale)
+
+Finds every worktree of every repo under ~/code, wherever the worktree lives.
+EOF
+}
+
+while [[ $# -gt 0 ]]; do
+  case $1 in
+    -n) shift ;;
+    --stale)
+      stale_days=${2:-30}
+      shift 2
+      ;;
+    --porcelain)
+      porcelain=1
+      shift
+      ;;
+    -h | --help)
+      usage
+      exit 0
+      ;;
+    *)
+      echo "up-worktrees: unknown option: $1" >&2
+      usage >&2
+      exit 1
+      ;;
+  esac
+done
+
+for tool in git jq; do
+  if ! command -v "$tool" > /dev/null 2>&1; then
+    echo "up-worktrees: $tool is not on PATH" >&2
+    exit 1
+  fi
+done
+
+tmp=$(mktemp -d) || exit 1
+trap 'rm -rf "$tmp"' EXIT
+
+# Worktrees live anywhere: /private/tmp, agent scratchpads, ~/.herdr, ~/.bb. So
+# find the repos under ~/code, then ask each one for its worktrees. A .git dir
+# is a main checkout; a .git file is a linked worktree, or the root of a
+# bare+worktrees layout, and either one leads to the common dir.
+commons=$tmp/commons
+while IFS= read -r dotgit; do
+  git -C "${dotgit%/.git}" rev-parse --path-format=absolute --git-common-dir 2> /dev/null
+done < <(find "$root" -mindepth 2 -maxdepth 4 -name .git \( -type d -prune -o -type f \) -print 2> /dev/null) \
+  | sort -u > "$commons"
+
+# common <TAB> path <TAB> branch <TAB> missing(0|1). The first entry git lists
+# is the main checkout or the bare repo, never a linked worktree. A detached
+# HEAD gets branch `-`, which git forbids as a name: `read` with a tab IFS
+# merges empty fields and would shift every column after it.
+index=$tmp/worktrees
+: > "$index"
+while IFS= read -r common; do
+  git --git-dir="$common" worktree list --porcelain 2> /dev/null | awk -v c="$common" '
+    function flush() {
+      if (p != "" && n > 1) print c "\t" p "\t" b
+      p = ""; b = "-"
+    }
+    /^worktree / { flush(); p = substr($0, 10); n++ }
+    /^branch /   { b = substr($0, 19) }
+    END          { flush() }'
+done < "$commons" | while IFS=$'\t' read -r common wt branch; do
+  # git flags an entry prunable only once its gitdir link is stale, so trust
+  # the filesystem instead.
+  missing=0
+  [[ -d $wt ]] || missing=1
+  printf '%s\t%s\t%s\t%s\n' "$common" "$wt" "$branch" "$missing"
+done > "$index"
+
+if [[ ! -s $index ]]; then
+  exit 0
+fi
+
+cache_for() {
+  printf '%s/pr-%s.json' "$tmp" "$(printf '%s' "$1" | shasum | cut -d' ' -f1)"
+}
+
+# One `gh pr list` per repo, not per worktree. gh is the authority on merges: a
+# squash merge leaves the branch out of the default branch's history, so
+# `git branch --merged` reports it as unmerged forever. gh needs a checkout to
+# find the remote, and a bare common dir is not one.
+fetch_prs() {
+  local repo=$1 probe cache
+  probe=$(awk -F'\t' -v r="$repo" '$1 == r && $4 == 0 { print $2; exit }' "$index")
+  cache=$(cache_for "$repo")
+  if [[ -z $probe ]] || ! (cd "$probe" && gh pr list --state all --limit 300 \
+    --json number,headRefName,headRefOid,state) > "$cache" 2> /dev/null < /dev/null; then
+    : > "$cache"
+  fi
+}
+
+while IFS= read -r repo; do
+  fetch_prs "$repo" &
+done < <(cut -f1 "$index" | sort -u)
+wait
+
+default_branch() {
+  local wt=$1 ref candidate
+  if ref=$(git -C "$wt" symbolic-ref --quiet --short refs/remotes/origin/HEAD 2> /dev/null); then
+    printf '%s\n' "$ref"
+    return 0
+  fi
+  for candidate in origin/main origin/master; do
+    if git -C "$wt" rev-parse --verify --quiet "$candidate" > /dev/null 2>&1; then
+      printf '%s\n' "$candidate"
+      return 0
+    fi
+  done
+  return 1
+}
+
+# A merged PR's branch is often deleted from the remote, which leaves its
+# commits on no remote ref even though the PR holds every one. The worktree is
+# done when HEAD is the PR head or behind it. The PR head can be a commit this
+# clone never fetched (a push from another machine), so fetch that one object.
+covered_by_pr() {
+  local wt=$1 oid=$2
+  [[ -n $oid ]] || return 1
+  if ! git -C "$wt" cat-file -e "$oid^{commit}" 2> /dev/null; then
+    git -C "$wt" fetch --quiet --no-write-fetch-head origin "$oid" < /dev/null 2> /dev/null || return 1
+  fi
+  git -C "$wt" merge-base --is-ancestor HEAD "$oid" 2> /dev/null
+}
+
+# One reflog entry is the branch's creation. Without reflogs, assume it moved.
+ever_moved() {
+  local entries
+  entries=$(git -C "$1" reflog show --format=%h "refs/heads/$2" -- 2> /dev/null | grep -c . || true)
+  [[ $entries -ne 1 ]]
+}
+
+rows=$tmp/rows
+: > "$rows"
+now=$(date +%s)
+
+row() { printf '%s\t%s\t%s\t%s\t%s\n' "$1" "$2" "$3" "${4:--}" "$5" >> "$rows"; }
+
+while IFS=$'\t' read -r repo wt branch missing; do
+  [[ $branch == - ]] && branch=''
+  if [[ $missing -eq 1 ]]; then
+    row prune "$repo" "$wt" "$branch" 'directory is gone'
+    continue
+  fi
+
+  base=$(default_branch "$wt" 2> /dev/null) || base=''
+
+  # A worktree sitting on the default branch is trivially an ancestor of it. In
+  # a bare+worktrees layout that worktree is the main checkout, so never offer it.
+  if [[ -n $base && -n $branch && $branch == "${base#origin/}" ]]; then
+    continue
+  fi
+
+  dirty=$(git -C "$wt" status --porcelain 2> /dev/null | grep -c . || true)
+  unpushed=$(git -C "$wt" rev-list --count HEAD --not --remotes 2> /dev/null || echo 0)
+
+  cache=$(cache_for "$repo")
+  verified=0
+  pr_num=''
+  pr_state=''
+  pr_oid=''
+  if [[ -s $cache ]]; then
+    verified=1
+    if [[ -n $branch ]]; then
+      IFS=$'\t' read -r pr_num pr_state pr_oid < <(jq -r --arg b "$branch" \
+        '[.[] | select(.headRefName == $b)] | first
+         | "\(.number // "")\t\(.state // "" | ascii_downcase)\t\(.headRefOid // "")"' \
+        "$cache" 2> /dev/null || true)
+    fi
+  fi
+
+  finished=0
+  detail=''
+  if [[ -z $branch ]]; then
+    finished=1
+    detail='detached'
+  elif [[ $verified -eq 1 ]]; then
+    case $pr_state in
+      merged | closed)
+        finished=1
+        detail="#$pr_num $pr_state"
+        if [[ $unpushed -gt 0 ]] && covered_by_pr "$wt" "$pr_oid"; then
+          unpushed=0
+        fi
+        ;;
+      open) detail="#$pr_num open" ;;
+      *)
+        # gh --limit only reaches back so far, and a branch can land without a
+        # PR at all, so absence of a PR is not proof the work is unfinished.
+        # A branch cut from the default branch that never moved is an ancestor
+        # of it too, and is usually a session that has not committed yet.
+        if [[ -n $base ]] && ever_moved "$wt" "$branch" \
+          && git -C "$wt" merge-base --is-ancestor HEAD "$base" 2> /dev/null; then
+          finished=1
+          detail="no PR, merged into ${base#origin/}"
+        else
+          detail='no PR'
+        fi
+        ;;
+    esac
+  else
+    if [[ -n $base ]] && git -C "$wt" merge-base --is-ancestor HEAD "$base" 2> /dev/null; then
+      finished=1
+      detail="merged into ${base#origin/}, gh unavailable"
+    else
+      detail='gh unavailable'
+    fi
+  fi
+
+  local_note=''
+  [[ $dirty -gt 0 ]] && local_note="${local_note:+$local_note, }$dirty uncommitted"
+  [[ $unpushed -gt 0 ]] && local_note="${local_note:+$local_note, }$unpushed on no remote"
+
+  if [[ $finished -eq 1 && -z $local_note ]]; then
+    row reap "$repo" "$wt" "$branch" "$detail"
+  elif [[ -z $branch && $dirty -eq 0 ]]; then
+    row orphan "$repo" "$wt" "$branch" "$detail, $local_note"
+  elif [[ $finished -eq 1 ]]; then
+    row stuck "$repo" "$wt" "$branch" "$detail, $local_note"
+  elif [[ $stale_days -gt 0 && -z $pr_num ]]; then
+    committed=$(git -C "$wt" log -1 --format=%ct 2> /dev/null || echo "$now")
+    age=$(((now - committed) / 86400))
+    if [[ $age -ge $stale_days ]]; then
+      row stale "$repo" "$wt" "$branch" "${local_note:+$local_note, }last commit ${age}d ago"
+    fi
+  fi
+done < "$index"
+
+if [[ $porcelain -eq 1 ]]; then
+  cat "$rows"
+  [[ -s $rows ]] && exit 2 || exit 0
+fi
+
+# The repo name is the directory that holds the common dir (.git, .bare), or
+# the common dir itself for a bare repo named like repo.git.
+print_bucket() {
+  local bucket=$1 header=$2 count
+  count=$(awk -F'\t' -v b="$bucket" '$1 == b' "$rows" | grep -c . || true)
+  [[ $count -eq 0 ]] && return
+  echo "  $bucket ($count), $header:"
+  awk -F'\t' -v b="$bucket" '$1 == b {
+    n = split($2, parts, "/")
+    name = (parts[n] ~ /^\./) ? parts[n - 1] : parts[n]
+    sub(/\.git$/, "", name)
+    printf "    %s/%s: %s\n      %s\n", name, ($4 == "-" ? "(detached)" : $4), $5, $3
+  }' "$rows"
+}
+
+print_bucket reap 'safe to remove'
+print_bucket orphan 'detached, commits on no remote'
+print_bucket stuck 'finished but holding local work'
+print_bucket prune 'directory already gone'
+print_bucket stale 'no PR'
+
+[[ -s $rows ]] && exit 2 || exit 0

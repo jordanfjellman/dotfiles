@@ -1,0 +1,173 @@
+#!/usr/bin/env bash
+# Remove the worktrees that `up-worktrees` calls reap. Dry run unless --apply.
+set -uo pipefail
+
+apply=0
+orphans=0
+targets=()
+
+usage() {
+  cat <<'EOF'
+Usage: worktree-reap [--apply] [--orphans] [PATH | BRANCH ...]
+
+  --apply    remove; without it, print what would go and how big it is
+  --orphans  also remove clean detached worktrees whose commits are on no
+             remote, after saving each HEAD as refs/archive/wt/<name>
+  PATH|BRANCH  act on only these; exit 1 if one is not safe to remove
+
+Also runs `git worktree prune` for every repo with a gone directory.
+Never touches ~/.bb worktrees (bb owns them) or a worktree a process is in.
+EOF
+}
+
+while [[ $# -gt 0 ]]; do
+  case $1 in
+    --apply) apply=1 ;;
+    --orphans) orphans=1 ;;
+    -h | --help)
+      usage
+      exit 0
+      ;;
+    -*)
+      echo "worktree-reap: unknown option: $1" >&2
+      usage >&2
+      exit 1
+      ;;
+    *) targets+=("$1") ;;
+  esac
+  shift
+done
+
+command -v up-worktrees > /dev/null 2>&1 || {
+  echo "worktree-reap: up-worktrees is not on PATH" >&2
+  exit 1
+}
+
+tmp=$(mktemp -d) || exit 1
+trap 'rm -rf "$tmp"' EXIT
+
+rows=$tmp/rows
+up-worktrees --porcelain > "$rows"
+[[ $? -eq 1 ]] && exit 1
+
+# Removing the directory a shell or agent is sitting in strands that process.
+lsof -a -d cwd -Fn -u "$USER" 2> /dev/null | sed -n 's/^n//p' | sort -u > "$tmp/cwds"
+
+in_use() {
+  local wt=$1 cwd
+  while IFS= read -r cwd; do
+    [[ $cwd == "$wt" || $cwd == "$wt"/* ]] && return 0
+  done < "$tmp/cwds"
+  return 1
+}
+
+resolve() {
+  if [[ -d $1 ]]; then (cd "$1" && pwd -P); else printf '%s\n' "$1"; fi
+}
+
+# bucket, common, path, branch, detail
+selected=$tmp/selected
+: > "$selected"
+refused=0
+if [[ ${#targets[@]} -eq 0 ]]; then
+  cp "$rows" "$selected"
+else
+  for target in "${targets[@]}"; do
+    real=$(resolve "$target")
+    match=$(awk -F'\t' -v t="$target" -v r="$real" '$3 == t || $3 == r || $4 == t' "$rows")
+    # A path given by its /tmp name is listed by git under /private/tmp.
+    if [[ -z $match ]]; then
+      match=$(awk -F'\t' -v r="$real" '{ p = $3; sub(/^\/private/, "", p); q = r; sub(/^\/private/, "", q) } p == q' "$rows")
+    fi
+    if [[ -z $match ]]; then
+      echo "refuse $target: up-worktrees does not call it reap (open PR, local work, or not a worktree)"
+      refused=1
+      continue
+    fi
+    printf '%s\n' "$match" >> "$selected"
+  done
+fi
+
+freed=0
+removed=0
+prune_repos=$tmp/prune
+: > "$prune_repos"
+
+while IFS=$'\t' read -r bucket common wt branch detail; do
+  [[ $branch == - ]] && branch=''
+  label="${branch:-(detached)} $wt"
+  case $bucket in
+    prune)
+      printf '%s\n' "$common" >> "$prune_repos"
+      continue
+      ;;
+    reap) ;;
+    orphan)
+      if [[ $orphans -eq 0 ]]; then
+        [[ ${#targets[@]} -gt 0 ]] && echo "refuse $label: $detail (pass --orphans to archive and remove)" && refused=1
+        continue
+      fi
+      ;;
+    *)
+      [[ ${#targets[@]} -gt 0 ]] && echo "refuse $label: $bucket, $detail" && refused=1
+      continue
+      ;;
+  esac
+
+  if [[ $wt == "$HOME/.bb/"* ]]; then
+    [[ ${#targets[@]} -gt 0 ]] && echo "refuse $label: bb owns it" && refused=1
+    continue
+  fi
+  if in_use "$wt"; then
+    echo "skip $label: a process has its working directory there"
+    [[ ${#targets[@]} -gt 0 ]] && refused=1
+    continue
+  fi
+
+  kb=$(du -sk "$wt" 2> /dev/null | cut -f1)
+  size=$(awk -v k="${kb:-0}" 'BEGIN { printf "%.1fG", k / 1048576 }')
+
+  if [[ $apply -eq 0 ]]; then
+    echo "would remove $size $label ($detail)"
+    freed=$((freed + ${kb:-0}))
+    removed=$((removed + 1))
+    continue
+  fi
+
+  if [[ $bucket == orphan ]]; then
+    ref="refs/archive/wt/$(basename "$wt")-$(git -C "$wt" rev-parse --short HEAD)"
+    if ! git --git-dir="$common" update-ref "$ref" "$(git -C "$wt" rev-parse HEAD)"; then
+      echo "fail $label: could not write $ref, left in place"
+      refused=1
+      continue
+    fi
+    echo "archived $ref"
+  fi
+
+  # No --force: up-worktrees only calls a tree clean when it has no untracked
+  # files, so a refusal here means the tree changed since the survey.
+  if err=$(git --git-dir="$common" worktree remove "$wt" 2>&1); then
+    echo "removed $size $label"
+    freed=$((freed + ${kb:-0}))
+    removed=$((removed + 1))
+    printf '%s\n' "$common" >> "$prune_repos"
+  else
+    echo "fail $label: $(printf '%s' "$err" | tail -1)"
+    refused=1
+  fi
+done < "$selected"
+
+pruned=0
+while IFS= read -r common; do
+  if [[ $apply -eq 1 ]]; then
+    git --git-dir="$common" worktree prune && pruned=$((pruned + 1))
+  else
+    pruned=$((pruned + 1))
+  fi
+done < <(sort -u "$prune_repos")
+
+verb=$([[ $apply -eq 1 ]] && echo removed || echo 'would remove')
+awk -v n="$removed" -v k="$freed" -v p="$pruned" -v v="$verb" \
+  'BEGIN { printf "%s %d worktrees, %.1fG; prune %d repos\n", v, n, k / 1048576, p }'
+
+exit $refused
