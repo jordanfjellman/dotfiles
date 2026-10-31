@@ -6,6 +6,8 @@ package-lock.json
 .opencode/
 packer_compiled.lua
 bin/.local/bin/*kiro*
+bin/.local/bin/claude
+bin/.local/bin/gh
 bin/.local/bin/cortex
 bin/.local/bin/ctpcli*
 bin/.local/bin/dce*
