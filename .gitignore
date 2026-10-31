@@ -43,8 +43,6 @@ fish/.config/fish/completions/*
 !fish/.config/fish/completions/xh.fish
 fish/.config/fish/fish_variables
 hammerspoon/.hammerspoon/Spoons/
-herdr/.config/herdr/*
-!herdr/.config/herdr/config.toml
 nushell/.config/nushell/history.txt
 nushell/.config/nushell/plugin.msgpackz
 pi/.pi/agent/auth.json
