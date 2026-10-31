@@ -1,0 +1,77 @@
+#!/usr/bin/env bash
+# Report clones nobody has touched in a while that hold nothing a fresh clone
+# would lose. Report only: deleting a whole repo is a person's call.
+set -uo pipefail
+
+days=60
+root=$HOME/code/work
+
+usage() {
+  cat <<'EOF'
+Usage: stale-repos [--days N] [ROOT]
+
+  --days N  no commit, checkout, or pull for N days (default 60)
+  ROOT      directory of clones (default ~/code/work)
+
+A repo is listed only when all of these hold: the tree is clean, nothing is
+stashed, every local commit is on a remote, it has no linked worktrees, and it
+has no .beads/ (a stealth beads database lives only in the clone). Git-ignored
+.env files do not block it, but the `env` column counts them: a fresh clone
+will not have them.
+
+Exit 2 when it lists anything, 0 when it lists nothing.
+EOF
+}
+
+while [[ $# -gt 0 ]]; do
+  case $1 in
+    --days)
+      days=${2:?--days needs a number}
+      shift 2
+      ;;
+    -h | --help)
+      usage
+      exit 0
+      ;;
+    -*)
+      echo "stale-repos: unknown option: $1" >&2
+      exit 1
+      ;;
+    *)
+      root=$1
+      shift
+      ;;
+  esac
+done
+
+now=$(date +%s)
+found=0
+
+for repo in "$root"/*/; do
+  repo=${repo%/}
+  [[ -d $repo/.git ]] || continue
+  [[ -e $repo/.beads ]] && continue
+  [[ $(git -C "$repo" worktree list --porcelain | grep -c '^worktree ') -eq 1 ]] || continue
+  [[ -z $(git -C "$repo" status --porcelain 2> /dev/null) ]] || continue
+  [[ -z $(git -C "$repo" stash list 2> /dev/null) ]] || continue
+  [[ $(git -C "$repo" rev-list --count --branches --not --remotes 2> /dev/null || echo 1) -eq 0 ]] || continue
+
+  # The HEAD reflog moves on every commit, checkout, and pull, so it dates the
+  # last time anyone worked here better than the last commit does.
+  last=$(git -C "$repo" log -g -1 --format=%ct HEAD 2> /dev/null)
+  [[ -n $last ]] || last=$(git -C "$repo" log -1 --format=%ct 2> /dev/null || echo "$now")
+  age=$(((now - last) / 86400))
+  [[ $age -ge $days ]] || continue
+
+  env=$(git -C "$repo" ls-files --others --ignored --exclude-standard \
+    -- ':(glob).env*' ':(glob)**/.env*' 2> /dev/null | grep -c . || true)
+  kb=$(du -sk "$repo" 2> /dev/null | cut -f1)
+
+  if [[ $found -eq 0 ]]; then
+    printf '%7s  %5s  %3s  %s\n' size idle env repo
+  fi
+  found=1
+  printf '%7s  %4sd  %3s  %s\n' "$(awk -v k="${kb:-0}" 'BEGIN { printf "%.1fG", k / 1048576 }')" "$age" "$env" "$repo"
+done
+
+exit $([[ $found -eq 1 ]] && echo 2 || echo 0)
