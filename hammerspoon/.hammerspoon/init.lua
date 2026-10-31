@@ -104,6 +104,11 @@ hs.hotkey.bind(meh, "t", function()
 	hs.application.launchOrFocus("Microsoft Teams")
 end)
 
+-- [b]b: on meh because hyper+b is Brave Browser
+hs.hotkey.bind(meh, "b", function()
+	hs.application.launchOrFocus("bb")
+end)
+
 spoon.SpoonInstall:andUse("ReloadConfiguration", {
 	hotkeys = { reloadConfiguration = { meh, "H" } },
 	start = true,
