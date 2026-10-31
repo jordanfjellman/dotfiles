@@ -9,6 +9,7 @@ dest="${1:-$HOME/.config/fish/completions}"
 # command:invocation. Hand-written files (kubectx, kubens) are not listed.
 tools=(
   "bat:bat --completion fish"
+  "bd:bd completion fish"
   "cliamp:cliamp completion fish"
   "herdr:herdr completion fish"
   "kubectl:kubectl completion fish"
