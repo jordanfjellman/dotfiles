@@ -16,6 +16,7 @@ spoon.SpoonInstall:andUse("AppLauncher", {
 		f = "Firefox Developer Edition",
 		g = "Google Chrome Canary",
 		i = "IntelliJ IDEA",
+		k = "KiroCrew", -- [k]iro
 		m = "Microsoft Outlook", -- [m]ail
 		o = "Obsidian",
 		r = "Rex Beta",

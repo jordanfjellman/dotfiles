@@ -216,3 +216,7 @@ run = 'move-node-to-workspace 5'
 [[on-window-detected]]
 if.app-id = 'com.usebruno.app'
 run = 'move-node-to-workspace 5'
+
+[[on-window-detected]]
+if.app-id = 'com.amazon.kiro.crew'
+run = 'move-node-to-workspace 5'
