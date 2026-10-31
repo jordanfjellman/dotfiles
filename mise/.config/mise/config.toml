@@ -58,6 +58,7 @@ taplo = "latest"
 # --- Other Tools ---
 "cargo:bws" = "latest"
 "cargo:parqeye" = "latest"
+"github:gastownhall/beads" = "latest"
 "github:jordanfjellman/skills-cli" = "latest"
 "npm:aws-cdk" = "latest"
 "npm:opencode-ai" = "latest"

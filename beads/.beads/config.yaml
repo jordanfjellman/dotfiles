@@ -1,0 +1,4 @@
+backup:
+    enabled: true
+    interval: 15m
+no-git-ops: true

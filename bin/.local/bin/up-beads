@@ -1,0 +1,35 @@
+#!/usr/bin/env bash
+# Keep bd's usage telemetry off. See `up` for the unit contract.
+#
+# bd ships telemetry on and keeps the opt-out in ~/.config/bd/config.yaml, a file
+# bd rewrites itself. Stow cannot own that file without losing its own comments to
+# the next rewrite, so a fresh machine starts opted in and needs this unit.
+# BD_METRICS_DISABLED does not work: `bd metrics` ignores it and writes the
+# default back. Only `bd metrics off` sets it.
+set -uo pipefail
+
+if ! command -v bd > /dev/null 2>&1; then
+  echo "  bd not installed"
+  exit 0
+fi
+
+if ! command -v jq > /dev/null 2>&1; then
+  echo "up-beads: jq is not on PATH" >&2
+  exit 1
+fi
+
+state=$(BD_JSON_ENVELOPE=1 bd config get --json metrics.disabled 2> /dev/null | jq -r '.data.value // empty')
+
+if [[ $state == true ]]; then
+  echo "  telemetry off"
+  exit 0
+fi
+
+echo "  telemetry on"
+
+if [[ ${1:-} == -n ]]; then
+  exit 2
+fi
+
+bd metrics off > /dev/null || exit 1
+echo "  turned it off"
