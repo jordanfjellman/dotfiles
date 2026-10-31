@@ -1,6 +1,7 @@
 [settings]
 idiomatic_version_file_enable_tools = ["java", "node"]
 experimental = true
+minimum_release_age = "0s"
 
 [settings.github]
 credential_command = "gh auth token"
@@ -89,3 +90,4 @@ typst = "latest"
 xh = "latest"
 pi = "latest"
 herdr = "latest"
+bottom = "latest"
