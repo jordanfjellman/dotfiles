@@ -11,7 +11,6 @@ tools=(
   "bat:bat --completion fish"
   "bd:bd completion fish"
   "cliamp:cliamp completion fish"
-  "herdr:herdr completion fish"
   "kubectl:kubectl completion fish"
   "rex:rex completion fish"
   "rg:rg --generate complete-fish"

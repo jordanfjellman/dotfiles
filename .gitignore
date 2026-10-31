@@ -31,7 +31,6 @@ fish/.config/fish/completions/*
 !fish/.config/fish/completions/btm.fish
 !fish/.config/fish/completions/cliamp.fish
 !fish/.config/fish/completions/fd.fish
-!fish/.config/fish/completions/herdr.fish
 !fish/.config/fish/completions/kubectl.fish
 !fish/.config/fish/completions/kubectx.fish
 !fish/.config/fish/completions/kubens.fish
