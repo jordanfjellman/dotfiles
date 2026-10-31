@@ -3,6 +3,7 @@ tap "modem-dev/tap", trusted: { formula: "hunk" }
 
 brew "bruno-cli"
 brew "coursier"
+brew "gcx"
 brew "telnet"
 brew "hashicorp/tap/vault"
 brew "modem-dev/tap/hunk"
@@ -15,9 +16,10 @@ cask "android-studio"
 cask "bruno"
 cask "claude"
 cask "dbvisualizer"
+cask "hopper-disassembler", args: { appdir: "~/Applications" }
 cask "kirocrew"
 cask "kiro-cli"
 cask "loom"
 cask "microsoft-excel"
 cask "microsoft-teams"
-cask "studio-3t"
+cask "studio-3t", args: { appdir: "~/Applications" }
