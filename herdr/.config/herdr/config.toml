@@ -75,6 +75,11 @@ type = "shell"
 command = "sessionizer ~/agent-memory"
 
 [[keys.command]]
+key = "prefix+i"
+type = "shell"
+command = "sessionizer ~/lifewayit"
+
+[[keys.command]]
 key = "prefix+a"
 type = "shell"
 command = "ai-workspaces"
@@ -83,3 +88,21 @@ command = "ai-workspaces"
 agent_panel_sort = "spaces"
 prompt_new_tab_name = false
 hide_tab_bar_when_single_tab = true
+
+[[keys.command]]
+key = "prefix+d"
+type = "plugin_action"
+command = "jordanfjellman.fjellydiff.open"
+description = "review pull requests"
+
+[[keys.command]]
+key = "prefix+shift+b"
+type = "plugin_action"
+command = "jordanfjellman.fjellybeads.open"
+description = "beads control pane"
+
+[[keys.command]]
+key = "prefix+shift+f"
+type = "plugin_action"
+command = "jordanfjellman.fjellybus.open"
+description = "event feed"
