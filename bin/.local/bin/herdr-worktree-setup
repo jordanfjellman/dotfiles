@@ -28,6 +28,13 @@ fi
 
 [[ -n $new && -d $new ]] || exit 0
 
+# Claude Code asks once per Git root, and a linked worktree is its own root, so
+# answer now instead of on the first session in here. Never fail the hook for it:
+# the env-file copy below matters more than a trust prompt.
+if command -v up-claude-trust > /dev/null 2>&1; then
+  up-claude-trust "$new" || true
+fi
+
 # Main checkout is the first entry of `git worktree list` (the non-linked root).
 source=$(git -C "$new" worktree list --porcelain 2>/dev/null \
   | awk '/^worktree /{print $2; exit}')

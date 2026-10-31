@@ -1,0 +1,143 @@
+#!/usr/bin/env bash
+# Trust my repos for Claude Code so it stops asking. See `up` for the unit contract.
+#
+# Claude Code keeps the answer per directory in ~/.claude.json under
+# projects.<abs path>.hasTrustDialogAccepted. Its check walks from the cwd up to the
+# Git root, so one entry per repo root covers every subdirectory, and each worktree
+# needs its own entry because a worktree is its own Git root.
+set -uo pipefail
+
+config=$HOME/.claude.json
+check=0
+roots=()
+
+usage() {
+  cat <<'EOF'
+Usage: up-claude-trust [-n] [dir ...]
+
+  -n     report untrusted repos, change nothing
+  dir    scan these dirs instead of ~/code/work and ~/code/personal
+
+Finds every Git root up to 2 levels deep, adds the worktrees Git reports for
+each, and marks them trusted in ~/.claude.json.
+Keeps one rolling backup at ~/.claude.json.bak.
+
+Claude Code caches this file while it runs, so restart it to pick up the change.
+EOF
+}
+
+while [[ $# -gt 0 ]]; do
+  case $1 in
+    -n) check=1; shift ;;
+    -h | --help)
+      usage
+      exit 0
+      ;;
+    -*)
+      echo "up-claude-trust: unknown option: $1" >&2
+      usage >&2
+      exit 1
+      ;;
+    *) roots+=("$1"); shift ;;
+  esac
+done
+
+[[ ${#roots[@]} -eq 0 ]] && roots=("$HOME/code/work" "$HOME/code/personal")
+
+if ! command -v jq > /dev/null 2>&1; then
+  echo "up-claude-trust: jq is not on PATH" >&2
+  exit 1
+fi
+
+if [[ ! -f $config ]]; then
+  echo "up-claude-trust: no $config, start Claude Code once first" >&2
+  exit 1
+fi
+
+list=$(mktemp) || exit 1
+trap 'rm -f "$list"' EXIT
+
+for root in "${roots[@]}"; do
+  [[ -d $root ]] || continue
+  # A worktree's .git is a file, so match both kinds.
+  find "$root" -mindepth 1 -maxdepth 3 -name .git 2>/dev/null | while IFS= read -r dot; do
+    repo=$(cd "$(dirname "$dot")" && pwd -P) || continue
+    echo "$repo"
+    # A branch name with a slash puts its worktree below the scan depth, so ask
+    # Git for the checkouts instead of guessing the layout. Skip the bare entry:
+    # nothing ever runs with a bare repo as its cwd.
+    git -C "$repo" worktree list --porcelain 2>/dev/null | awk '
+      /^worktree /{ p = substr($0, 10); next }
+      /^bare$/{ p = ""; next }
+      /^$/{ if (p != "") print p; p = ""; next }
+      END{ if (p != "") print p }
+    '
+  done
+done | sort -u > "$list"
+
+found=$(grep -c . "$list" || true)
+if [[ $found -eq 0 ]]; then
+  echo "  no Git roots found under: ${roots[*]}"
+  exit 0
+fi
+
+untrusted=$(
+  jq -r --rawfile list "$list" '
+    . as $cfg
+    | ($list | split("\n") | map(select(length > 0)))[]
+    | select(($cfg.projects[.]?.hasTrustDialogAccepted // false) | not)
+  ' "$config"
+) || {
+  echo "up-claude-trust: cannot read $config" >&2
+  exit 1
+}
+
+count=$(printf '%s' "$untrusted" | grep -c . || true)
+
+if [[ $count -eq 0 ]]; then
+  echo "  $found repos, all trusted"
+  exit 0
+fi
+
+echo "  $count of $found repos untrusted:"
+printf '%s\n' "$untrusted" | sed 's/^/    /'
+
+if [[ $check -eq 1 ]]; then
+  exit 2
+fi
+
+cp "$config" "$config.bak" || exit 1
+
+tmp=$config.tmp.$$
+jq --indent 2 --rawfile list "$list" '
+  ($list | split("\n") | map(select(length > 0))) as $paths
+  | .projects = (
+      reduce $paths[] as $p (.projects // {};
+        .[$p] = (
+          (.[$p] // {
+            allowedTools: [],
+            mcpContextUris: [],
+            mcpServers: {},
+            enabledMcpjsonServers: [],
+            disabledMcpjsonServers: [],
+            hasClaudeMdExternalIncludesApproved: false,
+            hasClaudeMdExternalIncludesWarningShown: false
+          })
+          + { hasTrustDialogAccepted: true }
+        )
+      )
+    )
+' "$config" > "$tmp" || {
+  rm -f "$tmp"
+  echo "up-claude-trust: jq failed, $config untouched" >&2
+  exit 1
+}
+
+if [[ ! -s $tmp ]]; then
+  rm -f "$tmp"
+  echo "up-claude-trust: jq wrote nothing, $config untouched" >&2
+  exit 1
+fi
+
+mv "$tmp" "$config" || exit 1
+echo "  trusted $count, backup at $config.bak"
