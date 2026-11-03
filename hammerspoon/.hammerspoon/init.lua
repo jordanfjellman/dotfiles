@@ -15,13 +15,10 @@ spoon.SpoonInstall:andUse("AppLauncher", {
 		e = "Visual Studio Code", -- code [e]ditor
 		f = "Firefox Developer Edition",
 		g = "Google Chrome Canary",
-		i = "IntelliJ IDEA",
-		k = "KiroCrew", -- [k]iro
 		m = "Microsoft Outlook", -- [m]ail
 		o = "Obsidian",
-		r = "Rex Beta",
 		s = "Slack",
-		t = "Ghostty", -- [t]erminal
+		t = "Rex Beta", -- [t]erminal
 		v = "zoom.us", -- [v]ideo calls
 		x = "Xcode", -- [x]code
 	},
