@@ -20,6 +20,4 @@ cask "hopper-disassembler", args: { appdir: "~/Applications" }
 cask "kirocrew"
 cask "kiro-cli"
 cask "loom"
-cask "microsoft-excel"
-cask "microsoft-teams"
 cask "studio-3t", args: { appdir: "~/Applications" }
