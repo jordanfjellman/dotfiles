@@ -1,5 +1,6 @@
 brew "zola"
 
 # cask "blender"
+cask "gcloud-cli"
 cask "google-chrome"
 cask "ultimaker-cura"
